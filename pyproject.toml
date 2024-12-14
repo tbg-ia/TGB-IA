@@ -12,4 +12,6 @@ dependencies = [
     "psycopg2-binary>=2.9.10",
     "python-binance>=1.0.25",
     "pandas>=2.2.3",
+    "flask-mail>=0.10.0",
+    "flask-migrate>=4.0.7",
 ]
