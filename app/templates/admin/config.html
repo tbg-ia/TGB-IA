@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Configuraciones del Sistema</h2>
+    
+    <div class="card">
+        <div class="card-body">
+            <div class="mb-4">
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newConfigModal">
+                    Añadir Configuración
+                </button>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Clave</th>
+                            <th>Valor</th>
+                            <th>Categoría</th>
+                            <th>Descripción</th>
+                            <th>Última Actualización</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for config in configs %}
+                        <tr>
+                            <td>{{ config.key }}</td>
+                            <td>{{ config.value }}</td>
+                            <td>
+                                <span class="badge bg-secondary">{{ config.category }}</span>
+                            </td>
+                            <td>{{ config.description }}</td>
+                            <td>{{ config.updated_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary" 
+                                        onclick="editConfig('{{ config.id }}')">
+                                    Editar
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para nueva configuración -->
+<div class="modal fade" id="newConfigModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Nueva Configuración</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="configForm">
+                    <div class="mb-3">
+                        <label class="form-label">Clave</label>
+                        <input type="text" class="form-control" name="key" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Valor</label>
+                        <input type="text" class="form-control" name="value" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Categoría</label>
+                        <select class="form-select" name="category" required>
+                            <option value="trading">Trading</option>
+                            <option value="system">Sistema</option>
+                            <option value="notification">Notificaciones</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Descripción</label>
+                        <textarea class="form-control" name="description" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" onclick="saveConfig()">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function editConfig(configId) {
+    fetch(`/admin/config/${configId}`)
+        .then(response => response.json())
+        .then(data => {
+            document.querySelector('#configForm [name="key"]').value = data.key;
+            document.querySelector('#configForm [name="value"]').value = data.value;
+            document.querySelector('#configForm [name="category"]').value = data.category;
+            document.querySelector('#configForm [name="description"]').value = data.description;
+            new bootstrap.Modal(document.getElementById('newConfigModal')).show();
+        });
+}
+
+function saveConfig() {
+    const formData = new FormData(document.getElementById('configForm'));
+    fetch('/admin/config/save', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        }
+    });
+}
+</script>
+{% endblock %}

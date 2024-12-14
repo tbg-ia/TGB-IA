@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 from app.auth.decorators import admin_required
 from app.models.trading_bot import TradingBot, Trade
 from app.models.user import User
+from app.models.system_config import SystemConfig
 from app import db
 from datetime import datetime
 
@@ -73,4 +74,42 @@ def toggle_user_status(user_id):
     user = User.query.get_or_404(user_id)
     user.is_active = not user.is_active
     db.session.commit()
+    return jsonify({'success': True})
+
+@crypto_bp.route('/admin/config')
+@login_required
+@admin_required
+def admin_config():
+    configs = SystemConfig.query.order_by(SystemConfig.category, SystemConfig.key).all()
+    return render_template('admin/config.html', configs=configs)
+
+@crypto_bp.route('/admin/config/<int:config_id>')
+@login_required
+@admin_required
+def get_config(config_id):
+    config = SystemConfig.query.get_or_404(config_id)
+    return jsonify({
+        'key': config.key,
+        'value': config.value,
+        'category': config.category,
+        'description': config.description
+    })
+
+@crypto_bp.route('/admin/config/save', methods=['POST'])
+@login_required
+@admin_required
+def save_config():
+    key = request.form.get('key')
+    value = request.form.get('value')
+    category = request.form.get('category')
+    description = request.form.get('description')
+    
+    config = SystemConfig.set_value(
+        key=key,
+        value=value,
+        category=category,
+        description=description,
+        user_id=current_user.id
+    )
+    
     return jsonify({'success': True})
