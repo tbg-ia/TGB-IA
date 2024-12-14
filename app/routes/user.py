@@ -69,7 +69,7 @@ def upload_profile_image():
 @user_bp.route('/subscription')
 @login_required
 def subscription():
-    return render_template('public/subscription.html')
+    return redirect(url_for('subscription.plans'))
 
 @user_bp.route('/billing')
 @login_required
@@ -172,4 +172,4 @@ def dashboard():
 @user_bp.route('/upgrade_plan')
 @login_required
 def upgrade_plan():
-    return redirect(url_for('user.subscription'))
+    return redirect(url_for('subscription.plans'))
