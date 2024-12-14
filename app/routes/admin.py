@@ -301,7 +301,7 @@ def subscription_plans():
             }
             plans.append(plan)
         
-        return render_template('admin/settings/subscription_plans.html', 
+        return render_template('admin/subscription_plans.html', 
                              plans=plans,
                              stats=stats)
     except Exception as e:
