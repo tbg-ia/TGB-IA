@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, jsonify, flash, redirect, url_for
 from flask_login import login_required, current_user
-from app.models.trading_bot import TradingBot, Trade
 from app.auth.decorators import admin_required
+from app.models.trading_bot import TradingBot, Trade
 
 crypto_bp = Blueprint('crypto', __name__)
 
@@ -9,13 +9,14 @@ crypto_bp = Blueprint('crypto', __name__)
 @login_required
 @admin_required
 def admin_dashboard():
-    bots = TradingBot.query.filter_by(user_id=current_user.id).all()
+    bots = TradingBot.query.all()
     return render_template('admin/dashboard.html', bots=bots)
 
 @crypto_bp.route('/user-dashboard')
 @login_required
 def user_dashboard():
     return render_template('public/user_dashboard.html')
+
 
 @crypto_bp.route('/planes')
 def planes():
