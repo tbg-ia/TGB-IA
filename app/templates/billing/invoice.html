@@ -1,0 +1,260 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-12 mb-4">
+            <h2>Información de Facturación</h2>
+        </div>
+    </div>
+
+    <!-- Resumen de Suscripción -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-primary">
+                    <h5 class="card-title mb-0 text-white">Resumen de Suscripción</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4>Plan {{ subscription.plan_type|title }}</h4>
+                            <p class="text-muted mb-0">
+                                Válido hasta: {{ subscription.end_date.strftime('%d-%m-%Y') }}
+                            </p>
+                            <p class="text-muted">
+                                Próximo cobro: ${{ "%.2f"|format(subscription.amount) }}
+                            </p>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <span class="badge bg-{{ 'success' if subscription.status == 'active' else 'warning' }}">
+                                {{ subscription.status|title }}
+                            </span>
+                            {% if subscription.trial_end and subscription.trial_end > now %}
+                                <span class="badge bg-info ms-2">Periodo de prueba</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detalles de Facturación -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Método de Pago</h5>
+                </div>
+                <div class="card-body">
+                    {% if payment_method %}
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-credit-card me-2 fs-4"></i>
+                            <div>
+                                <h6 class="mb-0">{{ payment_method.brand|title }} •••• {{ payment_method.last4 }}</h6>
+                                <small class="text-muted">Expira: {{ payment_method.exp_month }}/{{ payment_method.exp_year }}</small>
+                            </div>
+                        </div>
+                    {% else %}
+                        <p class="text-muted mb-0">No hay método de pago registrado</p>
+                    {% endif %}
+                </div>
+                <div class="card-footer bg-transparent">
+                    <button class="btn btn-sm btn-outline-primary" onclick="updatePaymentMethod()">
+                        <i class="bi bi-pencil me-1"></i>Actualizar método de pago
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Dirección de Facturación</h5>
+                </div>
+                <div class="card-body">
+                    {% if billing_address %}
+                        <p class="mb-1">{{ billing_address.name }}</p>
+                        <p class="mb-1">{{ billing_address.street }}</p>
+                        <p class="mb-1">{{ billing_address.city }}, {{ billing_address.state }} {{ billing_address.zip }}</p>
+                        <p class="mb-0">{{ billing_address.country }}</p>
+                    {% else %}
+                        <p class="text-muted mb-0">No hay dirección de facturación registrada</p>
+                    {% endif %}
+                </div>
+                <div class="card-footer bg-transparent">
+                    <button class="btn btn-sm btn-outline-primary" onclick="updateBillingAddress()">
+                        <i class="bi bi-pencil me-1"></i>Actualizar dirección
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Historial de Facturación -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Historial de Facturación</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Descripción</th>
+                            <th>Monto</th>
+                            <th>Estado</th>
+                            <th>Factura</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for invoice in invoices %}
+                        <tr>
+                            <td>{{ invoice.created_at.strftime('%d-%m-%Y') }}</td>
+                            <td>
+                                {{ invoice.description }}
+                                {% if invoice.is_trial %}
+                                    <span class="badge bg-info ms-2">Periodo de prueba</span>
+                                {% endif %}
+                            </td>
+                            <td>${{ "%.2f"|format(invoice.amount) }}</td>
+                            <td>
+                                <span class="badge bg-{{ invoice.status_color }}">
+                                    {{ invoice.status|title }}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{{ invoice.pdf_url }}" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                    <i class="bi bi-download"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% if not invoices %}
+                        <tr>
+                            <td colspan="5" class="text-center py-4">
+                                <i class="bi bi-receipt h3 mb-3 d-block"></i>
+                                <p class="text-muted mb-0">No hay facturas disponibles</p>
+                            </td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Actualizar Método de Pago -->
+<div class="modal fade" id="paymentMethodModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Actualizar Método de Pago</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="card-element"></div>
+                <div id="card-errors" class="text-danger mt-2"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="savePaymentMethod()">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Actualizar Dirección -->
+<div class="modal fade" id="addressModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Actualizar Dirección de Facturación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addressForm">
+                    <div class="mb-3">
+                        <label class="form-label">Nombre</label>
+                        <input type="text" class="form-control" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Dirección</label>
+                        <input type="text" class="form-control" name="street" required>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label class="form-label">Ciudad</label>
+                            <input type="text" class="form-control" name="city" required>
+                        </div>
+                        <div class="col">
+                            <label class="form-label">Estado</label>
+                            <input type="text" class="form-control" name="state" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label class="form-label">Código Postal</label>
+                            <input type="text" class="form-control" name="zip" required>
+                        </div>
+                        <div class="col">
+                            <label class="form-label">País</label>
+                            <select class="form-select" name="country" required>
+                                <option value="ES">España</option>
+                                <option value="MX">México</option>
+                                <option value="AR">Argentina</option>
+                                <option value="CO">Colombia</option>
+                                <option value="CL">Chile</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="saveAddress()">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    const stripe = Stripe('{{ stripe_public_key }}');
+    const elements = stripe.elements();
+    
+    function updatePaymentMethod() {
+        const modal = new bootstrap.Modal(document.getElementById('paymentMethodModal'));
+        modal.show();
+        
+        const cardElement = elements.create('card');
+        cardElement.mount('#card-element');
+    }
+    
+    function updateBillingAddress() {
+        const modal = new bootstrap.Modal(document.getElementById('addressModal'));
+        modal.show();
+    }
+    
+    async function savePaymentMethod() {
+        // Implementar lógica para guardar método de pago
+    }
+    
+    async function saveAddress() {
+        // Implementar lógica para guardar dirección
+        const formData = new FormData(document.getElementById('addressForm'));
+        const response = await fetch('/billing/update-address', {
+            method: 'POST',
+            body: formData
+        });
+        
+        if (response.ok) {
+            location.reload();
+        }
+    }
+</script>
+{% endblock %}
