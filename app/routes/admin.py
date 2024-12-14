@@ -227,40 +227,6 @@ def save_email_settings():
         flash('Error al guardar la configuración de email')
         return redirect(url_for('admin.settings'))
 @admin_bp.route('/settings/notification/save', methods=['POST'])
-@admin_bp.route('/settings/subscription/save', methods=['POST'])
-@login_required
-@admin_required
-def save_subscription_settings():
-    try:
-        # Actualizar configuración de planes de suscripción
-        config_keys = [
-            'DEFAULT_TRIAL_DAYS',
-            'DEFAULT_PLAN_TYPE',
-            'ALLOW_PLAN_CHANGES',
-            'AUTO_RENEW_SUBSCRIPTIONS'
-        ]
-        
-        for key in config_keys:
-            value = request.form.get(key.lower())
-            if key.startswith('ALLOW_') or key.startswith('AUTO_'):
-                value = 'true' if value == 'on' else 'false'
-            
-            if value is not None:
-                SystemConfig.set_value(
-                    key=key,
-                    value=str(value),
-                    category='subscription',
-                    description=f'Subscription Configuration - {key}',
-                    user_id=current_user.id
-                )
-        
-        flash('Configuración de planes actualizada exitosamente')
-        return redirect(url_for('admin.settings'))
-    except Exception as e:
-        logging.error(f"Error saving subscription settings: {str(e)}")
-        flash('Error al guardar la configuración de planes')
-        return redirect(url_for('admin.settings'))
-
 @login_required
 @admin_required
 def save_notification_settings():

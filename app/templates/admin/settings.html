@@ -139,47 +139,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- Configuración de Planes de Suscripción -->
-        <div class="col-md-6 mb-4">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">Configuración de Planes</h5>
-                </div>
-                <div class="card-body">
-                    <form method="POST" action="{{ url_for('admin.save_subscription_settings') }}">
-                        <div class="mb-3">
-                            <label class="form-label">Periodo de Prueba Predeterminado (días)</label>
-                            <input type="number" class="form-control" name="default_trial_days" 
-                                   value="{{ config.get('DEFAULT_TRIAL_DAYS', 14) }}">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Plan Predeterminado</label>
-                            <select class="form-select" name="default_plan_type">
-                                <option value="basic" {% if config.get('DEFAULT_PLAN_TYPE') == 'basic' %}selected{% endif %}>Básico</option>
-                                <option value="pro" {% if config.get('DEFAULT_PLAN_TYPE') == 'pro' %}selected{% endif %}>Pro</option>
-                                <option value="enterprise" {% if config.get('DEFAULT_PLAN_TYPE') == 'enterprise' %}selected{% endif %}>Enterprise</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" name="allow_plan_changes" 
-                                       {% if config.get('ALLOW_PLAN_CHANGES', True) %}checked{% endif %}>
-                                <label class="form-check-label">Permitir Cambios de Plan</label>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" name="auto_renew_subscriptions" 
-                                       {% if config.get('AUTO_RENEW_SUBSCRIPTIONS', True) %}checked{% endif %}>
-                                <label class="form-check-label">Renovación Automática</label>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-                    </form>
-                </div>
-            </div>
-        </div>
     </div>
 </div>
 {% endblock %}
