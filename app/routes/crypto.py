@@ -32,7 +32,7 @@ def signalbot():
 
 @crypto_bp.route('/planes')
 def planes():
-    return render_template('public/planes.html')
+    return redirect(url_for('subscription.plans'))
 
 @crypto_bp.route('/user-dashboard')
 @login_required
