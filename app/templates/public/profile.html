@@ -66,11 +66,29 @@
                             <button type="submit" class="btn btn-primary">Actualizar Perfil</button>
                         </form>
                         
-                        <p><strong>Tipo de Plan:</strong> {{ current_user.subscription_type|title }}</p>
-                        <p><strong>Miembro desde:</strong> {{ current_user.created_at.strftime('%d-%m-%Y') }}</p>
-                        {% if current_user.subscription_expires %}
-                        <p><strong>Suscripción válida hasta:</strong> {{ current_user.subscription_expires.strftime('%d-%m-%Y') }}</p>
-                        {% endif %}
+                        <div class="card bg-dark mb-3">
+                            <div class="card-body">
+                                <h6 class="card-subtitle mb-2">Información de Suscripción</h6>
+                                <p class="mb-2">
+                                    <strong>Plan Actual:</strong> 
+                                    <span class="badge {% if current_user.subscription_type == 'pro' %}bg-primary{% else %}bg-secondary{% endif %}">
+                                        {{ current_user.subscription_type|title }}
+                                    </span>
+                                </p>
+                                <p class="mb-2"><strong>Miembro desde:</strong> {{ current_user.created_at.strftime('%d-%m-%Y') }}</p>
+                                {% if current_user.subscription_expires %}
+                                <p class="mb-2"><strong>Suscripción válida hasta:</strong> {{ current_user.subscription_expires.strftime('%d-%m-%Y') }}</p>
+                                {% endif %}
+                                <div class="mt-3">
+                                    <a href="{{ url_for('subscription.plans') }}" class="btn btn-sm btn-outline-primary me-2">
+                                        <i class="bi bi-stars me-1"></i>Ver Planes
+                                    </a>
+                                    <a href="{{ url_for('user.billing') }}" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-credit-card me-1"></i>Facturación
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="mb-4">
@@ -93,12 +111,28 @@
                     <h5 class="card-title">Estadísticas</h5>
                     <div class="list-group list-group-flush">
                         <div class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
-                            <span>Operaciones Totales</span>
-                            <span class="badge bg-primary rounded-pill">0</span>
+                            <div>
+                                <i class="bi bi-graph-up me-2"></i>
+                                <span>Operaciones Totales</span>
+                                <small class="text-muted d-block">Últimos 30 días</small>
+                            </div>
+                            <span class="badge bg-primary rounded-pill">{{ total_trades|default(0) }}</span>
                         </div>
                         <div class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
-                            <span>Bots Activos</span>
-                            <span class="badge bg-success rounded-pill">0</span>
+                            <div>
+                                <i class="bi bi-robot me-2"></i>
+                                <span>Bots Activos</span>
+                                <small class="text-muted d-block">Trading automatizado</small>
+                            </div>
+                            <span class="badge bg-success rounded-pill">{{ active_bots|default(0) }}</span>
+                        </div>
+                        <div class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="bi bi-currency-exchange me-2"></i>
+                                <span>Balance Total</span>
+                                <small class="text-muted d-block">Todas las cuentas</small>
+                            </div>
+                            <span class="badge bg-info rounded-pill">${{ total_balance|default('0.00') }}</span>
                         </div>
                     </div>
                 </div>
