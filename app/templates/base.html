@@ -85,11 +85,22 @@
                             {{ current_user.username }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end">
-                            <li><a class="dropdown-item" href="{{ url_for('user.profile') }}">Perfil</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('user.account') }}">Cuenta</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('user.billing') }}">Facturación</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('user.profile') }}">
+                                <i class="bi bi-person-circle me-2"></i>Perfil
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('subscription.plans') }}">
+                                <i class="bi bi-stars me-2"></i>Suscripción
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('user.billing') }}">
+                                <i class="bi bi-credit-card me-2"></i>Facturación
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('user.account') }}">
+                                <i class="bi bi-gear me-2"></i>Configuración
+                            </a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">Cerrar sesión</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">
+                                <i class="bi bi-box-arrow-right me-2"></i>Cerrar sesión
+                            </a></li>
                         </ul>
                     </li>
                 </ul>
