@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, jsonify, request
 from flask_login import login_required, current_user
+from werkzeug.security import check_password_hash
 from app.models.trading_bot import TradingBot, Trade
 from app import db
 
@@ -11,6 +12,51 @@ def dashboard():
     if current_user.is_admin():
         return redirect(url_for('admin.dashboard'))
     return render_template('public/user_dashboard.html')
+
+@user_bp.route('/account')
+@login_required
+def account():
+    return render_template('public/account.html')
+
+@user_bp.route('/update_profile', methods=['POST'])
+@login_required
+def update_profile():
+    try:
+        # Por ahora solo permitimos actualizar información básica
+        flash('Información actualizada correctamente')
+        return redirect(url_for('user.account'))
+    except Exception as e:
+        flash('Error al actualizar la información')
+        return redirect(url_for('user.account'))
+
+@user_bp.route('/change_password', methods=['POST'])
+@login_required
+def change_password():
+    current_password = request.form.get('current_password')
+    new_password = request.form.get('new_password')
+    confirm_password = request.form.get('confirm_password')
+
+    if not all([current_password, new_password, confirm_password]):
+        flash('Todos los campos son requeridos')
+        return redirect(url_for('user.account'))
+
+    if new_password != confirm_password:
+        flash('Las contraseñas nuevas no coinciden')
+        return redirect(url_for('user.account'))
+
+    if not check_password_hash(current_user.password_hash, current_password):
+        flash('Contraseña actual incorrecta')
+        return redirect(url_for('user.account'))
+
+    try:
+        current_user.set_password(new_password)
+        db.session.commit()
+        flash('Contraseña actualizada correctamente')
+    except Exception as e:
+        db.session.rollback()
+        flash('Error al actualizar la contraseña')
+
+    return redirect(url_for('user.account'))
 
 @user_bp.route('/bot/<int:bot_id>/trades')
 @login_required
