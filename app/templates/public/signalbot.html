@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4">Configuración del Bot de Señales</h2>
+    
+    <!-- Configuración General -->
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Configuración General</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('user.save_bot_config') }}">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Par de Trading</label>
+                                <select class="form-select" name="trading_pair">
+                                    <option value="BTC/USDT" {% if bot.trading_pair == 'BTC/USDT' %}selected{% endif %}>BTC/USDT</option>
+                                    <option value="ETH/USDT" {% if bot.trading_pair == 'ETH/USDT' %}selected{% endif %}>ETH/USDT</option>
+                                    <option value="BNB/USDT" {% if bot.trading_pair == 'BNB/USDT' %}selected{% endif %}>BNB/USDT</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Intervalo</label>
+                                <select class="form-select" name="interval">
+                                    <option value="1m" {% if bot.interval == '1m' %}selected{% endif %}>1 minuto</option>
+                                    <option value="5m" {% if bot.interval == '5m' %}selected{% endif %}>5 minutos</option>
+                                    <option value="15m" {% if bot.interval == '15m' %}selected{% endif %}>15 minutos</option>
+                                    <option value="1h" {% if bot.interval == '1h' %}selected{% endif %}>1 hora</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Cantidad por Operación</label>
+                                <input type="number" class="form-control" name="trade_amount" 
+                                       value="{{ bot.trade_amount }}" step="0.001">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Stop Loss (%)</label>
+                                <input type="number" class="form-control" name="stop_loss" 
+                                       value="{{ bot.stop_loss }}" step="0.1">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="is_active" 
+                                       {% if bot.is_active %}checked{% endif %}>
+                                <label class="form-check-label">Activar Bot</label>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">Guardar Configuración</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Estadísticas -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Estadísticas</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Operaciones Totales</label>
+                        <h4>{{ stats.total_trades or 0 }}</h4>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Rentabilidad</label>
+                        <h4 class="{% if stats.profit >= 0 %}text-success{% else %}text-danger{% endif %}">
+                            {{ "%.2f"|format(stats.profit|default(0)) }}%
+                        </h4>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Último Trade</label>
+                        <p class="mb-0">{{ stats.last_trade.strftime('%d-%m-%Y %H:%M') if stats.last_trade else 'N/A' }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

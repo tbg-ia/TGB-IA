@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Panel de Trading -->
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Terminal de Trading</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Gráfico -->
+                        <div class="col-12 mb-4">
+                            <div id="tradingChart" style="height: 400px;"></div>
+                        </div>
+                        
+                        <!-- Controles de Trading -->
+                        <div class="col-12">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label">Par de Trading</label>
+                                    <select class="form-select" id="tradingPair">
+                                        <option value="BTC/USDT">BTC/USDT</option>
+                                        <option value="ETH/USDT">ETH/USDT</option>
+                                        <option value="BNB/USDT">BNB/USDT</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Cantidad</label>
+                                    <input type="number" class="form-control" id="tradeAmount">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Precio</label>
+                                    <input type="number" class="form-control" id="tradePrice">
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-6">
+                                    <button class="btn btn-success w-100">Comprar</button>
+                                </div>
+                                <div class="col-6">
+                                    <button class="btn btn-danger w-100">Vender</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Panel Lateral -->
+        <div class="col-md-4">
+            <!-- Libro de Órdenes -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Libro de Órdenes</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Precio</th>
+                                    <th>Cantidad</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="orderBook">
+                                <!-- Se llenará dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Órdenes Abiertas -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Órdenes Abiertas</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Par</th>
+                                    <th>Tipo</th>
+                                    <th>Precio</th>
+                                    <th>Cantidad</th>
+                                </tr>
+                            </thead>
+                            <tbody id="openOrders">
+                                <!-- Se llenará dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ url_for('static', filename='js/terminal.js') }}"></script>
+{% endblock %}

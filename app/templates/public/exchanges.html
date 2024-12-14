@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4">Configuración de Exchanges</h2>
+    
+    <!-- Lista de Exchanges -->
+    <div class="row">
+        {% for exchange in exchanges %}
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">{{ exchange.name }}</h5>
+                    <span class="badge {% if exchange.is_active %}bg-success{% else %}bg-secondary{% endif %}">
+                        {{ 'Activo' if exchange.is_active else 'Inactivo' }}
+                    </span>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('user.save_exchange_config', exchange_id=exchange.id) }}">
+                        <div class="mb-3">
+                            <label class="form-label">API Key</label>
+                            <input type="text" class="form-control" name="api_key" 
+                                   value="{{ exchange.api_key|mask_key if exchange.api_key else '' }}"
+                                   placeholder="Ingresa tu API Key">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">API Secret</label>
+                            <input type="password" class="form-control" name="api_secret" 
+                                   placeholder="Ingresa tu API Secret">
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="is_active" 
+                                       {% if exchange.is_active %}checked{% endif %}>
+                                <label class="form-check-label">Activar Exchange</label>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Guardar Configuración</button>
+                    </form>
+                </div>
+                <div class="card-footer">
+                    <small class="text-muted">
+                        Última actualización: 
+                        {% if exchange.last_updated %}
+                            {{ exchange.last_updated.strftime('%d-%m-%Y %H:%M') }}
+                        {% else %}
+                            Nunca
+                        {% endif %}
+                    </small>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
