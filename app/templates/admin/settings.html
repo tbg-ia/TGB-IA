@@ -76,6 +76,31 @@
                             <input type="number" class="form-control" name="cache_timeout" 
                                    value="{{ config.get('CACHE_TIMEOUT', 300) }}">
                         </div>
+                        
+                        <hr>
+                        <h6 class="mb-3">Configuración de Stripe</h6>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Stripe Public Key</label>
+                            <input type="text" class="form-control" name="stripe_public_key" 
+                                   value="{{ config.get('STRIPE_PUBLIC_KEY', '') }}">
+                            <small class="text-muted">Clave pública de Stripe para el procesamiento de pagos</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Stripe Secret Key</label>
+                            <input type="password" class="form-control" name="stripe_secret_key" 
+                                   placeholder="Introduce la clave secreta de Stripe">
+                            <small class="text-muted">Clave secreta de Stripe (nunca compartir)</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Stripe Webhook Secret</label>
+                            <input type="password" class="form-control" name="stripe_webhook_secret" 
+                                   placeholder="Introduce el secreto del webhook">
+                            <small class="text-muted">Secreto para verificar webhooks de Stripe</small>
+                        </div>
+                        
                         <button type="submit" class="btn btn-primary">Guardar Cambios</button>
                     </form>
                 </div>

@@ -157,6 +157,7 @@ def save_trading_settings():
 @admin_required
 def save_api_settings():
     try:
+        # Configuración de API general
         for key in ['api_rate_limit', 'cache_timeout']:
             value = request.form.get(key)
             if value:
@@ -166,6 +167,23 @@ def save_api_settings():
                     'api',
                     f'API {key.replace("_", " ").title()}',
                     current_user.id
+                )
+        
+        # Configuración de Stripe
+        stripe_config = {
+            'STRIPE_PUBLIC_KEY': request.form.get('stripe_public_key'),
+            'STRIPE_SECRET_KEY': request.form.get('stripe_secret_key'),
+            'STRIPE_WEBHOOK_SECRET': request.form.get('stripe_webhook_secret')
+        }
+        
+        for key, value in stripe_config.items():
+            if value:  # Solo actualizar si se proporcionó un valor
+                SystemConfig.set_value(
+                    key=key,
+                    value=value,
+                    category='payment',
+                    description=f'Stripe API Configuration - {key}',
+                    user_id=current_user.id
                 )
         
         flash('Configuración de API actualizada exitosamente')
