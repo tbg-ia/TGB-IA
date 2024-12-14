@@ -29,7 +29,7 @@ def create_checkout_session():
         plan_id = request.form.get('plan_id')
         plan_data = {
             'basic_monthly': {
-                'price': 999,  # $9.99
+                'price': 99,  # $0.99
                 'name': 'Plan Básico Mensual',
                 'description': 'Trading manual y análisis de mercado básico'
             },
