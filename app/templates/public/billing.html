@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="mb-4">Facturación</h2>
+    
+    <!-- Suscripción Actual -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Plan Actual</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h3>{{ current_user.subscription_type|title }}</h3>
+                    <p class="text-muted">
+                        {% if current_subscription %}
+                            Válido hasta: {{ current_subscription.end_date.strftime('%d-%m-%Y') }}
+                        {% else %}
+                            No hay suscripción activa
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="col-md-6 text-end">
+                    {% if current_user.subscription_type == 'basic' %}
+                        <a href="{{ url_for('user.upgrade_plan') }}" class="btn btn-primary">
+                            Actualizar a Pro
+                        </a>
+                    {% else %}
+                        <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#cancelSubscriptionModal">
+                            Cancelar Suscripción
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Historial de Pagos -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Historial de Pagos</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Plan</th>
+                            <th>Monto</th>
+                            <th>Estado</th>
+                            <th>Método de Pago</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for payment in payments %}
+                        <tr>
+                            <td>{{ payment.created_at.strftime('%d-%m-%Y') }}</td>
+                            <td>{{ payment.subscription.plan_type|title }}</td>
+                            <td>${{ "%.2f"|format(payment.amount) }}</td>
+                            <td>
+                                <span class="badge {% if payment.status == 'success' %}bg-success{% elif payment.status == 'pending' %}bg-warning{% else %}bg-danger{% endif %}">
+                                    {{ payment.status|title }}
+                                </span>
+                            </td>
+                            <td>{{ payment.payment_method|title }}</td>
+                        </tr>
+                        {% endfor %}
+                        {% if not payments %}
+                        <tr>
+                            <td colspan="5" class="text-center">No hay pagos registrados</td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Cancelación -->
+<div class="modal fade" id="cancelSubscriptionModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Cancelar Suscripción</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro de que deseas cancelar tu suscripción Pro?</p>
+                <p class="text-muted">Tu suscripción seguirá activa hasta el final del período actual.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form action="{{ url_for('user.cancel_subscription') }}" method="POST" class="d-inline">
+                    <button type="submit" class="btn btn-danger">Confirmar Cancelación</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

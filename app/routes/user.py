@@ -75,3 +75,48 @@ def get_bot_trades(bot_id):
 @login_required
 def subscription():
     return render_template('public/planes.html')
+
+
+@user_bp.route('/billing')
+@login_required
+def billing():
+    current_subscription = Subscription.query.filter_by(
+        user_id=current_user.id,
+        status='active'
+    ).order_by(Subscription.created_at.desc()).first()
+    
+    payments = Payment.query.join(Subscription).filter(
+        Subscription.user_id == current_user.id
+    ).order_by(Payment.created_at.desc()).all()
+    
+    return render_template('public/billing.html', 
+                         current_subscription=current_subscription,
+                         payments=payments)
+
+@user_bp.route('/upgrade_plan')
+@login_required
+def upgrade_plan():
+    return redirect(url_for('user.subscription'))
+
+@user_bp.route('/cancel_subscription', methods=['POST'])
+@login_required
+def cancel_subscription():
+    try:
+        subscription = Subscription.query.filter_by(
+            user_id=current_user.id,
+            status='active'
+        ).first()
+        
+        if subscription:
+            subscription.status = 'cancelled'
+            current_user.subscription_type = 'basic'
+            db.session.commit()
+            flash('Tu suscripción ha sido cancelada exitosamente')
+        else:
+            flash('No se encontró una suscripción activa')
+            
+    except Exception as e:
+        db.session.rollback()
+        flash('Error al cancelar la suscripción')
+        
+    return redirect(url_for('user.billing'))
