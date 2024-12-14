@@ -301,21 +301,48 @@ def subscription_plans():
         }
         
         # Obtener planes activos
-        stripe.api_key = current_app.config['STRIPE_SECRET_KEY']
-        prices = stripe.Price.list(active=True, expand=['data.product'])
+        stripe_key = os.environ.get('STRIPE_SECRET_KEY')
         plans = []
         
-        for price in prices.data:
-            plan = {
-                'stripe_price_id': price.id,
-                'name': price.product.name,
-                'description': price.product.description,
-                'price': price.unit_amount,
-                'interval': price.recurring.interval,
-                'subscriber_count': User.query.filter_by(subscription_type=price.product.name.lower()).count(),
-                'is_active': price.active
-            }
-            plans.append(plan)
+        if stripe_key:
+            stripe.api_key = stripe_key
+            try:
+                prices = stripe.Price.list(active=True, expand=['data.product'])
+                for price in prices.data:
+                    plan = {
+                        'stripe_price_id': price.id,
+                        'name': price.product.name,
+                        'description': price.product.description,
+                        'price': price.unit_amount,
+                        'interval': price.recurring.interval,
+                        'subscriber_count': User.query.filter_by(subscription_type=price.product.name.lower()).count(),
+                        'is_active': price.active
+                    }
+                    plans.append(plan)
+            except stripe.error.StripeError as e:
+                logging.error(f"Error accessing Stripe API: {str(e)}")
+                flash('Error al acceder a la API de Stripe', 'error')
+        else:
+            # Planes por defecto si no hay configuración de Stripe
+            default_plans = [
+                {
+                    'name': 'Basic',
+                    'description': 'Plan básico con funcionalidades esenciales',
+                    'price': 999,  # $9.99
+                    'interval': 'month',
+                    'subscriber_count': User.query.filter_by(subscription_type='basic').count(),
+                    'is_active': True
+                },
+                {
+                    'name': 'Pro',
+                    'description': 'Plan profesional con todas las características',
+                    'price': 2999,  # $29.99
+                    'interval': 'month',
+                    'subscriber_count': User.query.filter_by(subscription_type='pro').count(),
+                    'is_active': True
+                }
+            ]
+            plans.extend(default_plans)
         
         return render_template('admin/subscription_plans.html', 
                              plans=plans,
