@@ -30,8 +30,8 @@ def signalbot():
     stats = {}  # TODO: Obtener estadísticas del bot
     return render_template('public/signalbot.html', bot=bot, stats=stats)
 
-@crypto_bp.route('/planes')
-def planes():
+@crypto_bp.route('/subscription/plans')
+def plans():
     return redirect(url_for('subscription.plans'))
 
 @crypto_bp.route('/user-dashboard')
