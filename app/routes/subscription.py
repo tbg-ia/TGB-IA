@@ -17,7 +17,13 @@ subscription_bp = Blueprint('subscription', __name__)
 @subscription_bp.route('/planes')
 def plans():
     """Muestra los planes de suscripción disponibles"""
-    return render_template('subscription/plans.html')
+    try:
+        logging.info("Accediendo a la página de planes")
+        return render_template('subscription/plans.html')
+    except Exception as e:
+        logging.error(f"Error al cargar la página de planes: {str(e)}")
+        flash('Error al cargar los planes de suscripción', 'error')
+        return redirect(url_for('index'))
 
 @subscription_bp.route('/create-checkout-session', methods=['POST'])
 @login_required
