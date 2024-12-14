@@ -1,6 +1,6 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, jsonify, request
+from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_required, current_user
-from werkzeug.security import check_password_hash
+from app.models.subscription import Subscription, Payment
 from app.models.trading_bot import TradingBot, Trade
 from app import db
 
