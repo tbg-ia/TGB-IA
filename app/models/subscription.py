@@ -13,7 +13,6 @@ class Subscription(db.Model):
     end_date = db.Column(db.DateTime, nullable=False)
     trial_end = db.Column(db.DateTime, nullable=True)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
     
     # Relationships
     user = db.relationship('User', backref=db.backref('subscriptions', lazy=True))
