@@ -37,9 +37,21 @@ def create_app():
     login_manager.login_view = 'auth.login'
 
     # Register blueprints
-    from app.routes import all_blueprints
+    from app.routes.auth import auth_bp
+    from app.routes.user import user_bp
+    from app.routes.admin import admin_bp
+    from app.routes.subscription import subscription_bp
+    from app.billing import billing_bp
+
+    blueprints = [
+        auth_bp,
+        user_bp,
+        admin_bp,
+        subscription_bp,
+        billing_bp
+    ]
     
-    for blueprint in all_blueprints:
+    for blueprint in blueprints:
         app.register_blueprint(blueprint)
     
     # Register index route
