@@ -9,22 +9,14 @@ from datetime import datetime
 
 crypto_bp = Blueprint('crypto', __name__)
 
-@crypto_bp.route('/admin/dashboard')
-@login_required
-@admin_required
-def admin_dashboard():
-    bots = TradingBot.query.all()
-    trades = Trade.query.order_by(Trade.timestamp.desc()).limit(10).all()
-    return render_template('admin/dashboard.html', bots=bots, trades=trades)
+@crypto_bp.route('/planes')
+def planes():
+    return render_template('public/planes.html')
 
 @crypto_bp.route('/user-dashboard')
 @login_required
 def user_dashboard():
     return render_template('public/user_dashboard.html')
-
-@crypto_bp.route('/planes')
-def planes():
-    return render_template('public/planes.html')
 
 @crypto_bp.route('/bot/<int:bot_id>/trades')
 @login_required
