@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Gestión de Planes de Suscripción</h2>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newPlanModal">
+            <i class="bi bi-plus-circle me-2"></i>Nuevo Plan
+        </button>
+    </div>
+
+    <!-- Estadísticas Generales -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">Total Suscriptores</h6>
+                    <h2 class="card-title mb-0">{{ stats.total_subscribers }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">Ingresos Mensuales</h6>
+                    <h2 class="card-title mb-0">${{ "%.2f"|format(stats.monthly_revenue) }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">Plan Más Popular</h6>
+                    <h2 class="card-title mb-0">{{ stats.most_popular_plan|title }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">Tasa de Retención</h6>
+                    <h2 class="card-title mb-0">{{ "%.1f"|format(stats.retention_rate) }}%</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de Planes -->
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Plan</th>
+                            <th>Precio (USD)</th>
+                            <th>Periodo</th>
+                            <th>Suscriptores</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for plan in plans %}
+                        <tr>
+                            <td>
+                                <strong>{{ plan.name }}</strong>
+                                <br>
+                                <small class="text-muted">{{ plan.description[:50] }}...</small>
+                            </td>
+                            <td>${{ "%.2f"|format(plan.price/100) }}</td>
+                            <td>{{ plan.interval }}</td>
+                            <td>{{ plan.subscriber_count }}</td>
+                            <td>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" 
+                                           {% if plan.is_active %}checked{% endif %}
+                                           onchange="togglePlanStatus('{{ plan.stripe_price_id }}')">
+                                </div>
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary me-2" 
+                                        onclick="editPlan('{{ plan.stripe_price_id }}')">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger"
+                                        onclick="deletePlan('{{ plan.stripe_price_id }}')">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Nuevo Plan -->
+<div class="modal fade" id="newPlanModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Nuevo Plan de Suscripción</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="newPlanForm">
+                    <div class="mb-3">
+                        <label class="form-label">Nombre del Plan</label>
+                        <input type="text" class="form-control" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Descripción</label>
+                        <textarea class="form-control" name="description" rows="3" required></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Precio (USD)</label>
+                            <input type="number" class="form-control" name="price" step="0.01" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Periodo</label>
+                            <select class="form-select" name="interval" required>
+                                <option value="month">Mensual</option>
+                                <option value="year">Anual</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Características (una por línea)</label>
+                        <textarea class="form-control" name="features" rows="4" required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="savePlan()">Guardar Plan</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+function togglePlanStatus(priceId) {
+    fetch(`/admin/subscription/plans/${priceId}/toggle`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        }
+    });
+}
+
+function editPlan(priceId) {
+    fetch(`/admin/subscription/plans/${priceId}`)
+        .then(response => response.json())
+        .then(data => {
+            // Rellenar el formulario con los datos del plan
+            document.querySelector('[name="name"]').value = data.name;
+            document.querySelector('[name="description"]').value = data.description;
+            document.querySelector('[name="price"]').value = data.price;
+            document.querySelector('[name="interval"]').value = data.interval;
+            document.querySelector('[name="features"]').value = data.features.join('\n');
+            
+            // Mostrar el modal
+            new bootstrap.Modal(document.getElementById('newPlanModal')).show();
+        });
+}
+
+function savePlan() {
+    const formData = new FormData(document.getElementById('newPlanForm'));
+    
+    fetch('/admin/subscription/plans/save', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        }
+    });
+}
+
+function deletePlan(priceId) {
+    if (confirm('¿Está seguro de que desea eliminar este plan?')) {
+        fetch(`/admin/subscription/plans/${priceId}`, {
+            method: 'DELETE'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            }
+        });
+    }
+}
+</script>
+{% endblock %}
+{% endblock %}
