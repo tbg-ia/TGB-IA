@@ -15,7 +15,7 @@ def login():
         if user and user.check_password(password):
             login_user(user)
             return redirect(url_for('crypto.dashboard'))
-        flash('Invalid email or password')
+        flash('Correo electrónico o contraseña inválidos')
     return render_template('public/login.html')
 
 @auth_bp.route('/register', methods=['GET', 'POST'])
