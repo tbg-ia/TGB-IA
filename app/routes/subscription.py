@@ -56,8 +56,7 @@ def create_checkout_session():
                 'price_data': {
                     'currency': 'usd',
                     'recurring': {
-                        'interval': 'month',
-                        'trial_period_days': plan['trial_days']
+                        'interval': 'month'
                     },
                     'product_data': {
                         'name': plan['name'],
@@ -68,6 +67,9 @@ def create_checkout_session():
                 'quantity': 1,
             }],
             mode='subscription',
+            subscription_data={
+                'trial_period_days': 7  # Período de prueba de 7 días
+            },
             success_url=url_for('subscription.payment_success', _external=True),
             cancel_url=url_for('subscription.payment_cancel', _external=True),
             metadata={
