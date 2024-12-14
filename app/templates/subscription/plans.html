@@ -1,20 +1,40 @@
 {% extends "base.html" %}
 
 {% block content %}
-{% if current_user.is_authenticated %}
-<div class="container mb-4">
+<div class="container-fluid">
     <div class="row">
-        <div class="col-md-12">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ url_for('user.dashboard') }}">Dashboard</a></li>
-                    <li class="breadcrumb-item active">Planes de Suscripción</li>
-                </ol>
-            </nav>
-        </div>
-    </div>
-</div>
-{% endif %}
+        <!-- Barra lateral de navegación -->
+        <nav class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('user.dashboard') }}">
+                            <i class="bi bi-speedometer2 me-2"></i>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            <i class="bi bi-graph-up me-2"></i>
+                            Trading
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark">
+                            <li><a class="dropdown-item" href="{{ url_for('crypto.terminal') }}">Terminal</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('crypto.exchanges') }}">Exchanges</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('crypto.signalbot') }}">Signal Bot</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Contenido principal -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            {% if current_user.is_authenticated %}
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Planes de Suscripción</h1>
+            </div>
+            {% endif %}
 <div class="container py-5">
     <h2 class="text-center mb-5">Planes de Suscripción</h2>
     
@@ -91,6 +111,8 @@
             <p class="lead">Todos los planes incluyen periodo de prueba de 14 días</p>
             <p class="text-muted">Cancela en cualquier momento. Sin compromiso.</p>
         </div>
+    </div>
+        </main>
     </div>
 </div>
 {% endblock %}
