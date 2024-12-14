@@ -261,13 +261,21 @@ def handle_invoice_paid(invoice):
             logging.error(f"Suscripción no encontrada: {invoice.subscription}")
             return
             
+        # Obtener la URL del PDF de la factura
+        invoice_obj = stripe.Invoice.retrieve(invoice.id)
+        
         # Registrar el pago
         payment = Payment(
             subscription_id=subscription.id,
             amount=invoice.amount_paid / 100,
             status='success',
             payment_method='stripe',
-            transaction_id=invoice.payment_intent
+            transaction_id=invoice.payment_intent,
+            invoice_id=invoice.id,
+            invoice_url=invoice.hosted_invoice_url,
+            pdf_url=invoice_obj.invoice_pdf,
+            description=f"Plan {subscription.plan_type.title()} - Pago mensual",
+            is_trial=subscription.trial_end and datetime.fromtimestamp(invoice.created) <= subscription.trial_end
         )
         
         db.session.add(payment)
