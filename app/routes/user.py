@@ -75,20 +75,36 @@ def subscription():
 @login_required
 def billing():
     try:
+        # Obtener la suscripción actual
         current_subscription = Subscription.query.filter_by(
             user_id=current_user.id,
             status='active'
         ).first()
         
+        # Obtener el historial de pagos
         payments = Payment.query.join(Subscription).filter(
             Subscription.user_id == current_user.id
         ).order_by(Payment.created_at.desc()).all()
         
+        # Obtener métodos de pago guardados (si se usa Stripe)
+        payment_methods = []
+        if current_user.stripe_customer_id:
+            stripe.api_key = os.environ.get('STRIPE_SECRET_KEY')
+            try:
+                payment_methods = stripe.PaymentMethod.list(
+                    customer=current_user.stripe_customer_id,
+                    type='card'
+                ).data
+            except stripe.error.StripeError as e:
+                logging.error(f"Error al obtener métodos de pago: {str(e)}")
+        
         return render_template('public/billing.html',
                              current_subscription=current_subscription,
-                             payments=payments)
+                             payments=payments,
+                             payment_methods=payment_methods)
     except Exception as e:
-        flash('Error al cargar la información de facturación')
+        logging.error(f"Error en la página de facturación: {str(e)}")
+        flash('Error al cargar la información de facturación', 'error')
         return redirect(url_for('user.profile'))
 
 @user_bp.route('/cancel-subscription', methods=['POST'])

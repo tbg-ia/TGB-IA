@@ -4,18 +4,20 @@
 <div class="container py-5">
     <h2 class="mb-4">Facturación</h2>
     
-    <!-- Suscripción Actual -->
+    <!-- Plan Actual -->
     <div class="card mb-4">
-        <div class="card-header">
+        <div class="card-header bg-primary text-white">
             <h5 class="card-title mb-0">Plan Actual</h5>
         </div>
         <div class="card-body">
-            <div class="row">
+            <div class="row align-items-center">
                 <div class="col-md-6">
                     <h3>{{ current_user.subscription_type|title }}</h3>
-                    <p class="text-muted">
+                    <p class="text-muted mb-0">
                         {% if current_subscription %}
                             Válido hasta: {{ current_subscription.end_date.strftime('%d-%m-%Y') }}
+                            <br>
+                            Precio: ${{ "%.2f"|format(current_subscription.amount) }}/mes
                         {% else %}
                             No hay suscripción activa
                         {% endif %}
@@ -23,12 +25,12 @@
                 </div>
                 <div class="col-md-6 text-end">
                     {% if current_user.subscription_type == 'basic' %}
-                        <a href="{{ url_for('user.upgrade_plan') }}" class="btn btn-primary">
-                            Actualizar a Pro
+                        <a href="{{ url_for('subscription.plans') }}" class="btn btn-primary">
+                            <i class="bi bi-arrow-up-circle me-2"></i>Actualizar Plan
                         </a>
                     {% else %}
                         <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#cancelSubscriptionModal">
-                            Cancelar Suscripción
+                            <i class="bi bi-x-circle me-2"></i>Cancelar Suscripción
                         </button>
                     {% endif %}
                 </div>
@@ -36,27 +38,71 @@
         </div>
     </div>
 
-    <!-- Historial de Pagos -->
+    <!-- Métodos de Pago -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Métodos de Pago Guardados</h5>
+        </div>
+        <div class="card-body">
+            {% if payment_methods %}
+                <div class="list-group">
+                    {% for method in payment_methods %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="bi bi-credit-card me-2"></i>
+                            {{ method.card_brand|title }} •••• {{ method.last4 }}
+                            {% if method.is_default %}
+                                <span class="badge bg-primary ms-2">Principal</span>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <button class="btn btn-sm btn-outline-danger" onclick="removePaymentMethod('{{ method.id }}')">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted mb-0">No hay métodos de pago guardados</p>
+            {% endif %}
+            <div class="mt-3">
+                <button class="btn btn-outline-primary" onclick="addPaymentMethod()">
+                    <i class="bi bi-plus-circle me-2"></i>Agregar Método de Pago
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Historial de Facturación -->
     <div class="card">
         <div class="card-header">
-            <h5 class="card-title mb-0">Historial de Pagos</h5>
+            <h5 class="card-title mb-0">Historial de Facturación</h5>
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table">
+                <table class="table table-hover">
                     <thead>
                         <tr>
                             <th>Fecha</th>
+                            <th>Descripción</th>
                             <th>Plan</th>
                             <th>Monto</th>
                             <th>Estado</th>
                             <th>Método de Pago</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for payment in payments %}
                         <tr>
                             <td>{{ payment.created_at.strftime('%d-%m-%Y') }}</td>
+                            <td>
+                                Pago mensual - {{ payment.subscription.plan_type|title }}
+                                {% if payment.subscription.trial_end %}
+                                    <span class="badge bg-info ms-2">Periodo de prueba</span>
+                                {% endif %}
+                            </td>
                             <td>{{ payment.subscription.plan_type|title }}</td>
                             <td>${{ "%.2f"|format(payment.amount) }}</td>
                             <td>
@@ -64,12 +110,23 @@
                                     {{ payment.status|title }}
                                 </span>
                             </td>
-                            <td>{{ payment.payment_method|title }}</td>
+                            <td>
+                                <i class="bi bi-credit-card me-1"></i>
+                                {{ payment.payment_method|title }}
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-secondary" onclick="viewInvoice('{{ payment.transaction_id }}')">
+                                    <i class="bi bi-file-text"></i>
+                                </button>
+                            </td>
                         </tr>
                         {% endfor %}
                         {% if not payments %}
                         <tr>
-                            <td colspan="5" class="text-center">No hay pagos registrados</td>
+                            <td colspan="7" class="text-center py-4">
+                                <i class="bi bi-receipt h3 mb-3 d-block"></i>
+                                <p class="text-muted mb-0">No hay pagos registrados</p>
+                            </td>
                         </tr>
                         {% endif %}
                     </tbody>
