@@ -1,0 +1,60 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Planes de Suscripción</h2>
+        <a href="{{ url_for('admin_subscription.new_plan') }}" class="btn btn-primary">
+            <i class="bi bi-plus-lg"></i> Nuevo Plan
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Tipo</th>
+                            <th>Precio</th>
+                            <th>Trial (días)</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for plan in plans %}
+                        <tr>
+                            <td>{{ plan.name }}</td>
+                            <td>{{ plan.type|title }}</td>
+                            <td>${{ "%.2f"|format(plan.price) }}/mes</td>
+                            <td>{{ plan.trial_days }}</td>
+                            <td>
+                                <span class="badge bg-{{ 'success' if plan.is_active else 'danger' }}">
+                                    {{ 'Activo' if plan.is_active else 'Inactivo' }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="btn-group">
+                                    <a href="{{ url_for('admin_subscription.edit_plan', plan_id=plan.id) }}" 
+                                       class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <form action="{{ url_for('admin_subscription.toggle_plan', plan_id=plan.id) }}" 
+                                          method="POST" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-outline-{{ 'danger' if plan.is_active else 'success' }}">
+                                            <i class="bi bi-{{ 'x-lg' if plan.is_active else 'check-lg' }}"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
