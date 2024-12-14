@@ -80,52 +80,11 @@ def subscription():
 @login_required
 def billing():
     try:
-        # Obtener la suscripción actual
-        current_subscription = Subscription.query.filter_by(
-            user_id=current_user.id,
-            status='active'
-        ).first()
-        
-        # Obtener el historial de pagos
-        payments = Payment.query.join(Subscription).filter(
-            Subscription.user_id == current_user.id
-        ).order_by(Payment.created_at.desc()).all()
-        
-        # Obtener métodos de pago guardados (si se usa Stripe)
-        payment_methods = []
-        stripe.api_key = os.environ.get('STRIPE_SECRET_KEY')
-        
-        # Verificar si el usuario tiene un ID de cliente de Stripe
-        if not hasattr(current_user, 'stripe_customer_id') or not current_user.stripe_customer_id:
-            # Crear un nuevo cliente en Stripe si no existe
-            try:
-                customer = stripe.Customer.create(
-                    email=current_user.email,
-                    name=f"{current_user.first_name} {current_user.last_name}".strip() or current_user.username
-                )
-                current_user.stripe_customer_id = customer.id
-                db.session.commit()
-            except stripe.error.StripeError as e:
-                logging.error(f"Error al crear cliente en Stripe: {str(e)}")
-                
-        # Intentar obtener los métodos de pago si existe el customer_id
-        if current_user.stripe_customer_id:
-            try:
-                payment_methods = stripe.PaymentMethod.list(
-                    customer=current_user.stripe_customer_id,
-                    type='card'
-                ).data
-            except stripe.error.StripeError as e:
-                logging.error(f"Error al obtener métodos de pago: {str(e)}")
-        
-        return render_template('public/billing.html',
-                             current_subscription=current_subscription,
-                             payments=payments,
-                             payment_methods=payment_methods)
+        return redirect(url_for('billing.invoice'))
     except Exception as e:
-        logging.error(f"Error en la página de facturación: {str(e)}")
-        flash('Error al cargar la información de facturación', 'error')
-        return redirect(url_for('user.profile'))
+        logging.error(f"Error al redirigir a facturación: {str(e)}")
+        flash('Error al acceder a la información de facturación', 'error')
+        return redirect(url_for('user.dashboard'))
 
 @user_bp.route('/cancel-subscription', methods=['POST'])
 @login_required
