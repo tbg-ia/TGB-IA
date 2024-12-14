@@ -9,6 +9,26 @@ from datetime import datetime
 
 crypto_bp = Blueprint('crypto', __name__)
 
+@crypto_bp.route('/terminal')
+@login_required
+def terminal():
+    return render_template('public/terminal.html')
+
+@crypto_bp.route('/exchanges')
+@login_required
+def exchanges():
+    # Aquí podríamos obtener la lista de exchanges configurados para el usuario
+    exchanges = []  # TODO: Obtener exchanges de la base de datos
+    return render_template('public/exchanges.html', exchanges=exchanges)
+
+@crypto_bp.route('/signalbot')
+@login_required
+def signalbot():
+    # Aquí podríamos obtener la configuración actual del bot para el usuario
+    bot = {}  # TODO: Obtener configuración del bot de la base de datos
+    stats = {}  # TODO: Obtener estadísticas del bot
+    return render_template('public/signalbot.html', bot=bot, stats=stats)
+
 @crypto_bp.route('/planes')
 def planes():
     return render_template('public/planes.html')
