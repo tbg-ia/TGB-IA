@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-12 mb-4">
+            <h2>Perfil de Usuario</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Información del Perfil -->
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="bg-secondary rounded-circle p-3 me-3">
+                            <span class="h3 text-white mb-0">{{ current_user.username[0].upper() }}</span>
+                        </div>
+                        <div>
+                            <h4 class="mb-1">{{ current_user.username }}</h4>
+                            <p class="text-muted mb-0">{{ current_user.email }}</p>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="mb-4">
+                        <h5>Detalles de la Cuenta</h5>
+                        <p><strong>Tipo de Plan:</strong> {{ current_user.subscription_type|title }}</p>
+                        <p><strong>Miembro desde:</strong> {{ current_user.created_at.strftime('%d-%m-%Y') }}</p>
+                        {% if current_user.subscription_expires %}
+                        <p><strong>Suscripción válida hasta:</strong> {{ current_user.subscription_expires.strftime('%d-%m-%Y') }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-4">
+                        <h5>Actividad Reciente</h5>
+                        <div class="list-group list-group-flush">
+                            <!-- Aquí se puede agregar actividad reciente del usuario -->
+                            <div class="list-group-item bg-transparent">
+                                <p class="text-muted mb-0">No hay actividad reciente para mostrar</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Estadísticas -->
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Estadísticas</h5>
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
+                            <span>Operaciones Totales</span>
+                            <span class="badge bg-primary rounded-pill">0</span>
+                        </div>
+                        <div class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
+                            <span>Bots Activos</span>
+                            <span class="badge bg-success rounded-pill">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Acciones Rápidas</h5>
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('user.account') }}" class="btn btn-outline-primary">
+                            Configurar Cuenta
+                        </a>
+                        <a href="{{ url_for('user.billing') }}" class="btn btn-outline-primary">
+                            Ver Facturación
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

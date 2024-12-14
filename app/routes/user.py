@@ -6,6 +6,11 @@ from app import db
 
 user_bp = Blueprint('user', __name__, url_prefix='/user')
 
+@user_bp.route('/profile')
+@login_required
+def profile():
+    return render_template('public/profile.html')
+
 @user_bp.route('/dashboard')
 @login_required
 def dashboard():
