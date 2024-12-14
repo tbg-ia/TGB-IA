@@ -25,21 +25,18 @@ def create_checkout_session():
         plan_data = {
             'basic_monthly': {
                 'price': 999,  # $9.99
-                'name': 'Plan Básico',
-                'trial_days': 14,
-                'features': ['Trading manual', 'Análisis de mercado básico']
+                'name': 'Plan Básico Mensual',
+                'description': 'Trading manual y análisis de mercado básico'
             },
             'pro_monthly': {
                 'price': 2999,  # $29.99
-                'name': 'Plan Pro',
-                'trial_days': 14,
-                'features': ['Trading automatizado', 'Análisis avanzado', 'Soporte 24/7']
+                'name': 'Plan Pro Mensual',
+                'description': 'Trading automatizado, análisis avanzado y soporte 24/7'
             },
             'enterprise_monthly': {
                 'price': 9999,  # $99.99
-                'name': 'Plan Enterprise',
-                'trial_days': 14,
-                'features': ['Trading automatizado avanzado', 'APIs personalizadas']
+                'name': 'Plan Enterprise Mensual',
+                'description': 'Trading automatizado avanzado y APIs personalizadas'
             }
         }
         
@@ -60,15 +57,15 @@ def create_checkout_session():
                     },
                     'product_data': {
                         'name': plan['name'],
-                        'description': 'Incluye: ' + ', '.join(plan['features'])
+                        'description': plan['description']
                     },
-                    'unit_amount': plan['price'],
+                    'unit_amount': plan['price']
                 },
-                'quantity': 1,
+                'quantity': 1
             }],
             mode='subscription',
             subscription_data={
-                'trial_period_days': 7  # Período de prueba de 7 días
+                'trial_period_days': 7
             },
             success_url=url_for('subscription.payment_success', _external=True),
             cancel_url=url_for('subscription.payment_cancel', _external=True),
