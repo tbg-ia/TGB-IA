@@ -6,11 +6,21 @@
     
     <!-- Lista de Exchanges -->
     <div class="row">
+        <div class="col-12 mb-4">
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle-fill me-2"></i>
+                Configure sus exchanges preferidos para operar. Puede activar múltiples exchanges simultáneamente.
+            </div>
+        </div>
         {% for exchange in exchanges %}
         <div class="col-md-6 mb-4">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">{{ exchange.name }}</h5>
+                    <div class="d-flex align-items-center">
+                        <img src="{{ url_for('static', filename='img/exchanges/' + exchange.name.lower() + '.svg') }}" 
+                             alt="{{ exchange.name }}" class="me-2" style="height: 24px;">
+                        <h5 class="card-title mb-0">{{ exchange.name }}</h5>
+                    </div>
                     <span class="badge {% if exchange.is_active %}bg-success{% else %}bg-secondary{% endif %}">
                         {{ 'Activo' if exchange.is_active else 'Inactivo' }}
                     </span>
