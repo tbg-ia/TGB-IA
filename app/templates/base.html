@@ -49,9 +49,13 @@
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
-                                <span class="text-white fw-bold">{{ current_user.username[0].upper() }}</span>
-                            </div>
+                            {% if current_user.profile_image %}
+                                <img src="{{ current_user.profile_image }}" alt="Profile" class="rounded-circle" style="width: 32px; height: 32px; object-fit: cover;">
+                            {% else %}
+                                <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                                    <span class="text-white fw-bold">{{ current_user.username[0].upper() }}</span>
+                                </div>
+                            {% endif %}
                             {{ current_user.username }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end">
