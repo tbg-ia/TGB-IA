@@ -86,10 +86,12 @@
             <!-- Trading Performance Chart -->
             <div class="row mb-4">
                 <div class="col-md-8">
-                    <div class="card">
+                    <div class="card h-100">
                         <div class="card-body">
                             <h5 class="card-title">Trading Performance</h5>
-                            <canvas id="tradingChart" style="height: 300px;"></canvas>
+                            <div style="position: relative; height: 300px; width: 100%;">
+                                <canvas id="tradingChart"></canvas>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -206,6 +208,15 @@ document.addEventListener('DOMContentLoaded', function() {
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            aspectRatio: 2,
+            layout: {
+                padding: {
+                    top: 10,
+                    right: 20,
+                    bottom: 10,
+                    left: 10
+                }
+            },
             plugins: {
                 legend: {
                     display: false
