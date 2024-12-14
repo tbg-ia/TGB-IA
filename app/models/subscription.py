@@ -10,6 +10,7 @@ class Subscription(db.Model):
     start_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     end_date = db.Column(db.DateTime, nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    stripe_subscription_id = db.Column(db.String(100), unique=True)
     
     # Relationships
     user = db.relationship('User', backref=db.backref('subscriptions', lazy=True))
