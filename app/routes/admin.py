@@ -98,29 +98,100 @@ def get_config(config_id):
         logging.error(f"Error fetching config {config_id}: {str(e)}")
         return jsonify({'error': 'Configuration not found'}), 404
 
-@admin_bp.route('/config/save', methods=['POST'])
+@admin_bp.route('/settings')
 @login_required
 @admin_required
-def save_config():
+def settings():
     try:
-        key = request.form.get('key')
-        value = request.form.get('value')
-        category = request.form.get('category')
-        description = request.form.get('description')
-        
-        if not all([key, value, category]):
-            return jsonify({'error': 'Missing required fields'}), 400
-        
-        config = SystemConfig.set_value(
-            key=key,
-            value=value,
-            category=category,
-            description=description,
-            user_id=current_user.id
-        )
-        
-        return jsonify({'success': True})
+        configs = SystemConfig.query.order_by(SystemConfig.category).all()
+        config_dict = {conf.key: conf.value for conf in configs}
+        return render_template('admin/settings.html', config=config_dict)
     except Exception as e:
-        logging.error(f"Error saving config: {str(e)}")
-        db.session.rollback()
-        return jsonify({'error': 'Failed to save configuration'}), 500
+        logging.error(f"Error loading settings: {str(e)}")
+        flash('Error loading system settings', 'error')
+        return redirect(url_for('admin.dashboard'))
+
+@admin_bp.route('/settings/save', methods=['POST'])
+@login_required
+@admin_required
+def save_settings():
+    try:
+        platform_name = request.form.get('platform_name')
+        contact_email = request.form.get('contact_email')
+        
+        SystemConfig.set_value('PLATFORM_NAME', platform_name, 'system', 'Platform Name', current_user.id)
+        SystemConfig.set_value('CONTACT_EMAIL', contact_email, 'system', 'Contact Email', current_user.id)
+        
+        flash('Configuración general actualizada exitosamente')
+        return redirect(url_for('admin.settings'))
+    except Exception as e:
+        logging.error(f"Error saving settings: {str(e)}")
+        flash('Error al guardar la configuración')
+        return redirect(url_for('admin.settings'))
+
+@admin_bp.route('/settings/trading/save', methods=['POST'])
+@login_required
+@admin_required
+def save_trading_settings():
+    try:
+        for key in ['daily_trade_limit', 'max_trade_size', 'default_stop_loss']:
+            value = request.form.get(key)
+            if value:
+                SystemConfig.set_value(
+                    key.upper(),
+                    value,
+                    'trading',
+                    f'Trading {key.replace("_", " ").title()}',
+                    current_user.id
+                )
+        
+        flash('Configuración de trading actualizada exitosamente')
+        return redirect(url_for('admin.settings'))
+    except Exception as e:
+        logging.error(f"Error saving trading settings: {str(e)}")
+        flash('Error al guardar la configuración de trading')
+        return redirect(url_for('admin.settings'))
+
+@admin_bp.route('/settings/api/save', methods=['POST'])
+@login_required
+@admin_required
+def save_api_settings():
+    try:
+        for key in ['api_rate_limit', 'cache_timeout']:
+            value = request.form.get(key)
+            if value:
+                SystemConfig.set_value(
+                    key.upper(),
+                    value,
+                    'api',
+                    f'API {key.replace("_", " ").title()}',
+                    current_user.id
+                )
+        
+        flash('Configuración de API actualizada exitosamente')
+        return redirect(url_for('admin.settings'))
+    except Exception as e:
+        logging.error(f"Error saving API settings: {str(e)}")
+        flash('Error al guardar la configuración de API')
+        return redirect(url_for('admin.settings'))
+
+@admin_bp.route('/settings/notification/save', methods=['POST'])
+@login_required
+@admin_required
+def save_notification_settings():
+    try:
+        email_notifications = request.form.get('email_notifications') == 'on'
+        trade_notifications = request.form.get('trade_notifications') == 'on'
+        summary_frequency = request.form.get('summary_frequency')
+        
+        SystemConfig.set_value('EMAIL_NOTIFICATIONS', str(email_notifications), 'notification', 'Enable Email Notifications', current_user.id)
+        SystemConfig.set_value('TRADE_NOTIFICATIONS', str(trade_notifications), 'notification', 'Enable Trade Notifications', current_user.id)
+        if summary_frequency:
+            SystemConfig.set_value('SUMMARY_FREQUENCY', summary_frequency, 'notification', 'Summary Email Frequency (hours)', current_user.id)
+        
+        flash('Configuración de notificaciones actualizada exitosamente')
+        return redirect(url_for('admin.settings'))
+    except Exception as e:
+        logging.error(f"Error saving notification settings: {str(e)}")
+        flash('Error al guardar la configuración de notificaciones')
+        return redirect(url_for('admin.settings'))
