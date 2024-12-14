@@ -1,4 +1,5 @@
 import os
+import os
 from flask import Flask
 from flask import render_template
 from flask_sqlalchemy import SQLAlchemy
@@ -26,6 +27,8 @@ def create_app():
     app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
         "pool_recycle": 300,
         "pool_pre_ping": True,
+        "pool_size": 10,
+        "max_overflow": 20,
     }
 
     # Initialize extensions
