@@ -18,6 +18,7 @@ class User(UserMixin, db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     is_active = db.Column(db.Boolean, default=True)
     profile_image = db.Column(db.String(255))
+    stripe_customer_id = db.Column(db.String(255), unique=True, nullable=True)
 
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
