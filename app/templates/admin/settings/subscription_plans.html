@@ -1,75 +1,74 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container py-4">
+<div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Planes y Suscripciones</h2>
+        <h2 class="mb-0">Planes y Suscripciones</h2>
         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newPlanModal">
-            <i class="bi bi-gear me-2"></i>Gestionar Planes
+            <i class="bi bi-gear-fill me-2"></i>Gestionar Planes
         </button>
     </div>
 
     <!-- Estadísticas Generales -->
-    <div class="row mb-4">
+    <div class="row g-4 mb-4">
         <div class="col-md-3">
-            <div class="card">
+            <div class="card border-0 bg-dark">
                 <div class="card-body">
                     <h6 class="card-subtitle mb-2 text-muted">Total Suscriptores</h6>
-                    <h2 class="card-title mb-0">{{ stats.total_subscribers }}</h2>
+                    <h2 class="card-title display-6 mb-0">{{ stats.total_subscribers }}</h2>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card">
+            <div class="card border-0 bg-dark">
                 <div class="card-body">
                     <h6 class="card-subtitle mb-2 text-muted">Ingresos Mensuales</h6>
-                    <h2 class="card-title mb-0">${{ "%.2f"|format(stats.monthly_revenue) }}</h2>
+                    <h2 class="card-title display-6 mb-0">${{ "%.2f"|format(stats.monthly_revenue) }}</h2>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card">
+            <div class="card border-0 bg-dark">
                 <div class="card-body">
                     <h6 class="card-subtitle mb-2 text-muted">Plan Más Popular</h6>
-                    <h2 class="card-title mb-0">{{ stats.most_popular_plan|title }}</h2>
+                    <h2 class="card-title display-6 mb-0">{{ stats.most_popular_plan|title }}</h2>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card">
+            <div class="card border-0 bg-dark">
                 <div class="card-body">
                     <h6 class="card-subtitle mb-2 text-muted">Tasa de Retención</h6>
-                    <h2 class="card-title mb-0">{{ "%.1f"|format(stats.retention_rate) }}%</h2>
+                    <h2 class="card-title display-6 mb-0">{{ "%.1f"|format(stats.retention_rate) }}%</h2>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Lista de Planes -->
-    <div class="card">
-        <div class="card-body">
+    <div class="card border-0 bg-dark">
+        <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table">
+                <table class="table table-dark table-hover align-middle mb-0">
                     <thead>
                         <tr>
-                            <th>Plan</th>
-                            <th>Precio (USD)</th>
-                            <th>Periodo</th>
-                            <th>Suscriptores</th>
-                            <th>Estado</th>
-                            <th>Acciones</th>
+                            <th class="border-0">Plan</th>
+                            <th class="border-0">Precio (USD)</th>
+                            <th class="border-0">Periodo</th>
+                            <th class="border-0">Suscriptores</th>
+                            <th class="border-0">Estado</th>
+                            <th class="border-0">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for plan in plans %}
                         <tr>
                             <td>
-                                <strong>{{ plan.name }}</strong>
-                                <br>
+                                <h6 class="mb-0">{{ plan.name }}</h6>
                                 <small class="text-muted">{{ plan.description[:50] }}...</small>
                             </td>
                             <td>${{ "%.2f"|format(plan.price/100) }}</td>
-                            <td>{{ plan.interval }}</td>
+                            <td>{{ plan.interval|title }}</td>
                             <td>{{ plan.subscriber_count }}</td>
                             <td>
                                 <div class="form-check form-switch">
@@ -79,14 +78,18 @@
                                 </div>
                             </td>
                             <td>
-                                <button class="btn btn-sm btn-outline-primary me-2" 
-                                        onclick="editPlan('{{ plan.stripe_price_id }}')">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                                <button class="btn btn-sm btn-outline-danger"
-                                        onclick="deletePlan('{{ plan.stripe_price_id }}')">
-                                    <i class="bi bi-trash"></i>
-                                </button>
+                                <div class="btn-group">
+                                    <button class="btn btn-sm btn-outline-light" 
+                                            onclick="editPlan('{{ plan.stripe_price_id }}')"
+                                            title="Editar">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger"
+                                            onclick="deletePlan('{{ plan.stripe_price_id }}')"
+                                            title="Eliminar">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                         {% endfor %}
