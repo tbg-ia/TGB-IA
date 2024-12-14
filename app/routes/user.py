@@ -93,8 +93,23 @@ def billing():
         
         # Obtener métodos de pago guardados (si se usa Stripe)
         payment_methods = []
+        stripe.api_key = os.environ.get('STRIPE_SECRET_KEY')
+        
+        # Verificar si el usuario tiene un ID de cliente de Stripe
+        if not hasattr(current_user, 'stripe_customer_id') or not current_user.stripe_customer_id:
+            # Crear un nuevo cliente en Stripe si no existe
+            try:
+                customer = stripe.Customer.create(
+                    email=current_user.email,
+                    name=f"{current_user.first_name} {current_user.last_name}".strip() or current_user.username
+                )
+                current_user.stripe_customer_id = customer.id
+                db.session.commit()
+            except stripe.error.StripeError as e:
+                logging.error(f"Error al crear cliente en Stripe: {str(e)}")
+                
+        # Intentar obtener los métodos de pago si existe el customer_id
         if current_user.stripe_customer_id:
-            stripe.api_key = os.environ.get('STRIPE_SECRET_KEY')
             try:
                 payment_methods = stripe.PaymentMethod.list(
                     customer=current_user.stripe_customer_id,
