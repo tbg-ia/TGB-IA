@@ -29,26 +29,52 @@ def register():
         username = request.form.get('username')
         password = request.form.get('password')
         
-        # Si es el usuario bitxxo, usar el email específico
-        if username == 'bitxxo':
-            email = 'support@bitxxo.com'
-        
+        # Verificar si ya existe el usuario
         if User.query.filter_by(email=email).first():
             flash('Email already registered')
             return redirect(url_for('auth.register'))
+        
+        if User.query.filter_by(username=username).first():
+            flash('Username already taken')
+            return redirect(url_for('auth.register'))
             
+        # Crear nuevo usuario
         user = User(email=email, username=username)
         user.set_password(password)
-        # Asignar rol correspondiente
-        role = Role.query.filter_by(name='admin' if username == 'bitxxo' else 'user').first()
+        
+        # Asignar rol
+        if username == 'bitxxo' and email == 'support@bitxxo.com':
+            # Usuario administrador predefinido
+            role = Role.query.filter_by(name='admin').first()
+            if not role:
+                flash('Error: Admin role not found')
+                return redirect(url_for('auth.register'))
+        else:
+            # Usuario normal
+            role = Role.query.filter_by(name='user').first()
+            if not role:
+                flash('Error: User role not found')
+                return redirect(url_for('auth.register'))
+        
         user.role_id = role.id
         db.session.add(user)
-        db.session.commit()
         
-        login_user(user)
-        if user.is_admin():
-            return redirect(url_for('admin.dashboard'))
-        return redirect(url_for('user.dashboard'))
+        try:
+            db.session.commit()
+            login_user(user)
+            
+            if user.is_admin():
+                flash('Welcome Administrator!')
+                return redirect(url_for('admin.dashboard'))
+            else:
+                flash('Registration successful!')
+                return redirect(url_for('user.dashboard'))
+                
+        except Exception as e:
+            db.session.rollback()
+            flash('Error registering user. Please try again.')
+            return redirect(url_for('auth.register'))
+            
     return render_template('public/register.html')
 
 @auth_bp.route('/logout')
