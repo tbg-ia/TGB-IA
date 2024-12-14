@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-8 mx-auto text-center">
+            <div class="card">
+                <div class="card-body">
+                    <i class="bi bi-exclamation-circle text-warning display-1 mb-4"></i>
+                    <h2 class="mb-4">Tu periodo de prueba ha terminado</h2>
+                    
+                    <p class="lead mb-4">
+                        Esperamos que hayas disfrutado de tu experiencia con {{ plan.name }}.
+                    </p>
+
+                    <p>
+                        Para continuar disfrutando de todos los beneficios, 
+                        actualiza tu suscripción ahora:
+                    </p>
+
+                    <div class="mt-4">
+                        <a href="{{ url_for('subscription.plans') }}" class="btn btn-primary">
+                            Ver Planes
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
