@@ -33,21 +33,33 @@ def create_checkout_session():
         stripe.api_key = os.environ.get('STRIPE_SECRET_KEY')
         
         plan_id = request.form.get('plan_id')
+        # Verificar que el plan seleccionado es de nivel superior al actual
+        current_plan_level = {'basic': 0, 'pro': 1, 'enterprise': 2}
+        user_plan_level = current_plan_level.get(current_user.subscription_type, -1)
+        selected_plan_level = current_plan_level.get(plan_id.split('_')[0], -1)
+        
+        if selected_plan_level <= user_plan_level:
+            flash('Ya tienes acceso a este plan o uno superior', 'warning')
+            return redirect(url_for('subscription.plans'))
+        
         plan_data = {
             'basic_monthly': {
                 'price': 99,  # $0.99
                 'name': 'Plan Básico Mensual',
-                'description': 'Trading manual y análisis de mercado básico'
+                'description': 'Trading manual y análisis de mercado básico',
+                'stripe_price_id': os.environ.get('STRIPE_BASIC_PRICE_ID')
             },
             'pro_monthly': {
                 'price': 2999,  # $29.99
                 'name': 'Plan Pro Mensual',
-                'description': 'Trading automatizado, análisis avanzado y soporte 24/7'
+                'description': 'Trading automatizado, análisis avanzado y soporte 24/7',
+                'stripe_price_id': os.environ.get('STRIPE_PRO_PRICE_ID')
             },
             'enterprise_monthly': {
                 'price': 9999,  # $99.99
                 'name': 'Plan Enterprise Mensual',
-                'description': 'Trading automatizado avanzado y APIs personalizadas'
+                'description': 'Trading automatizado avanzado y APIs personalizadas',
+                'stripe_price_id': os.environ.get('STRIPE_ENTERPRISE_PRICE_ID')
             }
         }
         
@@ -55,12 +67,18 @@ def create_checkout_session():
         if not plan:
             flash('Plan inválido seleccionado', 'error')
             return redirect(url_for('subscription.plans'))
+            
+        # Si el usuario ya tiene una suscripción activa, crear un upgrade
+        current_subscription = Subscription.query.filter_by(
+            user_id=current_user.id,
+            status='active'
+        ).first()
         
-        # Crear sesión de checkout
-        checkout_session = stripe.checkout.Session.create(
-            customer_email=current_user.email,
-            payment_method_types=['card'],
-            line_items=[{
+        checkout_params = {
+            'customer': current_user.stripe_customer_id if current_user.stripe_customer_id else None,
+            'customer_email': None if current_user.stripe_customer_id else current_user.email,
+            'payment_method_types': ['card'],
+            'line_items': [{
                 'price_data': {
                     'currency': 'usd',
                     'recurring': {
@@ -74,17 +92,31 @@ def create_checkout_session():
                 },
                 'quantity': 1
             }],
-            mode='subscription',
-            subscription_data={
-                'trial_period_days': 7
-            },
-            success_url=url_for('subscription.payment_success', _external=True),
-            cancel_url=url_for('subscription.payment_cancel', _external=True),
-            metadata={
+            'mode': 'subscription',
+            'success_url': url_for('subscription.payment_success', _external=True),
+            'cancel_url': url_for('subscription.payment_cancel', _external=True),
+            'metadata': {
                 'user_id': current_user.id,
                 'plan_id': plan_id
             }
-        )
+        }
+        
+        # Si es un upgrade, configurar el prorate
+        if current_subscription and current_subscription.stripe_subscription_id:
+            checkout_params['subscription_data'] = {
+                'trial_period_days': None,  # No trial en upgrades
+                'transfer_data': {
+                    'destination': current_subscription.stripe_subscription_id,
+                    'amount_percent': 100
+                }
+            }
+        else:
+            checkout_params['subscription_data'] = {
+                'trial_period_days': 7  # Trial solo para nuevas suscripciones
+            }
+        
+        # Crear sesión de checkout
+        checkout_session = stripe.checkout.Session.create(**checkout_params)
         
         return redirect(checkout_session.url)
         
