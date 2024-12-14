@@ -99,7 +99,7 @@
                             <td>{{ payment.created_at.strftime('%d-%m-%Y') }}</td>
                             <td>
                                 Pago mensual - {{ payment.subscription.plan_type|title }}
-                                {% if payment.subscription.trial_end %}
+                                {% if payment.subscription.trial_end and payment.subscription.trial_end > payment.created_at %}
                                     <span class="badge bg-info ms-2">Periodo de prueba</span>
                                 {% endif %}
                             </td>
