@@ -53,26 +53,83 @@ def invoice():
 def update_payment_method():
     try:
         payment_method_id = request.json.get('payment_method_id')
-        
-        # Actualizar método de pago en Stripe
-        if current_user.stripe_customer_id:
-            stripe.PaymentMethod.attach(
-                payment_method_id,
-                customer=current_user.stripe_customer_id,
+        if not payment_method_id:
+            return jsonify({'success': False, 'error': 'No se proporcionó un método de pago'})
+            
+        # Verificar si el usuario tiene un ID de cliente de Stripe
+        if not current_user.stripe_customer_id:
+            # Crear un nuevo cliente en Stripe
+            customer = stripe.Customer.create(
+                email=current_user.email,
+                name=f"{current_user.first_name} {current_user.last_name}".strip() or current_user.username
             )
+            current_user.stripe_customer_id = customer.id
+            db.session.commit()
+        
+        # Adjuntar el método de pago al cliente
+        payment_method = stripe.PaymentMethod.attach(
+            payment_method_id,
+            customer=current_user.stripe_customer_id,
+        )
+        
+        # Establecer como método de pago predeterminado
+        stripe.Customer.modify(
+            current_user.stripe_customer_id,
+            invoice_settings={
+                'default_payment_method': payment_method_id
+            }
+        )
         
         return jsonify({'success': True})
-    except Exception as e:
+    except stripe.error.StripeError as e:
         return jsonify({'success': False, 'error': str(e)})
+    except Exception as e:
+        return jsonify({'success': False, 'error': 'Error al procesar la solicitud'})
 
-@billing_bp.route('/update-address', methods=['POST'])
+@billing_bp.route('/set-default-payment-method', methods=['POST'])
 @login_required
-def update_address():
+def set_default_payment_method():
     try:
-        # Implementar actualización de dirección
+        payment_method_id = request.json.get('payment_method_id')
+        if not payment_method_id:
+            return jsonify({'success': False, 'error': 'No se proporcionó un método de pago'})
+        
+        if not current_user.stripe_customer_id:
+            return jsonify({'success': False, 'error': 'Usuario no tiene ID de cliente de Stripe'})
+        
+        # Establecer como método de pago predeterminado
+        stripe.Customer.modify(
+            current_user.stripe_customer_id,
+            invoice_settings={
+                'default_payment_method': payment_method_id
+            }
+        )
+        
         return jsonify({'success': True})
-    except Exception as e:
+    except stripe.error.StripeError as e:
         return jsonify({'success': False, 'error': str(e)})
+    except Exception as e:
+        return jsonify({'success': False, 'error': 'Error al establecer método de pago por defecto'})
+
+@billing_bp.route('/remove-payment-method', methods=['POST'])
+@login_required
+def remove_payment_method():
+    try:
+        payment_method_id = request.json.get('payment_method_id')
+        if not payment_method_id:
+            return jsonify({'success': False, 'error': 'No se proporcionó un método de pago'})
+        
+        if not current_user.stripe_customer_id:
+            return jsonify({'success': False, 'error': 'Usuario no tiene ID de cliente de Stripe'})
+        
+        # Desasociar el método de pago del cliente
+        stripe.PaymentMethod.detach(payment_method_id)
+        
+        return jsonify({'success': True})
+    except stripe.error.StripeError as e:
+        return jsonify({'success': False, 'error': str(e)})
+    except Exception as e:
+        return jsonify({'success': False, 'error': 'Error al eliminar método de pago'})
 
 @billing_bp.route('/webhook', methods=['POST'])
 def webhook():

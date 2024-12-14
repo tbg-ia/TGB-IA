@@ -13,7 +13,7 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header bg-primary">
-                    <h5 class="card-title mb-0 text-white">Resumen de Suscripción</h5>
+                    <h5 class="card-title mb-0 text-white">Plan Actual</h5>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -40,52 +40,55 @@
         </div>
     </div>
 
-    <!-- Detalles de Facturación -->
+    <!-- Métodos de Pago -->
     <div class="row mb-4">
-        <div class="col-md-6">
-            <div class="card h-100">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">Método de Pago</h5>
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Métodos de Pago Guardados</h5>
+                    <button class="btn btn-sm btn-primary" onclick="addPaymentMethod()">
+                        <i class="bi bi-plus-lg"></i> Agregar método de pago
+                    </button>
                 </div>
                 <div class="card-body">
-                    {% if payment_method %}
-                        <div class="d-flex align-items-center">
-                            <i class="bi bi-credit-card me-2 fs-4"></i>
-                            <div>
-                                <h6 class="mb-0">{{ payment_method.brand|title }} •••• {{ payment_method.last4 }}</h6>
-                                <small class="text-muted">Expira: {{ payment_method.exp_month }}/{{ payment_method.exp_year }}</small>
+                    {% if payment_methods %}
+                        <div class="row">
+                            {% for method in payment_methods %}
+                            <div class="col-md-6 mb-3">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div class="d-flex align-items-center">
+                                                <i class="bi bi-credit-card me-3 fs-4"></i>
+                                                <div>
+                                                    <h6 class="mb-0">{{ method.card.brand|title }} •••• {{ method.card.last4 }}</h6>
+                                                    <small class="text-muted">Expira: {{ method.card.exp_month }}/{{ method.card.exp_year }}</small>
+                                                </div>
+                                            </div>
+                                            <div class="dropdown">
+                                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                                    <i class="bi bi-three-dots-vertical"></i>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><a class="dropdown-item" href="#" onclick="setDefaultPaymentMethod('{{ method.id }}')">Establecer por defecto</a></li>
+                                                    <li><a class="dropdown-item text-danger" href="#" onclick="removePaymentMethod('{{ method.id }}')">Eliminar</a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
+                            {% endfor %}
                         </div>
                     {% else %}
-                        <p class="text-muted mb-0">No hay método de pago registrado</p>
+                        <div class="text-center py-4">
+                            <i class="bi bi-credit-card h1 mb-3 d-block"></i>
+                            <p class="text-muted mb-4">No hay métodos de pago guardados</p>
+                            <button class="btn btn-primary" onclick="addPaymentMethod()">
+                                <i class="bi bi-plus-lg"></i> Agregar método de pago
+                            </button>
+                        </div>
                     {% endif %}
-                </div>
-                <div class="card-footer bg-transparent">
-                    <button class="btn btn-sm btn-outline-primary" onclick="updatePaymentMethod()">
-                        <i class="bi bi-pencil me-1"></i>Actualizar método de pago
-                    </button>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card h-100">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">Dirección de Facturación</h5>
-                </div>
-                <div class="card-body">
-                    {% if billing_address %}
-                        <p class="mb-1">{{ billing_address.name }}</p>
-                        <p class="mb-1">{{ billing_address.street }}</p>
-                        <p class="mb-1">{{ billing_address.city }}, {{ billing_address.state }} {{ billing_address.zip }}</p>
-                        <p class="mb-0">{{ billing_address.country }}</p>
-                    {% else %}
-                        <p class="text-muted mb-0">No hay dirección de facturación registrada</p>
-                    {% endif %}
-                </div>
-                <div class="card-footer bg-transparent">
-                    <button class="btn btn-sm btn-outline-primary" onclick="updateBillingAddress()">
-                        <i class="bi bi-pencil me-1"></i>Actualizar dirección
-                    </button>
                 </div>
             </div>
         </div>
@@ -146,75 +149,26 @@
     </div>
 </div>
 
-<!-- Modal para Actualizar Método de Pago -->
+<!-- Modal para Agregar/Actualizar Método de Pago -->
 <div class="modal fade" id="paymentMethodModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Actualizar Método de Pago</h5>
+                <h5 class="modal-title">Agregar Método de Pago</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <div id="card-element"></div>
-                <div id="card-errors" class="text-danger mt-2"></div>
+                <div class="mb-4">
+                    <div id="card-element" class="form-control"></div>
+                    <div id="card-errors" class="text-danger mt-2"></div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" onclick="savePaymentMethod()">Guardar</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal para Actualizar Dirección -->
-<div class="modal fade" id="addressModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Actualizar Dirección de Facturación</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <form id="addressForm">
-                    <div class="mb-3">
-                        <label class="form-label">Nombre</label>
-                        <input type="text" class="form-control" name="name" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Dirección</label>
-                        <input type="text" class="form-control" name="street" required>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col">
-                            <label class="form-label">Ciudad</label>
-                            <input type="text" class="form-control" name="city" required>
-                        </div>
-                        <div class="col">
-                            <label class="form-label">Estado</label>
-                            <input type="text" class="form-control" name="state" required>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col">
-                            <label class="form-label">Código Postal</label>
-                            <input type="text" class="form-control" name="zip" required>
-                        </div>
-                        <div class="col">
-                            <label class="form-label">País</label>
-                            <select class="form-select" name="country" required>
-                                <option value="ES">España</option>
-                                <option value="MX">México</option>
-                                <option value="AR">Argentina</option>
-                                <option value="CO">Colombia</option>
-                                <option value="CL">Chile</option>
-                            </select>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" onclick="saveAddress()">Guardar</button>
+                <button type="button" class="btn btn-primary" id="savePaymentButton" onclick="savePaymentMethod()">
+                    <span id="buttonText">Guardar</span>
+                    <span id="buttonSpinner" class="spinner-border spinner-border-sm d-none" role="status"></span>
+                </button>
             </div>
         </div>
     </div>
@@ -226,34 +180,126 @@
 <script>
     const stripe = Stripe('{{ stripe_public_key }}');
     const elements = stripe.elements();
+    let cardElement = null;
     
-    function updatePaymentMethod() {
+    function addPaymentMethod() {
         const modal = new bootstrap.Modal(document.getElementById('paymentMethodModal'));
         modal.show();
         
-        const cardElement = elements.create('card');
-        cardElement.mount('#card-element');
-    }
-    
-    function updateBillingAddress() {
-        const modal = new bootstrap.Modal(document.getElementById('addressModal'));
-        modal.show();
+        if (!cardElement) {
+            cardElement = elements.create('card', {
+                style: {
+                    base: {
+                        color: '#fff',
+                        fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+                        fontSmoothing: 'antialiased',
+                        fontSize: '16px',
+                        '::placeholder': {
+                            color: '#aab7c4'
+                        }
+                    },
+                    invalid: {
+                        color: '#fa755a',
+                        iconColor: '#fa755a'
+                    }
+                }
+            });
+            cardElement.mount('#card-element');
+        }
     }
     
     async function savePaymentMethod() {
-        // Implementar lógica para guardar método de pago
+        const button = document.getElementById('savePaymentButton');
+        const buttonText = document.getElementById('buttonText');
+        const buttonSpinner = document.getElementById('buttonSpinner');
+        const errorElement = document.getElementById('card-errors');
+        
+        try {
+            button.disabled = true;
+            buttonText.classList.add('d-none');
+            buttonSpinner.classList.remove('d-none');
+            
+            const {setupIntent, error} = await stripe.createPaymentMethod({
+                type: 'card',
+                card: cardElement,
+                billing_details: {
+                    email: '{{ current_user.email }}'
+                }
+            });
+            
+            if (error) {
+                errorElement.textContent = error.message;
+                return;
+            }
+            
+            // Enviar el paymentMethod.id al servidor
+            const response = await fetch('/billing/update-payment-method', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    payment_method_id: setupIntent.payment_method
+                })
+            });
+            
+            if (response.ok) {
+                location.reload();
+            } else {
+                const data = await response.json();
+                errorElement.textContent = data.error || 'Error al guardar el método de pago';
+            }
+            
+        } catch (e) {
+            errorElement.textContent = 'Error al procesar el pago';
+        } finally {
+            button.disabled = false;
+            buttonText.classList.remove('d-none');
+            buttonSpinner.classList.add('d-none');
+        }
     }
     
-    async function saveAddress() {
-        // Implementar lógica para guardar dirección
-        const formData = new FormData(document.getElementById('addressForm'));
-        const response = await fetch('/billing/update-address', {
-            method: 'POST',
-            body: formData
-        });
+    async function setDefaultPaymentMethod(methodId) {
+        try {
+            const response = await fetch('/billing/set-default-payment-method', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    payment_method_id: methodId
+                })
+            });
+            
+            if (response.ok) {
+                location.reload();
+            }
+        } catch (e) {
+            console.error('Error al establecer método de pago por defecto:', e);
+        }
+    }
+    
+    async function removePaymentMethod(methodId) {
+        if (!confirm('¿Estás seguro de que deseas eliminar este método de pago?')) {
+            return;
+        }
         
-        if (response.ok) {
-            location.reload();
+        try {
+            const response = await fetch('/billing/remove-payment-method', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    payment_method_id: methodId
+                })
+            });
+            
+            if (response.ok) {
+                location.reload();
+            }
+        } catch (e) {
+            console.error('Error al eliminar método de pago:', e);
         }
     }
 </script>
