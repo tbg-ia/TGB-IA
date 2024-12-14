@@ -14,12 +14,18 @@
             <div class="card">
                 <div class="card-body">
                     <div class="d-flex align-items-center mb-4">
-                        <div class="bg-secondary rounded-circle p-3 me-3">
-                            <span class="h3 text-white mb-0">{{ current_user.username[0].upper() }}</span>
+                        <div class="position-relative me-4">
+                            <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                                <span class="h2 text-white mb-0">{{ current_user.username[0].upper() }}</span>
+                            </div>
+                            <div class="position-absolute bottom-0 end-0 bg-success rounded-circle d-flex align-items-center justify-content-center" style="width: 24px; height: 24px;">
+                                <i class="bi bi-robot"></i>
+                            </div>
                         </div>
                         <div>
                             <h4 class="mb-1">{{ current_user.username }}</h4>
                             <p class="text-muted mb-0">{{ current_user.email }}</p>
+                            <span class="badge bg-primary">AI Trading Bot</span>
                         </div>
                     </div>
 
