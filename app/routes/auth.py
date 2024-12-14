@@ -34,6 +34,7 @@ def register():
         # Asignar rol de administrador si es el usuario bitxxo
         if username == 'bitxxo':
             user.role = 'admin'
+            user.email = 'support@bitxxo.com'
         db.session.add(user)
         db.session.commit()
         
