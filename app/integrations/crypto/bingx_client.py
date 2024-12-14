@@ -111,6 +111,57 @@ class BingXClient:
             logger.error(f"Error placing order: {str(e)}")
             return None
 
+    def get_account_balance(self):
+        """Get account balance"""
+        try:
+            response = self._make_request(
+                'GET',
+                '/openApi/swap/v2/user/balance',
+                signed=True
+            )
+            return response.get('data', {})
+        except Exception as e:
+            logger.error(f"Error getting account balance: {str(e)}")
+            return None
+
+    def get_positions(self, symbol=None):
+        """Get current positions"""
+        try:
+            params = {}
+            if symbol:
+                params['symbol'] = symbol
+            
+            response = self._make_request(
+                'GET',
+                '/openApi/swap/v2/user/positions',
+                params,
+                signed=True
+            )
+            return response.get('data', [])
+        except Exception as e:
+            logger.error(f"Error getting positions: {str(e)}")
+            return None
+
+    def set_leverage(self, symbol, leverage, margin_type='isolated'):
+        """Set leverage for a symbol"""
+        try:
+            params = {
+                'symbol': symbol,
+                'leverage': leverage,
+                'marginType': margin_type
+            }
+            response = self._make_request(
+                'POST',
+                '/openApi/swap/v2/trade/leverage',
+                params,
+                signed=True
+            )
+            logger.info(f"Leverage set successfully for {symbol}: {leverage}x")
+            return response
+        except Exception as e:
+            logger.error(f"Error setting leverage: {str(e)}")
+            return None
+
 def init_bingx(app):
     """Initialize BingX client with app configuration."""
     api_key = app.config.get('BINGX_API_KEY')

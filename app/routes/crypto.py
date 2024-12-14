@@ -4,6 +4,7 @@ from app.auth.decorators import admin_required
 from app.models.trading_bot import TradingBot, Trade
 from app.models.user import User
 from app.models.system_config import SystemConfig
+from app.integrations.crypto.bingx_client import BingXClient
 from app import db
 from datetime import datetime
 
