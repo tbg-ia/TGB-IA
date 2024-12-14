@@ -27,7 +27,20 @@ class Payment(db.Model):
     status = db.Column(db.String(20), nullable=False)  # success, failed, pending
     payment_method = db.Column(db.String(50))
     transaction_id = db.Column(db.String(100))
+    invoice_id = db.Column(db.String(100))
+    invoice_url = db.Column(db.String(500))
+    pdf_url = db.Column(db.String(500))
+    description = db.Column(db.String(200))
+    is_trial = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     
     # Relationships
     subscription = db.relationship('Subscription', backref=db.backref('payments', lazy=True))
+    
+    @property
+    def status_color(self):
+        return {
+            'success': 'success',
+            'failed': 'danger',
+            'pending': 'warning'
+        }.get(self.status, 'secondary')
