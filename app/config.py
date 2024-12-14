@@ -7,12 +7,12 @@ class Config:
     # Subscription plans
     SUBSCRIPTION_PLANS = {
         'basic': {
-            'name': 'Basic',
+            'name': 'Trader Starter',
             'price': 9.99,
             'features': ['Manual Trading', 'Market Analysis']
         },
         'pro': {
-            'name': 'Pro',
+            'name': 'Trader Pro',
             'price': 29.99,
             'features': ['Automated Trading', 'Advanced Analytics', 'Priority Support']
         }
