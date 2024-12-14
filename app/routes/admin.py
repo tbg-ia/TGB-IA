@@ -16,18 +16,34 @@ admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 @admin_required
 def dashboard():
     try:
+        # Obtener estadísticas básicas
         total_users = User.query.count()
-        active_bots = TradingBot.query.filter_by(active=True).count()
+        active_bots = db.session.query(db.func.count(TradingBot.id))\
+            .filter(TradingBot.active == True).scalar() or 0
+        
+        # Obtener trades recientes
         recent_trades = Trade.query.order_by(Trade.timestamp.desc()).limit(10).all()
         
+        # Obtener estadísticas de suscripciones
+        total_subscribers = User.query.filter(User.subscription_type != 'basic').count()
+        monthly_revenue = db.session.query(
+            db.func.sum(Subscription.amount)
+        ).filter(Subscription.status == 'active').scalar() or 0
+        
+        stats = {
+            'total_users': total_users,
+            'active_bots': active_bots,
+            'total_subscribers': total_subscribers,
+            'monthly_revenue': monthly_revenue
+        }
+        
         return render_template('admin/dashboard.html', 
-                             stats={'total_users': total_users, 
-                                   'active_bots': active_bots},
+                             stats=stats,
                              trades=recent_trades)
     except Exception as e:
         logging.error(f"Error in admin dashboard: {str(e)}")
         flash('Error loading dashboard data', 'error')
-        return redirect(url_for('index'))
+        return redirect(url_for('admin.dashboard'))
 
 @admin_bp.route('/users')
 @login_required
