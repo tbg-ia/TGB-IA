@@ -1,4 +1,5 @@
 import os
+import logging
 from flask import Blueprint, render_template, jsonify, request, current_app, url_for, flash, redirect
 from flask_login import login_required, current_user
 import stripe
@@ -6,6 +7,10 @@ from datetime import datetime, timedelta
 from app.models.subscription import Subscription, Payment
 from app.models.user import User
 from app import db
+
+# Configuración de logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 subscription_bp = Blueprint('subscription', __name__)
 
@@ -113,10 +118,191 @@ def webhook():
     except stripe.error.SignatureVerificationError as e:
         return jsonify({'error': 'Invalid signature'}), 400
     
-    if event['type'] == 'checkout.session.completed':
-        session = event['data']['object']
-        handle_successful_payment(session)
+    # Manejar diferentes tipos de eventos
+    event_handlers = {
+        'checkout.session.completed': handle_checkout_completed,
+        'customer.subscription.created': handle_subscription_created,
+        'customer.subscription.updated': handle_subscription_updated,
+        'customer.subscription.deleted': handle_subscription_deleted,
+        'invoice.paid': handle_invoice_paid,
+        'invoice.payment_failed': handle_invoice_payment_failed
+    }
     
+    handler = event_handlers.get(event['type'])
+    if handler:
+        try:
+            handler(event['data']['object'])
+        except Exception as e:
+            logging.error(f"Error processing {event['type']}: {str(e)}")
+            return jsonify({'error': str(e)}), 500
+    
+def handle_checkout_completed(session):
+    """Procesa una sesión de checkout completada exitosamente"""
+    try:
+        user_id = session.metadata.get('user_id')
+        plan_id = session.metadata.get('plan_id')
+        
+        user = User.query.get(user_id)
+        if not user:
+            logging.error(f"Usuario no encontrado: {user_id}")
+            return
+        
+        # Determinar el tipo de plan basado en el plan_id
+        plan_type = plan_id.split('_')[0]  # basic, pro, enterprise
+        
+        # Crear nueva suscripción
+        subscription = Subscription(
+            user_id=user.id,
+            plan_type=plan_type,
+            status='active',
+            stripe_subscription_id=session.subscription,
+            amount=session.amount_total / 100,
+            start_date=datetime.utcnow(),
+            # El período de prueba es de 7 días
+            end_date=datetime.utcnow() + timedelta(days=37)  # 30 días + 7 días de prueba
+        )
+        
+        # Actualizar el tipo de suscripción del usuario
+        user.subscription_type = plan_type
+        
+        db.session.add(subscription)
+        db.session.commit()
+        
+    except Exception as e:
+        logging.error(f"Error en handle_checkout_completed: {str(e)}")
+        db.session.rollback()
+
+def handle_subscription_created(subscription_object):
+    """Maneja la creación de una nueva suscripción"""
+    try:
+        # Obtener el customer ID y buscar el usuario correspondiente
+        customer_id = subscription_object.customer
+        user = User.query.filter_by(stripe_customer_id=customer_id).first()
+        
+        if not user:
+            logging.error(f"Usuario no encontrado para customer_id: {customer_id}")
+            return
+            
+        # Actualizar la suscripción con el ID de Stripe
+        subscription = Subscription.query.filter_by(user_id=user.id, status='active').first()
+        if subscription:
+            subscription.stripe_subscription_id = subscription_object.id
+            db.session.commit()
+            
+    except Exception as e:
+        logging.error(f"Error en handle_subscription_created: {str(e)}")
+        db.session.rollback()
+
+def handle_subscription_updated(subscription_object):
+    """Maneja la actualización de una suscripción existente"""
+    try:
+        subscription = Subscription.query.filter_by(
+            stripe_subscription_id=subscription_object.id
+        ).first()
+        
+        if not subscription:
+            logging.error(f"Suscripción no encontrada: {subscription_object.id}")
+            return
+            
+        # Actualizar estado y fechas
+        subscription.status = subscription_object.status
+        subscription.end_date = datetime.fromtimestamp(subscription_object.current_period_end)
+        
+        # Si el plan cambió, actualizar el tipo de plan
+        if subscription_object.items.data:
+            new_plan = subscription_object.items.data[0].price.product
+            subscription.plan_type = new_plan
+            subscription.user.subscription_type = new_plan
+            
+        db.session.commit()
+        
+    except Exception as e:
+        logging.error(f"Error en handle_subscription_updated: {str(e)}")
+        db.session.rollback()
+
+def handle_subscription_deleted(subscription_object):
+    """Maneja la cancelación de una suscripción"""
+    try:
+        subscription = Subscription.query.filter_by(
+            stripe_subscription_id=subscription_object.id
+        ).first()
+        
+        if not subscription:
+            logging.error(f"Suscripción no encontrada: {subscription_object.id}")
+            return
+            
+        # Marcar la suscripción como cancelada
+        subscription.status = 'cancelled'
+        subscription.end_date = datetime.fromtimestamp(subscription_object.canceled_at)
+        
+        # Revertir al plan básico
+        subscription.user.subscription_type = 'basic'
+        
+        db.session.commit()
+        
+    except Exception as e:
+        logging.error(f"Error en handle_subscription_deleted: {str(e)}")
+        db.session.rollback()
+
+def handle_invoice_paid(invoice):
+    """Maneja el pago exitoso de una factura"""
+    try:
+        subscription = Subscription.query.filter_by(
+            stripe_subscription_id=invoice.subscription
+        ).first()
+        
+        if not subscription:
+            logging.error(f"Suscripción no encontrada: {invoice.subscription}")
+            return
+            
+        # Registrar el pago
+        payment = Payment(
+            subscription_id=subscription.id,
+            amount=invoice.amount_paid / 100,
+            status='success',
+            payment_method='stripe',
+            transaction_id=invoice.payment_intent
+        )
+        
+        db.session.add(payment)
+        db.session.commit()
+        
+    except Exception as e:
+        logging.error(f"Error en handle_invoice_paid: {str(e)}")
+        db.session.rollback()
+
+def handle_invoice_payment_failed(invoice):
+    """Maneja el fallo en el pago de una factura"""
+    try:
+        subscription = Subscription.query.filter_by(
+            stripe_subscription_id=invoice.subscription
+        ).first()
+        
+        if not subscription:
+            logging.error(f"Suscripción no encontrada: {invoice.subscription}")
+            return
+            
+        # Registrar el intento fallido de pago
+        payment = Payment(
+            subscription_id=subscription.id,
+            amount=invoice.amount_due / 100,
+            status='failed',
+            payment_method='stripe',
+            transaction_id=invoice.payment_intent
+        )
+        
+        db.session.add(payment)
+        
+        # Si es el último intento fallido, marcar la suscripción como inactiva
+        if invoice.next_payment_attempt is None:
+            subscription.status = 'inactive'
+            subscription.user.subscription_type = 'basic'
+        
+        db.session.commit()
+        
+    except Exception as e:
+        logging.error(f"Error en handle_invoice_payment_failed: {str(e)}")
+        db.session.rollback()
     return jsonify({'success': True})
 
 def handle_successful_payment(session):
