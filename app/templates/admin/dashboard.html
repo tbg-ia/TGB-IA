@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Trading Performance</h5>
+                <canvas id="tradingChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Active Bots</h5>
+                {% for bot in bots %}
+                <div class="bot-card mb-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6>{{ bot.trading_pair }}</h6>
+                            <small class="text-muted">Strategy: {{ bot.strategy }}</small>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" 
+                                   {% if bot.active %}checked{% endif %}
+                                   onchange="toggleBot({{ bot.id }})">
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#newBotModal">
+                    Create New Bot
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- New Bot Modal -->
+<div class="modal fade" id="newBotModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create New Trading Bot</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="newBotForm">
+                    <div class="mb-3">
+                        <label class="form-label">Trading Pair</label>
+                        <select class="form-select" name="trading_pair" required>
+                            <option value="BTC/USDT">BTC/USDT</option>
+                            <option value="ETH/USDT">ETH/USDT</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Strategy</label>
+                        <select class="form-select" name="strategy" required>
+                            <option value="grid">Grid Trading</option>
+                            <option value="dca">DCA</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Max Position Size</label>
+                        <input type="number" class="form-control" name="max_position" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="createBot()">Create Bot</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize trading chart
+    const ctx = document.getElementById('tradingChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'Portfolio Value',
+                data: [],
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+});
+
+function toggleBot(botId) {
+    // Implementation for toggling bot status
+}
+
+function createBot() {
+    // Implementation for creating new bot
+}
+</script>
+{% endblock %}
