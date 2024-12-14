@@ -25,11 +25,18 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('admin.users') }}">Usuarios</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('admin.settings') }}">Configuración</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('admin.config') }}">Sistema</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                Configuración
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-dark">
+                                <li><a class="dropdown-item" href="{{ url_for('admin.settings') }}">General</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('admin.config') }}">Sistema</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#emailConfigModal">
+                                    Configuración Email
+                                </a></li>
+                            </ul>
                         </li>
                         {% else %}
                         <li class="nav-item">
@@ -86,6 +93,54 @@
         
         {% block content %}{% endblock %}
     </main>
+
+    <!-- Modal Configuración Email -->
+    {% if current_user.is_authenticated and current_user.is_admin() %}
+    <div class="modal fade" id="emailConfigModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Configuración de Email</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="{{ url_for('admin.save_email_settings') }}">
+                        <div class="mb-3">
+                            <label class="form-label">Servidor SMTP</label>
+                            <input type="text" class="form-control" name="mail_server" 
+                                   value="{{ config.get('MAIL_SERVER', 'smtp.gmail.com') }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Puerto SMTP</label>
+                            <input type="number" class="form-control" name="mail_port" 
+                                   value="{{ config.get('MAIL_PORT', 587) }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Usuario SMTP</label>
+                            <input type="text" class="form-control" name="mail_username" 
+                                   value="{{ config.get('MAIL_USERNAME', '') }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Contraseña SMTP</label>
+                            <input type="password" class="form-control" name="mail_password">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email Remitente</label>
+                            <input type="email" class="form-control" name="mail_default_sender" 
+                                   value="{{ config.get('MAIL_DEFAULT_SENDER', 'noreply@bitxxo.com') }}">
+                        </div>
+                        <div class="form-check mb-3">
+                            <input type="checkbox" class="form-check-input" name="mail_use_tls" 
+                                   {% if config.get('MAIL_USE_TLS', True) %}checked{% endif %}>
+                            <label class="form-check-label">Usar TLS</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Guardar Configuración</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     {% block extra_js %}{% endblock %}

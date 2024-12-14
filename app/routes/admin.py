@@ -175,6 +175,39 @@ def save_api_settings():
         flash('Error al guardar la configuración de API')
         return redirect(url_for('admin.settings'))
 
+@admin_bp.route('/settings/email/save', methods=['POST'])
+@login_required
+@admin_required
+def save_email_settings():
+    try:
+        email_config = {
+            'MAIL_SERVER': request.form.get('mail_server'),
+            'MAIL_PORT': request.form.get('mail_port'),
+            'MAIL_USERNAME': request.form.get('mail_username'),
+            'MAIL_PASSWORD': request.form.get('mail_password'),
+            'MAIL_DEFAULT_SENDER': request.form.get('mail_default_sender'),
+            'MAIL_USE_TLS': request.form.get('mail_use_tls') == 'on'
+        }
+        
+        for key, value in email_config.items():
+            if value is not None:  # Solo actualizar si se proporcionó un valor
+                SystemConfig.set_value(
+                    key=key,
+                    value=str(value),
+                    category='email',
+                    description=f'Email Configuration - {key}',
+                    user_id=current_user.id
+                )
+        
+        from app.mail.smtp_settings import EmailConfig
+        EmailConfig.init_app(current_app)
+        
+        flash('Configuración de email actualizada exitosamente')
+        return redirect(url_for('admin.settings'))
+    except Exception as e:
+        logging.error(f"Error saving email settings: {str(e)}")
+        flash('Error al guardar la configuración de email')
+        return redirect(url_for('admin.settings'))
 @admin_bp.route('/settings/notification/save', methods=['POST'])
 @login_required
 @admin_required
