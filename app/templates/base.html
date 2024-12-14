@@ -19,17 +19,17 @@
                     {% if current_user.is_authenticated %}
                         {% if current_user.is_admin() %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('crypto.admin_dashboard') }}">Dashboard</a>
+                            <a class="nav-link" href="{{ url_for('admin.dashboard') }}">Dashboard</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('crypto.admin_users') }}">Usuarios</a>
+                            <a class="nav-link" href="{{ url_for('admin.users') }}">Usuarios</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('crypto.admin_config') }}">Configuración</a>
+                            <a class="nav-link" href="{{ url_for('admin.config') }}">Configuración</a>
                         </li>
                         {% else %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('crypto.user_dashboard') }}">Dashboard</a>
+                            <a class="nav-link" href="{{ url_for('user.dashboard') }}">Dashboard</a>
                         </li>
                         {% endif %}
                         <li class="nav-item">
@@ -37,7 +37,7 @@
                         </li>
                     {% else %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('crypto.planes') }}">Planes</a>
+                        <a class="nav-link" href="{{ url_for('user.subscription') }}">Planes</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>

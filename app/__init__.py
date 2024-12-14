@@ -37,11 +37,10 @@ def create_app():
     login_manager.login_view = 'auth.login'
 
     # Register blueprints
-    from app.routes.auth import auth_bp
-    from app.routes.crypto import crypto_bp
+    from app.routes import all_blueprints
     
-    app.register_blueprint(auth_bp)
-    app.register_blueprint(crypto_bp)
+    for blueprint in all_blueprints:
+        app.register_blueprint(blueprint)
     
     # Register index route
     @app.route('/')

@@ -16,8 +16,8 @@ def login():
             login_user(user)
             next_page = request.args.get('next')
             if user.is_admin():
-                return redirect(next_page or url_for('crypto.admin_dashboard'))
-            return redirect(next_page or url_for('crypto.user_dashboard'))
+                return redirect(next_page or url_for('admin.dashboard'))
+            return redirect(next_page or url_for('user.dashboard'))
         flash('Correo electrónico o contraseña inválidos')
     return render_template('public/login.html')
 
@@ -46,8 +46,8 @@ def register():
         
         login_user(user)
         if user.is_admin():
-            return redirect(url_for('crypto.admin_dashboard'))
-        return redirect(url_for('crypto.user_dashboard'))
+            return redirect(url_for('admin.dashboard'))
+        return redirect(url_for('user.dashboard'))
     return render_template('public/register.html')
 
 @auth_bp.route('/logout')
