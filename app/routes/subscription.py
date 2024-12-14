@@ -1,9 +1,10 @@
 import os
 from datetime import datetime, timedelta
-from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify, current_app
+from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
+from flask import current_app
 from flask_login import login_required, current_user
 import stripe
-stripe.api_key = os.environ.get('STRIPE_SECRET_KEY')
+stripe.api_key = os.environ.get('STRIPE_SECRET_KEY', '')
 from app.models.user import User
 from app.models.subscription import Subscription, Payment
 from app import db
@@ -78,13 +79,17 @@ def create_checkout_session():
         flash('Error al procesar el pago')
         return redirect(url_for('subscription.plans'))
 
-@subscription_bp.route('/webhook', methods=['POST'])
+@subscription_bp.route('/subscription/webhook', methods=['POST'])
 def webhook():
     """Maneja los webhooks de Stripe"""
     payload = request.get_data()
     sig_header = request.headers.get('Stripe-Signature')
-    webhook_secret = os.environ.get('STRIPE_WEBHOOK_SECRET')
+    webhook_secret = os.environ.get('STRIPE_WEBHOOK_SECRET', '')
     
+    if not webhook_secret:
+        current_app.logger.error('Missing STRIPE_WEBHOOK_SECRET')
+        return jsonify({'error': 'Webhook secret not configured'}), 500
+        
     try:
         event = stripe.Webhook.construct_event(
             payload, sig_header, webhook_secret
