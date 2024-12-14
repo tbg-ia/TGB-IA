@@ -1,7 +1,11 @@
 import os
+import logging
 from flask import Blueprint, render_template, jsonify, request, current_app, url_for, flash, redirect
 from flask_login import login_required, current_user
 import stripe
+
+# Configurar logging
+logging.basicConfig(level=logging.INFO)
 from datetime import datetime, timedelta
 from app.models.subscription import Subscription, Payment
 from app.models.user import User
@@ -101,23 +105,58 @@ def payment_cancel():
 @subscription_bp.route('/webhook', methods=['POST'])
 def webhook():
     """Maneja los webhooks de Stripe"""
+    if request.method != 'POST':
+        logging.warning("Método no permitido en webhook")
+        return jsonify({'error': 'Method not allowed'}), 405
+        
     payload = request.get_data()
     sig_header = request.headers.get('Stripe-Signature')
+    webhook_secret = os.environ.get('STRIPE_WEBHOOK_SECRET')
+    
+    logging.info(f"Webhook recibido - Signature: {sig_header}")
+    
+    if not webhook_secret:
+        logging.error("STRIPE_WEBHOOK_SECRET no está configurado")
+        return jsonify({'error': 'Webhook secret not configured'}), 500
     
     try:
         event = stripe.Webhook.construct_event(
-            payload, sig_header, current_app.config['STRIPE_WEBHOOK_SECRET']
+            payload, sig_header, webhook_secret
         )
+        logging.info(f"Evento Stripe recibido: {event['type']}")
     except ValueError as e:
+        logging.error(f"Error de payload inválido: {str(e)}")
         return jsonify({'error': 'Invalid payload'}), 400
     except stripe.error.SignatureVerificationError as e:
+        logging.error(f"Error de firma inválida: {str(e)}")
         return jsonify({'error': 'Invalid signature'}), 400
     
-    if event['type'] == 'checkout.session.completed':
-        session = event['data']['object']
-        handle_successful_payment(session)
-    
-    return jsonify({'success': True})
+    try:
+        # Manejar diferentes tipos de eventos
+        if event['type'] == 'checkout.session.completed':
+            session = event['data']['object']
+            logging.info(f"Sesión de checkout completada: {session.id}")
+            handle_successful_payment(session)
+            
+        elif event['type'] == 'invoice.payment_succeeded':
+            invoice = event['data']['object']
+            logging.info(f"Pago de factura exitoso: {invoice.id}")
+            # Aquí puedes manejar la renovación de suscripción
+            
+        elif event['type'] == 'customer.subscription.updated':
+            subscription = event['data']['object']
+            logging.info(f"Suscripción actualizada: {subscription.id}")
+            # Actualizar estado de suscripción en la base de datos
+            
+        elif event['type'] == 'customer.subscription.deleted':
+            subscription = event['data']['object']
+            logging.info(f"Suscripción cancelada: {subscription.id}")
+            # Manejar cancelación de suscripción
+            
+        return jsonify({'success': True})
+    except Exception as e:
+        logging.error(f"Error procesando evento Stripe: {str(e)}")
+        return jsonify({'error': 'Internal server error'}), 500
 
 def handle_successful_payment(session):
     """Procesa un pago exitoso"""
