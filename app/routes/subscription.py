@@ -17,40 +17,50 @@ def plans():
 @login_required
 def create_checkout_session():
     """Crea una sesión de checkout de Stripe"""
-    stripe.api_key = current_app.config['STRIPE_SECRET_KEY']
-    
-    plan_id = request.form.get('plan_id')
-    plan_data = {
-        'basic_monthly': {
-            'price': 999,  # $9.99
-            'name': 'Plan Básico',
-            'trial_days': 14
-        },
-        'pro_monthly': {
-            'price': 2999,  # $29.99
-            'name': 'Plan Pro',
-            'trial_days': 14
-        },
-        'enterprise_monthly': {
-            'price': 9999,  # $99.99
-            'name': 'Plan Enterprise',
-            'trial_days': 14
-        }
-    }
-    
-    plan = plan_data.get(plan_id)
-    if not plan:
-        return jsonify({'error': 'Plan inválido'}), 400
-    
     try:
+        stripe.api_key = os.environ.get('STRIPE_SECRET_KEY')
+        
+        plan_id = request.form.get('plan_id')
+        plan_data = {
+            'basic_monthly': {
+                'price': 999,  # $9.99
+                'name': 'Plan Básico',
+                'trial_days': 14,
+                'features': ['Trading manual', 'Análisis de mercado básico']
+            },
+            'pro_monthly': {
+                'price': 2999,  # $29.99
+                'name': 'Plan Pro',
+                'trial_days': 14,
+                'features': ['Trading automatizado', 'Análisis avanzado', 'Soporte 24/7']
+            },
+            'enterprise_monthly': {
+                'price': 9999,  # $99.99
+                'name': 'Plan Enterprise',
+                'trial_days': 14,
+                'features': ['Trading automatizado avanzado', 'APIs personalizadas']
+            }
+        }
+        
+        plan = plan_data.get(plan_id)
+        if not plan:
+            flash('Plan inválido seleccionado', 'error')
+            return redirect(url_for('subscription.plans'))
+        
+        # Crear sesión de checkout
         checkout_session = stripe.checkout.Session.create(
             customer_email=current_user.email,
             payment_method_types=['card'],
             line_items=[{
                 'price_data': {
                     'currency': 'usd',
+                    'recurring': {
+                        'interval': 'month',
+                        'trial_period_days': plan['trial_days']
+                    },
                     'product_data': {
                         'name': plan['name'],
+                        'description': 'Incluye: ' + ', '.join(plan['features'])
                     },
                     'unit_amount': plan['price'],
                 },
@@ -59,22 +69,33 @@ def create_checkout_session():
             mode='subscription',
             success_url=url_for('subscription.payment_success', _external=True),
             cancel_url=url_for('subscription.payment_cancel', _external=True),
+            metadata={
+                'user_id': current_user.id,
+                'plan_id': plan_id
+            }
         )
         
-        return jsonify({'sessionId': checkout_session.id})
+        return redirect(checkout_session.url)
+        
+    except stripe.error.StripeError as e:
+        flash(f'Error al procesar el pago: {str(e)}', 'error')
+        return redirect(url_for('subscription.plans'))
     except Exception as e:
-        return jsonify({'error': str(e)}), 403
+        flash('Error inesperado al procesar la solicitud', 'error')
+        return redirect(url_for('subscription.plans'))
 
 @subscription_bp.route('/payment/success')
 @login_required
 def payment_success():
     """Maneja el éxito del pago"""
-    return render_template('subscription/payment_success.html')
+    flash('¡Gracias por tu suscripción! Tu plan ha sido activado.', 'success')
+    return redirect(url_for('user.dashboard'))
 
 @subscription_bp.route('/payment/cancel')
 @login_required
 def payment_cancel():
     """Maneja la cancelación del pago"""
+    flash('El proceso de pago fue cancelado.', 'info')
     return redirect(url_for('subscription.plans'))
 
 @subscription_bp.route('/webhook', methods=['POST'])
