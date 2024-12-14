@@ -15,15 +15,36 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center mb-4">
                         <div class="position-relative me-4">
-                            <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
-                                <span class="h2 text-white mb-0">{{ current_user.username[0].upper() }}</span>
+                            <div class="position-relative">
+                                <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center overflow-hidden" style="width: 80px; height: 80px;" id="profileImageContainer">
+                                    {% if current_user.profile_image %}
+                                        <img src="{{ current_user.profile_image }}" alt="Profile" class="w-100 h-100 object-fit-cover">
+                                    {% else %}
+                                        <span class="h2 text-white mb-0">{{ current_user.username[0].upper() }}</span>
+                                    {% endif %}
+                                </div>
+                                <div class="position-absolute bottom-0 end-0 bg-success rounded-circle d-flex align-items-center justify-content-center" style="width: 24px; height: 24px;">
+                                    <i class="bi bi-robot"></i>
+                                </div>
+                                <!-- Overlay para drag & drop -->
+                                <div id="dragOverlay" class="position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-75 rounded-circle d-none d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-cloud-upload text-white"></i>
+                                </div>
                             </div>
-                            <div class="position-absolute bottom-0 end-0 bg-success rounded-circle d-flex align-items-center justify-content-center" style="width: 24px; height: 24px;">
-                                <i class="bi bi-robot"></i>
-                            </div>
+                            <!-- Botón de subida oculto -->
+                            <input type="file" id="profileImageInput" class="d-none" accept="image/*">
+                            <button class="btn btn-sm btn-outline-primary mt-2 w-100" onclick="document.getElementById('profileImageInput').click()">
+                                Cambiar Foto
+                            </button>
                         </div>
                         <div>
-                            <h4 class="mb-1">{{ current_user.username }}</h4>
+                            <h4 class="mb-1">
+                                {% if current_user.first_name and current_user.last_name %}
+                                    {{ current_user.first_name }} {{ current_user.last_name }}
+                                {% else %}
+                                    {{ current_user.username }}
+                                {% endif %}
+                            </h4>
                             <p class="text-muted mb-0">{{ current_user.email }}</p>
                             <span class="badge bg-primary">AI Trading Bot</span>
                         </div>
@@ -33,6 +54,18 @@
 
                     <div class="mb-4">
                         <h5>Detalles de la Cuenta</h5>
+                        <form method="POST" action="{{ url_for('user.update_profile') }}" class="mb-4">
+                            <div class="mb-3">
+                                <label class="form-label">First Name</label>
+                                <input type="text" class="form-control" name="first_name" value="{{ current_user.first_name or '' }}">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Last Name</label>
+                                <input type="text" class="form-control" name="last_name" value="{{ current_user.last_name or '' }}">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Actualizar Perfil</button>
+                        </form>
+                        
                         <p><strong>Tipo de Plan:</strong> {{ current_user.subscription_type|title }}</p>
                         <p><strong>Miembro desde:</strong> {{ current_user.created_at.strftime('%d-%m-%Y') }}</p>
                         {% if current_user.subscription_expires %}
@@ -87,4 +120,8 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/profile.js') }}"></script>
 {% endblock %}
