@@ -8,9 +8,14 @@ crypto_bp = Blueprint('crypto', __name__)
 @crypto_bp.route('/dashboard')
 @login_required
 @admin_required
-def dashboard():
+def admin_dashboard():
     bots = TradingBot.query.filter_by(user_id=current_user.id).all()
     return render_template('admin/dashboard.html', bots=bots)
+
+@crypto_bp.route('/user-dashboard')
+@login_required
+def user_dashboard():
+    return render_template('public/user_dashboard.html')
 
 @crypto_bp.route('/bot/create', methods=['POST'])
 @login_required
