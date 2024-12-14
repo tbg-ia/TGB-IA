@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Gestión de Usuarios</h2>
+    
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Email</th>
+                            <th>Plan</th>
+                            <th>Fecha Registro</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td>{{ user.username }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>
+                                <span class="badge {% if user.subscription_type == 'pro' %}bg-primary{% else %}bg-secondary{% endif %}">
+                                    {{ user.subscription_type|title }}
+                                </span>
+                            </td>
+                            <td>{{ user.created_at.strftime('%Y-%m-%d') }}</td>
+                            <td>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" 
+                                           {% if user.is_active %}checked{% endif %}
+                                           onchange="toggleUserStatus({{ user.id }})">
+                                </div>
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary" 
+                                        onclick="editUser({{ user.id }})">
+                                    Editar
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Edición -->
+<div class="modal fade" id="editUserModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Editar Usuario</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editUserForm">
+                    <input type="hidden" id="userId" name="userId">
+                    <div class="mb-3">
+                        <label class="form-label">Plan de Suscripción</label>
+                        <select class="form-select" name="subscription_type">
+                            <option value="basic">Basic</option>
+                            <option value="pro">Pro</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Fecha de Expiración</label>
+                        <input type="date" class="form-control" name="subscription_expires">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" onclick="saveUserChanges()">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleUserStatus(userId) {
+    fetch(`/admin/users/${userId}/toggle-status`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        }
+    });
+}
+
+function editUser(userId) {
+    fetch(`/admin/users/${userId}`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('userId').value = userId;
+            document.querySelector('[name="subscription_type"]').value = data.subscription_type;
+            document.querySelector('[name="subscription_expires"]').value = data.subscription_expires;
+            new bootstrap.Modal(document.getElementById('editUserModal')).show();
+        });
+}
+
+function saveUserChanges() {
+    const formData = new FormData(document.getElementById('editUserForm'));
+    const userId = formData.get('userId');
+    
+    fetch(`/admin/users/${userId}`, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        }
+    });
+}
+</script>
+{% endblock %}
