@@ -72,9 +72,9 @@
                             <td>{{ plan.subscriber_count }}</td>
                             <td>
                                 <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" 
-                                           {% if plan.is_active %}checked{% endif %}
-                                           onchange="togglePlanStatus('{{ plan.stripe_price_id }}')">
+                                    <input class="form-check-input" type="checkbox" role="switch"
+                                           {{ 'checked' if plan.is_active else '' }}
+                                           onchange="togglePlan('{{ plan.stripe_price_id }}')">
                                 </div>
                             </td>
                             <td>
@@ -100,12 +100,12 @@
     </div>
 </div>
 
-<!-- Modal Nuevo Plan -->
+<!-- Modal para Nuevo Plan -->
 <div class="modal fade" id="newPlanModal" tabindex="-1">
     <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Nuevo Plan de Suscripción</h5>
+        <div class="modal-content bg-dark">
+            <div class="modal-header border-bottom border-secondary">
+                <h5 class="modal-title">Crear Nuevo Plan</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
@@ -118,18 +118,16 @@
                         <label class="form-label">Descripción</label>
                         <textarea class="form-control" name="description" rows="3" required></textarea>
                     </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Precio (USD)</label>
-                            <input type="number" class="form-control" name="price" step="0.01" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Periodo</label>
-                            <select class="form-select" name="interval" required>
-                                <option value="month">Mensual</option>
-                                <option value="year">Anual</option>
-                            </select>
-                        </div>
+                    <div class="mb-3">
+                        <label class="form-label">Precio (USD)</label>
+                        <input type="number" class="form-control" name="price" step="0.01" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Periodo de Facturación</label>
+                        <select class="form-select" name="interval" required>
+                            <option value="month">Mensual</option>
+                            <option value="year">Anual</option>
+                        </select>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Características (una por línea)</label>
@@ -137,75 +135,95 @@
                     </div>
                 </form>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer border-top border-secondary">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                 <button type="button" class="btn btn-primary" onclick="savePlan()">Guardar Plan</button>
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
 
 {% block extra_js %}
 <script>
-function togglePlanStatus(priceId) {
-    fetch(`/admin/subscription/plans/${priceId}/toggle`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            location.reload();
-        }
-    });
-}
-
-function editPlan(priceId) {
-    fetch(`/admin/subscription/plans/${priceId}`)
-        .then(response => response.json())
-        .then(data => {
-            // Rellenar el formulario con los datos del plan
-            document.querySelector('[name="name"]').value = data.name;
-            document.querySelector('[name="description"]').value = data.description;
-            document.querySelector('[name="price"]').value = data.price;
-            document.querySelector('[name="interval"]').value = data.interval;
-            document.querySelector('[name="features"]').value = data.features.join('\n');
-            
-            // Mostrar el modal
-            new bootstrap.Modal(document.getElementById('newPlanModal')).show();
-        });
-}
-
-function savePlan() {
-    const formData = new FormData(document.getElementById('newPlanForm'));
+async function savePlan() {
+    const form = document.getElementById('newPlanForm');
+    const formData = new FormData(form);
     
-    fetch('/admin/subscription/plans/save', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            location.reload();
+    try {
+        const response = await fetch("{{ url_for('admin.save_plan') }}", {
+            method: 'POST',
+            body: formData
+        });
+        
+        if (response.ok) {
+            window.location.reload();
+        } else {
+            const error = await response.json();
+            alert(error.error || 'Error al guardar el plan');
         }
-    });
+    } catch (error) {
+        alert('Error al guardar el plan');
+    }
 }
 
-function deletePlan(priceId) {
-    if (confirm('¿Está seguro de que desea eliminar este plan?')) {
-        fetch(`/admin/subscription/plans/${priceId}`, {
-            method: 'DELETE'
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                location.reload();
-            }
+async function togglePlan(priceId) {
+    try {
+        const response = await fetch(`/admin/subscription/plans/${priceId}/toggle`, {
+            method: 'POST'
         });
+        
+        if (!response.ok) {
+            const error = await response.json();
+            alert(error.error || 'Error al actualizar el estado del plan');
+            window.location.reload();
+        }
+    } catch (error) {
+        alert('Error al actualizar el estado del plan');
+        window.location.reload();
+    }
+}
+
+async function deletePlan(priceId) {
+    if (!confirm('¿Estás seguro de que deseas eliminar este plan?')) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/admin/subscription/plans/${priceId}`, {
+            method: 'DELETE'
+        });
+        
+        if (response.ok) {
+            window.location.reload();
+        } else {
+            const error = await response.json();
+            alert(error.error || 'Error al eliminar el plan');
+        }
+    } catch (error) {
+        alert('Error al eliminar el plan');
+    }
+}
+
+async function editPlan(priceId) {
+    try {
+        const response = await fetch(`/admin/subscription/plans/${priceId}`);
+        const plan = await response.json();
+        
+        // Rellenar el formulario con los datos del plan
+        const form = document.getElementById('newPlanForm');
+        form.querySelector('[name="name"]').value = plan.name;
+        form.querySelector('[name="description"]').value = plan.description;
+        form.querySelector('[name="price"]').value = plan.price;
+        form.querySelector('[name="interval"]').value = plan.interval;
+        form.querySelector('[name="features"]').value = plan.features.join('\n');
+        
+        // Mostrar el modal
+        const modal = new bootstrap.Modal(document.getElementById('newPlanModal'));
+        modal.show();
+    } catch (error) {
+        alert('Error al cargar los datos del plan');
     }
 }
 </script>
-{% endblock %}
 {% endblock %}
