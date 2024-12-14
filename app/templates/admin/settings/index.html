@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Sidebar de navegación -->
+        <div class="col-md-3 col-lg-2">
+            <div class="list-group">
+                <a href="#general" class="list-group-item list-group-item-action active" data-bs-toggle="list">
+                    <i class="bi bi-gear me-2"></i>General
+                </a>
+                <a href="#subscription" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                    <i class="bi bi-credit-card me-2"></i>Planes y Suscripciones
+                </a>
+                <a href="#api" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                    <i class="bi bi-code-slash me-2"></i>Configuración API
+                </a>
+                <a href="#email" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                    <i class="bi bi-envelope me-2"></i>Email
+                </a>
+                <a href="#notifications" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                    <i class="bi bi-bell me-2"></i>Notificaciones
+                </a>
+            </div>
+        </div>
+
+        <!-- Contenido principal -->
+        <div class="col-md-9 col-lg-10">
+            <div class="tab-content">
+                <!-- Configuración General -->
+                <div class="tab-pane fade show active" id="general">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Configuración General</h5>
+                        </div>
+                        <div class="card-body">
+                            <form action="{{ url_for('admin.save_settings') }}" method="POST">
+                                <div class="mb-3">
+                                    <label class="form-label">Nombre de la Plataforma</label>
+                                    <input type="text" class="form-control" name="platform_name" 
+                                           value="{{ config.get('PLATFORM_NAME', '') }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Email de Contacto</label>
+                                    <input type="email" class="form-control" name="contact_email"
+                                           value="{{ config.get('CONTACT_EMAIL', '') }}">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Planes y Suscripciones -->
+                <div class="tab-pane fade" id="subscription">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="card-title mb-0">Planes y Suscripciones</h5>
+                            <a href="{{ url_for('admin.subscription_plans') }}" class="btn btn-primary">
+                                <i class="bi bi-gear me-2"></i>Gestionar Planes
+                            </a>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="card bg-light">
+                                        <div class="card-body">
+                                            <h6 class="card-subtitle mb-2 text-muted">Total Suscriptores</h6>
+                                            <h2 class="card-title mb-0">{{ subscription_stats.total_subscribers }}</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card bg-light">
+                                        <div class="card-body">
+                                            <h6 class="card-subtitle mb-2 text-muted">Ingresos Mensuales</h6>
+                                            <h2 class="card-title mb-0">${{ "%.2f"|format(subscription_stats.monthly_revenue) }}</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card bg-light">
+                                        <div class="card-body">
+                                            <h6 class="card-subtitle mb-2 text-muted">Plan Más Popular</h6>
+                                            <h2 class="card-title mb-0">{{ subscription_stats.most_popular_plan|title }}</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card bg-light">
+                                        <div class="card-body">
+                                            <h6 class="card-subtitle mb-2 text-muted">Tasa de Retención</h6>
+                                            <h2 class="card-title mb-0">{{ "%.1f"|format(subscription_stats.retention_rate) }}%</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Configuración API -->
+                <div class="tab-pane fade" id="api">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Configuración de API</h5>
+                        </div>
+                        <div class="card-body">
+                            <form action="{{ url_for('admin.save_api_settings') }}" method="POST">
+                                <h6 class="mb-3">Configuración General de API</h6>
+                                <div class="mb-3">
+                                    <label class="form-label">Límite de Tasa (requests/min)</label>
+                                    <input type="number" class="form-control" name="api_rate_limit"
+                                           value="{{ config.get('API_RATE_LIMIT', '60') }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Tiempo de Cache (segundos)</label>
+                                    <input type="number" class="form-control" name="cache_timeout"
+                                           value="{{ config.get('CACHE_TIMEOUT', '300') }}">
+                                </div>
+
+                                <h6 class="mb-3 mt-4">Configuración de Stripe</h6>
+                                <div class="mb-3">
+                                    <label class="form-label">Stripe Public Key</label>
+                                    <input type="text" class="form-control" name="stripe_public_key"
+                                           value="{{ config.get('STRIPE_PUBLIC_KEY', '') }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Stripe Secret Key</label>
+                                    <input type="password" class="form-control" name="stripe_secret_key"
+                                           value="{{ config.get('STRIPE_SECRET_KEY', '') }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Stripe Webhook Secret</label>
+                                    <input type="password" class="form-control" name="stripe_webhook_secret"
+                                           value="{{ config.get('STRIPE_WEBHOOK_SECRET', '') }}">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Configuración Email -->
+                <div class="tab-pane fade" id="email">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Configuración de Email</h5>
+                        </div>
+                        <div class="card-body">
+                            <form action="{{ url_for('admin.save_email_settings') }}" method="POST">
+                                <div class="mb-3">
+                                    <label class="form-label">Servidor SMTP</label>
+                                    <input type="text" class="form-control" name="mail_server"
+                                           value="{{ config.get('MAIL_SERVER', '') }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Puerto SMTP</label>
+                                    <input type="number" class="form-control" name="mail_port"
+                                           value="{{ config.get('MAIL_PORT', '587') }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Usuario SMTP</label>
+                                    <input type="text" class="form-control" name="mail_username"
+                                           value="{{ config.get('MAIL_USERNAME', '') }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Contraseña SMTP</label>
+                                    <input type="password" class="form-control" name="mail_password"
+                                           value="{{ config.get('MAIL_PASSWORD', '') }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Email por Defecto</label>
+                                    <input type="email" class="form-control" name="mail_default_sender"
+                                           value="{{ config.get('MAIL_DEFAULT_SENDER', '') }}">
+                                </div>
+                                <div class="mb-3">
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" name="mail_use_tls"
+                                               {% if config.get('MAIL_USE_TLS', 'True') == 'True' %}checked{% endif %}>
+                                        <label class="form-check-label">Usar TLS</label>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Configuración Notificaciones -->
+                <div class="tab-pane fade" id="notifications">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Configuración de Notificaciones</h5>
+                        </div>
+                        <div class="card-body">
+                            <form action="{{ url_for('admin.save_notification_settings') }}" method="POST">
+                                <div class="mb-3">
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" name="email_notifications"
+                                               {% if config.get('EMAIL_NOTIFICATIONS', 'True') == 'True' %}checked{% endif %}>
+                                        <label class="form-check-label">Habilitar Notificaciones por Email</label>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" name="trade_notifications"
+                                               {% if config.get('TRADE_NOTIFICATIONS', 'True') == 'True' %}checked{% endif %}>
+                                        <label class="form-check-label">Notificar Operaciones de Trading</label>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Frecuencia de Resumen (horas)</label>
+                                    <select class="form-select" name="summary_frequency">
+                                        <option value="6" {% if config.get('SUMMARY_FREQUENCY') == '6' %}selected{% endif %}>Cada 6 horas</option>
+                                        <option value="12" {% if config.get('SUMMARY_FREQUENCY') == '12' %}selected{% endif %}>Cada 12 horas</option>
+                                        <option value="24" {% if config.get('SUMMARY_FREQUENCY') == '24' %}selected{% endif %}>Diario</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

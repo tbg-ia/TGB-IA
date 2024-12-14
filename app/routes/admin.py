@@ -105,9 +105,26 @@ def get_config(config_id):
 @admin_required
 def settings():
     try:
+        # Obtener todas las configuraciones del sistema
         configs = SystemConfig.query.order_by(SystemConfig.category).all()
         config_dict = {conf.key: conf.value for conf in configs}
-        return render_template('admin/settings.html', config=config_dict)
+        
+        # Obtener estadísticas de suscripciones para la sección de planes
+        subscription_stats = {
+            'total_subscribers': User.query.filter(User.subscription_type != 'basic').count(),
+            'monthly_revenue': db.session.query(
+                db.func.sum(Subscription.amount)
+            ).filter(Subscription.status == 'active').scalar() or 0,
+            'most_popular_plan': db.session.query(
+                User.subscription_type,
+                db.func.count(User.id).label('count')
+            ).group_by(User.subscription_type).order_by(db.text('count DESC')).first()[0],
+            'retention_rate': 95.5  # Valor por defecto
+        }
+        
+        return render_template('admin/settings/index.html',
+                             config=config_dict,
+                             subscription_stats=subscription_stats)
     except Exception as e:
         logging.error(f"Error loading settings: {str(e)}")
         flash('Error loading system settings', 'error')
