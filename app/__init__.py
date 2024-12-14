@@ -1,4 +1,5 @@
 import os
+import os
 from flask import Flask
 from flask import render_template
 from flask_sqlalchemy import SQLAlchemy
@@ -29,11 +30,6 @@ def create_app():
         "pool_size": 10,
         "max_overflow": 20,
     }
-    
-    # Stripe Configuration
-    app.config['STRIPE_PUBLIC_KEY'] = os.environ.get('STRIPE_PUBLIC_KEY')
-    app.config['STRIPE_SECRET_KEY'] = os.environ.get('STRIPE_SECRET_KEY')
-    app.config['STRIPE_WEBHOOK_SECRET'] = os.environ.get('STRIPE_WEBHOOK_SECRET')
 
     # Initialize extensions
     db.init_app(app)
