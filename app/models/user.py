@@ -8,7 +8,7 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(64), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(256))
-    role = db.Column(db.String(20), default='user')
+    role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
     subscription_type = db.Column(db.String(20), default='basic')
     subscription_expires = db.Column(db.DateTime)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -21,4 +21,7 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password_hash, password)
 
     def is_admin(self):
-        return self.role == 'admin'
+        return self.role.name == 'admin' if self.role else False
+
+    def get_role_name(self):
+        return self.role.name if self.role else 'user'

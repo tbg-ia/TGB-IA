@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, login_required, current_user
 from app.models.user import User
+from app.models.role import Role
 from app import db
 
 auth_bp = Blueprint('auth', __name__)
@@ -38,9 +39,9 @@ def register():
             
         user = User(email=email, username=username)
         user.set_password(password)
-        # Asignar rol de administrador si es el usuario bitxxo
-        if username == 'bitxxo':
-            user.role = 'admin'
+        # Asignar rol correspondiente
+        role = Role.query.filter_by(name='admin' if username == 'bitxxo' else 'user').first()
+        user.role_id = role.id
         db.session.add(user)
         db.session.commit()
         
