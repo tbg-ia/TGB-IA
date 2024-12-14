@@ -246,3 +246,136 @@ def save_notification_settings():
         logging.error(f"Error saving notification settings: {str(e)}")
         flash('Error al guardar la configuración de notificaciones')
         return redirect(url_for('admin.settings'))
+
+@admin_bp.route('/subscription/plans')
+@login_required
+@admin_required
+def subscription_plans():
+    try:
+        # Obtener estadísticas de suscripciones
+        stats = {
+            'total_subscribers': User.query.filter(User.subscription_type != 'basic').count(),
+            'monthly_revenue': db.session.query(
+                db.func.sum(Subscription.amount)
+            ).filter(Subscription.status == 'active').scalar() or 0,
+            'most_popular_plan': db.session.query(
+                User.subscription_type,
+                db.func.count(User.id).label('count')
+            ).group_by(User.subscription_type).order_by(db.text('count DESC')).first()[0],
+            'retention_rate': 95.5  # TODO: Implementar cálculo real
+        }
+        
+        # Obtener planes activos
+        stripe.api_key = current_app.config['STRIPE_SECRET_KEY']
+        prices = stripe.Price.list(active=True, expand=['data.product'])
+        plans = []
+        
+        for price in prices.data:
+            plan = {
+                'stripe_price_id': price.id,
+                'name': price.product.name,
+                'description': price.product.description,
+                'price': price.unit_amount,
+                'interval': price.recurring.interval,
+                'subscriber_count': User.query.filter_by(subscription_type=price.product.name.lower()).count(),
+                'is_active': price.active
+            }
+            plans.append(plan)
+        
+        return render_template('admin/subscription_plans.html', 
+                             plans=plans,
+                             stats=stats)
+    except Exception as e:
+        logging.error(f"Error loading subscription plans: {str(e)}")
+        flash('Error al cargar los planes de suscripción', 'error')
+        return redirect(url_for('admin.dashboard'))
+
+@admin_bp.route('/subscription/plans/<price_id>')
+@login_required
+@admin_required
+def get_plan(price_id):
+    try:
+        stripe.api_key = current_app.config['STRIPE_SECRET_KEY']
+        price = stripe.Price.retrieve(price_id, expand=['product'])
+        
+        return jsonify({
+            'name': price.product.name,
+            'description': price.product.description,
+            'price': price.unit_amount/100,
+            'interval': price.recurring.interval,
+            'features': price.product.metadata.get('features', '').split('\n')
+        })
+    except Exception as e:
+        logging.error(f"Error fetching plan {price_id}: {str(e)}")
+        return jsonify({'error': 'Plan not found'}), 404
+
+@admin_bp.route('/subscription/plans/save', methods=['POST'])
+@login_required
+@admin_required
+def save_plan():
+    try:
+        stripe.api_key = current_app.config['STRIPE_SECRET_KEY']
+        
+        name = request.form.get('name')
+        description = request.form.get('description')
+        price = float(request.form.get('price'))
+        interval = request.form.get('interval')
+        features = request.form.get('features')
+        
+        # Crear o actualizar el producto en Stripe
+        product = stripe.Product.create(
+            name=name,
+            description=description,
+            metadata={'features': features}
+        )
+        
+        # Crear el precio para el producto
+        stripe.Price.create(
+            product=product.id,
+            unit_amount=int(price * 100),  # Convertir a centavos
+            currency='usd',
+            recurring={'interval': interval}
+        )
+        
+        flash('Plan creado exitosamente', 'success')
+        return jsonify({'success': True})
+    except Exception as e:
+        logging.error(f"Error saving plan: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@admin_bp.route('/subscription/plans/<price_id>/toggle', methods=['POST'])
+@login_required
+@admin_required
+def toggle_plan(price_id):
+    try:
+        stripe.api_key = current_app.config['STRIPE_SECRET_KEY']
+        price = stripe.Price.retrieve(price_id)
+        
+        # Activar/desactivar el precio en Stripe
+        stripe.Price.modify(
+            price_id,
+            active=not price.active
+        )
+        
+        return jsonify({'success': True})
+    except Exception as e:
+        logging.error(f"Error toggling plan {price_id}: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@admin_bp.route('/subscription/plans/<price_id>', methods=['DELETE'])
+@login_required
+@admin_required
+def delete_plan(price_id):
+    try:
+        stripe.api_key = current_app.config['STRIPE_SECRET_KEY']
+        
+        # Desactivar el precio en Stripe (no se pueden eliminar precios)
+        stripe.Price.modify(
+            price_id,
+            active=False
+        )
+        
+        return jsonify({'success': True})
+    except Exception as e:
+        logging.error(f"Error deleting plan {price_id}: {str(e)}")
+        return jsonify({'error': str(e)}), 500
