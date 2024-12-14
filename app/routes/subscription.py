@@ -9,7 +9,7 @@ from app.models.user import User
 from app.models.subscription import Subscription, Payment
 from app import db
 
-subscription_bp = Blueprint('subscription', __name__)
+subscription_bp = Blueprint('subscription', __name__, url_prefix='/subscription')
 
 @subscription_bp.route('/plans')
 def plans():
@@ -79,7 +79,7 @@ def create_checkout_session():
         flash('Error al procesar el pago')
         return redirect(url_for('subscription.plans'))
 
-@subscription_bp.route('/subscription/webhook', methods=['POST'])
+@subscription_bp.route('/webhook', methods=['POST'])
 def webhook():
     """Maneja los webhooks de Stripe"""
     payload = request.get_data()
@@ -103,33 +103,33 @@ def webhook():
         # Manejar diferentes tipos de eventos
         if event['type'] == 'checkout.session.completed':
             session = event['data']['object']
+            current_app.logger.info(f"Received checkout.session.completed event for session {session.id}")
             handle_successful_payment(session)
-            current_app.logger.info(f"Processed checkout.session.completed for session {session.id}")
             
         elif event['type'] == 'customer.subscription.created':
             subscription = event['data']['object']
+            current_app.logger.info(f"Received subscription.created event for subscription {subscription.id}")
             handle_subscription_created(subscription)
-            current_app.logger.info(f"Processed subscription creation {subscription.id}")
             
         elif event['type'] == 'customer.subscription.updated':
             subscription = event['data']['object']
+            current_app.logger.info(f"Received subscription.updated event for subscription {subscription.id}")
             handle_subscription_update(subscription)
-            current_app.logger.info(f"Processed subscription update {subscription.id}")
             
         elif event['type'] == 'customer.subscription.deleted':
             subscription = event['data']['object']
+            current_app.logger.info(f"Received subscription.deleted event for subscription {subscription.id}")
             handle_subscription_cancellation(subscription)
-            current_app.logger.info(f"Processed subscription cancellation {subscription.id}")
             
         elif event['type'] == 'invoice.paid':
             invoice = event['data']['object']
+            current_app.logger.info(f"Received invoice.paid event for invoice {invoice.id}")
             handle_invoice_paid(invoice)
-            current_app.logger.info(f"Processed successful invoice payment {invoice.id}")
             
         elif event['type'] == 'invoice.payment_failed':
             invoice = event['data']['object']
+            current_app.logger.info(f"Received invoice.payment_failed event for invoice {invoice.id}")
             handle_invoice_payment_failed(invoice)
-            current_app.logger.info(f"Processed failed invoice payment {invoice.id}")
             
         return jsonify({'success': True})
         
