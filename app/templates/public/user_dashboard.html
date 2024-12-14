@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 mb-4">
+            <h2>Bienvenido, {{ current_user.username }}</h2>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- Plan de Suscripción -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Tu Plan</h5>
+                    <h6 class="card-subtitle mb-3">{{ current_user.subscription_type|title }}</h6>
+                    {% if current_user.subscription_type == 'basic' %}
+                    <ul class="list-unstyled">
+                        <li>✓ Trading Manual</li>
+                        <li>✓ Análisis de Mercado</li>
+                    </ul>
+                    <a href="#" class="btn btn-primary mt-3">Actualizar a Pro</a>
+                    {% else %}
+                    <ul class="list-unstyled">
+                        <li>✓ Trading Automatizado</li>
+                        <li>✓ Análisis Avanzado</li>
+                        <li>✓ Soporte Prioritario</li>
+                    </ul>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Estado de la Cuenta -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Estado de la Cuenta</h5>
+                    <div class="mt-3">
+                        <p><strong>Email:</strong> {{ current_user.email }}</p>
+                        <p><strong>Miembro desde:</strong> {{ current_user.created_at.strftime('%d-%m-%Y') }}</p>
+                        {% if current_user.subscription_expires %}
+                        <p><strong>Suscripción válida hasta:</strong> {{ current_user.subscription_expires.strftime('%d-%m-%Y') }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Funcionalidades disponibles -->
+    <div class="row">
+        <div class="col-md-12">
+            <h3 class="mb-4">Funcionalidades Disponibles</h3>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Trading Manual</h5>
+                    <p class="card-text">Realiza operaciones de trading manualmente con nuestras herramientas básicas.</p>
+                    <a href="#" class="btn btn-primary">Comenzar Trading</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Análisis de Mercado</h5>
+                    <p class="card-text">Accede a análisis básicos del mercado de criptomonedas.</p>
+                    <a href="#" class="btn btn-primary">Ver Análisis</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Soporte</h5>
+                    <p class="card-text">Accede a nuestro centro de ayuda y soporte técnico.</p>
+                    <a href="#" class="btn btn-primary">Contactar Soporte</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
