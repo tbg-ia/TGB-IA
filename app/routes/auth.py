@@ -14,7 +14,7 @@ def login():
         
         if user and user.check_password(password):
             login_user(user)
-            return redirect(url_for('crypto.dashboard'))
+            return redirect(url_for('index'))
         flash('Correo electrónico o contraseña inválidos')
     return render_template('public/login.html')
 
@@ -42,7 +42,7 @@ def register():
         db.session.commit()
         
         login_user(user)
-        return redirect(url_for('crypto.dashboard'))
+        return redirect(url_for('index'))
     return render_template('public/register.html')
 
 @auth_bp.route('/logout')
