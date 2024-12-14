@@ -166,7 +166,7 @@ function editPlan(priceId) {
             // Rellenar el formulario con los datos del plan
             document.querySelector('[name="name"]').value = data.name;
             document.querySelector('[name="description"]').value = data.description;
-            document.querySelector('[name="price"]').value = data.price/100;
+            document.querySelector('[name="price"]').value = data.price;
             document.querySelector('[name="interval"]').value = data.interval;
             document.querySelector('[name="features"]').value = data.features.join('\n');
             
