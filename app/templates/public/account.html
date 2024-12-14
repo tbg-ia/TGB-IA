@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-12 mb-4">
+            <h2>Mi Cuenta</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Información Personal -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Información Personal</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('user.update_profile') }}">
+                        <div class="mb-3">
+                            <label class="form-label">Username</label>
+                            <input type="text" class="form-control" name="username" value="{{ current_user.username }}" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" name="email" value="{{ current_user.email }}" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Miembro desde</label>
+                            <input type="text" class="form-control" value="{{ current_user.created_at.strftime('%d-%m-%Y') }}" readonly>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Actualizar Información</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cambiar Contraseña -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Cambiar Contraseña</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('user.change_password') }}">
+                        <div class="mb-3">
+                            <label class="form-label">Contraseña Actual</label>
+                            <input type="password" class="form-control" name="current_password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Nueva Contraseña</label>
+                            <input type="password" class="form-control" name="new_password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Confirmar Nueva Contraseña</label>
+                            <input type="password" class="form-control" name="confirm_password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Cambiar Contraseña</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detalles de Suscripción -->
+    <div class="row">
+        <div class="col-md-12 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Detalles de Suscripción</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Plan Actual:</strong> {{ current_user.subscription_type|title }}</p>
+                            {% if current_user.subscription_expires %}
+                            <p><strong>Válido hasta:</strong> {{ current_user.subscription_expires.strftime('%d-%m-%Y') }}</p>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <a href="{{ url_for('user.subscription') }}" class="btn btn-outline-primary">
+                                {% if current_user.subscription_type == 'basic' %}
+                                Actualizar a Pro
+                                {% else %}
+                                Gestionar Suscripción
+                                {% endif %}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
