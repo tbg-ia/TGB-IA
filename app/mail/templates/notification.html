@@ -1,0 +1,41 @@
+{% extends "mail/base.html" %}
+
+{% block title %}Notificación de Trading{% endblock %}
+
+{% block content %}
+<h2>Hola {{ user.username }},</h2>
+
+{% if trade is iterable %}
+    <h3>Resumen de operaciones:</h3>
+    <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+        <tr style="background-color: #f8f9fa;">
+            <th style="padding: 10px; border: 1px solid #dee2e6;">Tipo</th>
+            <th style="padding: 10px; border: 1px solid #dee2e6;">Precio</th>
+            <th style="padding: 10px; border: 1px solid #dee2e6;">Cantidad</th>
+            <th style="padding: 10px; border: 1px solid #dee2e6;">Fecha</th>
+        </tr>
+        {% for t in trade %}
+        <tr>
+            <td style="padding: 10px; border: 1px solid #dee2e6;">{{ t.type }}</td>
+            <td style="padding: 10px; border: 1px solid #dee2e6;">${{ "%.2f"|format(t.price) }}</td>
+            <td style="padding: 10px; border: 1px solid #dee2e6;">{{ t.amount }}</td>
+            <td style="padding: 10px; border: 1px solid #dee2e6;">{{ t.timestamp.strftime('%d-%m-%Y %H:%M') }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    <p>Se ha realizado una nueva operación:</p>
+    <ul>
+        <li><strong>Tipo:</strong> {{ trade.type }}</li>
+        <li><strong>Precio:</strong> ${{ "%.2f"|format(trade.price) }}</li>
+        <li><strong>Cantidad:</strong> {{ trade.amount }}</li>
+        <li><strong>Fecha:</strong> {{ trade.timestamp.strftime('%d-%m-%Y %H:%M') }}</li>
+    </ul>
+{% endif %}
+
+<p style="text-align: center;">
+    <a href="{{ url_for('user.dashboard', _external=True) }}" class="button">
+        Ver Dashboard
+    </a>
+</p>
+{% endblock %}
