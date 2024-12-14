@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row align-items-center">
+    <div class="col-md-6">
+        <h1 class="display-4">Automated Crypto Trading</h1>
+        <p class="lead">Take control of your crypto investments with our advanced trading bots.</p>
+        <div class="mt-4">
+            <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg">Get Started</a>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card bg-dark">
+            <div class="card-body">
+                <h5 class="card-title">Our Plans</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title">Basic</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">$9.99/month</h6>
+                                <ul class="list-unstyled">
+                                    <li>✓ Manual Trading</li>
+                                    <li>✓ Market Analysis</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Pro</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">$29.99/month</h6>
+                                <ul class="list-unstyled">
+                                    <li>✓ Automated Trading</li>
+                                    <li>✓ Advanced Analytics</li>
+                                    <li>✓ Priority Support</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
