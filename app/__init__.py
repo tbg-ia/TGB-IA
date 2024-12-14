@@ -50,15 +50,8 @@ def create_app():
     with app.app_context():
         db.create_all()
         
-        # Initialize roles if they don't exist
+        # Initialize roles
         from app.models.role import Role
-        if not Role.query.first():
-            roles = [
-                Role(name='admin', description='Administrator with full access'),
-                Role(name='user', description='Regular user with basic access')
-            ]
-            for role in roles:
-                db.session.add(role)
-            db.session.commit()
+        Role.insert_roles()
 
     return app
