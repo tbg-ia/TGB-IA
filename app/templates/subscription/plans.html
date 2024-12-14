@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="text-center mb-5">Planes de Suscripción</h2>
+    
+    <div class="row row-cols-1 row-cols-md-3 mb-3 text-center">
+        <!-- Plan Básico -->
+        <div class="col">
+            <div class="card mb-4 rounded-3 shadow-sm">
+                <div class="card-header py-3">
+                    <h4 class="my-0 fw-normal">Básico</h4>
+                </div>
+                <div class="card-body">
+                    <h1 class="card-title pricing-card-title">$9.99<small class="text-muted fw-light">/mes</small></h1>
+                    <ul class="list-unstyled mt-3 mb-4">
+                        <li>Trading manual</li>
+                        <li>Análisis de mercado básico</li>
+                        <li>Dashboard personalizado</li>
+                        <li>Soporte por email</li>
+                    </ul>
+                    <form action="{{ url_for('subscription.create_checkout_session') }}" method="POST">
+                        <input type="hidden" name="plan_id" value="basic_monthly">
+                        <button type="submit" class="w-100 btn btn-lg btn-outline-primary">Comenzar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Plan Pro -->
+        <div class="col">
+            <div class="card mb-4 rounded-3 shadow-sm border-primary">
+                <div class="card-header py-3 text-bg-primary border-primary">
+                    <h4 class="my-0 fw-normal">Pro</h4>
+                </div>
+                <div class="card-body">
+                    <h1 class="card-title pricing-card-title">$29.99<small class="text-muted fw-light">/mes</small></h1>
+                    <ul class="list-unstyled mt-3 mb-4">
+                        <li>Trading automatizado</li>
+                        <li>Análisis avanzado</li>
+                        <li>Bots de trading personalizados</li>
+                        <li>Soporte prioritario 24/7</li>
+                    </ul>
+                    <form action="{{ url_for('subscription.create_checkout_session') }}" method="POST">
+                        <input type="hidden" name="plan_id" value="pro_monthly">
+                        <button type="submit" class="w-100 btn btn-lg btn-primary">Comenzar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Plan Enterprise -->
+        <div class="col">
+            <div class="card mb-4 rounded-3 shadow-sm">
+                <div class="card-header py-3">
+                    <h4 class="my-0 fw-normal">Enterprise</h4>
+                </div>
+                <div class="card-body">
+                    <h1 class="card-title pricing-card-title">$99.99<small class="text-muted fw-light">/mes</small></h1>
+                    <ul class="list-unstyled mt-3 mb-4">
+                        <li>Trading automatizado avanzado</li>
+                        <li>APIs personalizadas</li>
+                        <li>Bots ilimitados</li>
+                        <li>Soporte dedicado</li>
+                    </ul>
+                    <form action="{{ url_for('subscription.create_checkout_session') }}" method="POST">
+                        <input type="hidden" name="plan_id" value="enterprise_monthly">
+                        <button type="submit" class="w-100 btn btn-lg btn-outline-primary">Contactar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8 mx-auto text-center">
+            <p class="lead">Todos los planes incluyen periodo de prueba de 14 días</p>
+            <p class="text-muted">Cancela en cualquier momento. Sin compromiso.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
