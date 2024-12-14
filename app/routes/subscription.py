@@ -19,7 +19,7 @@ def plans():
     """Muestra los planes de suscripción disponibles"""
     try:
         logging.info("Accediendo a la página de planes")
-        return render_template('subscription/public/plans.html')
+        return render_template('subscription/plans.html')
     except Exception as e:
         logging.error(f"Error al cargar la página de planes: {str(e)}")
         flash('Error al cargar los planes de suscripción', 'error')

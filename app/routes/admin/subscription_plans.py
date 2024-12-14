@@ -15,7 +15,7 @@ admin_subscription_bp = Blueprint('admin_subscription', __name__, url_prefix='/a
 def plans():
     """Lista todos los planes de suscripción"""
     plans = SubscriptionPlan.query.order_by(SubscriptionPlan.price).all()
-    return render_template('subscription/admin/plans.html', plans=plans)
+    return render_template('admin/subscription/plans.html', plans=plans)
 
 @admin_subscription_bp.route('/plans/new', methods=['GET', 'POST'])
 @login_required
