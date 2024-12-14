@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Barra lateral de navegación -->
+        <nav class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'admin.dashboard' %}active{% endif %}" 
+                           href="{{ url_for('admin.dashboard') }}">
+                            <i class="bi bi-speedometer2 me-2"></i>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'admin.users' %}active{% endif %}" 
+                           href="{{ url_for('admin.users') }}">
+                            <i class="bi bi-people me-2"></i>
+                            Usuarios
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'admin_subscription.' in request.endpoint %}active{% endif %}" 
+                           href="{{ url_for('admin_subscription.plans') }}">
+                            <i class="bi bi-tag me-2"></i>
+                            Planes de Suscripción
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle {% if 'admin.config' in request.endpoint or 'admin.settings' in request.endpoint %}active{% endif %}" 
+                           href="#" data-bs-toggle="dropdown">
+                            <i class="bi bi-gear me-2"></i>
+                            Configuración
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark">
+                            <li><a class="dropdown-item" href="{{ url_for('admin.settings') }}">General</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('admin.config') }}">Sistema</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#emailConfigModal">
+                                Configuración Email
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Contenido principal -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            {% block admin_content %}{% endblock %}
+        </main>
+    </div>
+</div>
+{% endblock %}
