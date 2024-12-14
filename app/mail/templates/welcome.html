@@ -1,0 +1,23 @@
+{% extends "mail/base.html" %}
+
+{% block title %}¡Bienvenido a Crypto Trading Platform!{% endblock %}
+
+{% block content %}
+<h2>¡Hola {{ user.username }}!</h2>
+<p>Gracias por unirte a Crypto Trading Platform. Estamos emocionados de tenerte como parte de nuestra comunidad de trading.</p>
+
+<h3>Próximos pasos:</h3>
+<ul>
+    <li>Completa tu perfil</li>
+    <li>Configura tus preferencias de trading</li>
+    <li>Explora nuestros bots de trading automatizados</li>
+</ul>
+
+<p style="text-align: center;">
+    <a href="{{ url_for('user.dashboard', _external=True) }}" class="button">
+        Ir a mi Dashboard
+    </a>
+</p>
+
+<p>Si tienes alguna pregunta, no dudes en contactar a nuestro equipo de soporte.</p>
+{% endblock %}
