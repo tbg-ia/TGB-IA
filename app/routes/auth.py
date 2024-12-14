@@ -14,9 +14,10 @@ def login():
         
         if user and user.check_password(password):
             login_user(user)
+            next_page = request.args.get('next')
             if user.is_admin():
-                return redirect(url_for('crypto.admin_dashboard'))
-            return redirect(url_for('crypto.user_dashboard'))
+                return redirect(next_page or url_for('crypto.admin_dashboard'))
+            return redirect(next_page or url_for('crypto.user_dashboard'))
         flash('Correo electrónico o contraseña inválidos')
     return render_template('public/login.html')
 
