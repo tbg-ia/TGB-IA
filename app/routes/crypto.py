@@ -17,6 +17,10 @@ def admin_dashboard():
 def user_dashboard():
     return render_template('public/user_dashboard.html')
 
+@crypto_bp.route('/planes')
+def planes():
+    return render_template('public/planes.html')
+
 @crypto_bp.route('/bot/create', methods=['POST'])
 @login_required
 def create_bot():
