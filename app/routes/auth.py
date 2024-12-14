@@ -25,6 +25,10 @@ def register():
         username = request.form.get('username')
         password = request.form.get('password')
         
+        # Si es el usuario bitxxo, usar el email específico
+        if username == 'bitxxo':
+            email = 'support@bitxxo.com'
+        
         if User.query.filter_by(email=email).first():
             flash('Email already registered')
             return redirect(url_for('auth.register'))
@@ -34,7 +38,6 @@ def register():
         # Asignar rol de administrador si es el usuario bitxxo
         if username == 'bitxxo':
             user.role = 'admin'
-            user.email = 'support@bitxxo.com'
         db.session.add(user)
         db.session.commit()
         
