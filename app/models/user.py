@@ -8,6 +8,8 @@ class User(UserMixin, db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True, nullable=False)
+    first_name = db.Column(db.String(64))
+    last_name = db.Column(db.String(64))
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(256))
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
@@ -15,6 +17,7 @@ class User(UserMixin, db.Model):
     subscription_expires = db.Column(db.DateTime)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     is_active = db.Column(db.Boolean, default=True)
+    profile_image = db.Column(db.String(255))
 
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
