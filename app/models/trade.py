@@ -2,7 +2,7 @@ from app import db
 from datetime import datetime
 
 class Trade(db.Model):
-    __tablename__ = 'trade'
+    __tablename__ = 'trades'
     
     id = db.Column(db.Integer, primary_key=True)
     symbol = db.Column(db.String(20), nullable=False)  # Par de trading (ej: BTC-USDT)
@@ -19,9 +19,9 @@ class Trade(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     # Foreign Keys
-    exchange_id = db.Column(db.Integer, db.ForeignKey('exchange.id'), nullable=False)
-    bot_id = db.Column(db.Integer, db.ForeignKey('trading_bot.id'))
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    exchange_id = db.Column(db.Integer, db.ForeignKey('exchanges.id'), nullable=False)
+    bot_id = db.Column(db.Integer, db.ForeignKey('trading_bots.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     
     def close_trade(self, close_price):
         """Cierra un trade y calcula el P&L"""

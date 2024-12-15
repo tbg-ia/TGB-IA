@@ -1,12 +1,13 @@
 from app import db
 from datetime import datetime
+from app.models.trade import Trade
 
 class TradingBot(db.Model):
-    __tablename__ = 'trading_bot'
+    __tablename__ = 'trading_bots'
     
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    exchange_id = db.Column(db.Integer, db.ForeignKey('exchange.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    exchange_id = db.Column(db.Integer, db.ForeignKey('exchanges.id', ondelete='CASCADE'), nullable=False)
     name = db.Column(db.String(100))
     strategy = db.Column(db.String(50), nullable=False)
     active = db.Column(db.Boolean, default=False)
