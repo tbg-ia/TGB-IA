@@ -123,7 +123,7 @@ def create_checkout_session():
             }
         else:
             checkout_params['subscription_data'] = {
-                'trial_period_days': 7  # Trial solo para nuevas suscripciones
+                'trial_period_days': 7  # 7 días de prueba para nuevas suscripciones
             }
         
         # Crear sesión de checkout
@@ -284,8 +284,16 @@ def handle_subscription_deleted(subscription_object):
         subscription.status = 'cancelled'
         subscription.end_date = datetime.fromtimestamp(subscription_object.canceled_at)
         
-        # Revertir al plan básico
-        subscription.user.subscription_type = 'basic'
+        # Revocar todos los accesos al cancelar
+        subscription.user.subscription_type = None
+        subscription.user.has_active_subscription = False
+        
+        # Desactivar todos los bots activos del usuario
+        from app.models.trading_bot import TradingBot
+        TradingBot.query.filter_by(user_id=subscription.user_id).update({
+            'is_active': False,
+            'status': 'disabled'
+        })
         
         db.session.commit()
         
