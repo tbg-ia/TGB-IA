@@ -36,12 +36,25 @@ def plans():
         flash('Error al cargar los planes de suscripción', 'error')
         return redirect(url_for('index'))
 
+def get_stripe_credentials():
+    """Obtiene las credenciales de Stripe desde SystemConfig"""
+    from app.models.system_config import SystemConfig
+    return {
+        'api_key': SystemConfig.get_value('STRIPE_SECRET_KEY'),
+        'webhook_secret': SystemConfig.get_value('STRIPE_WEBHOOK_SECRET')
+    }
+
 @subscription_bp.route('/create-checkout-session', methods=['POST'])
 @login_required
 def create_checkout_session():
     """Crea una sesión de checkout de Stripe"""
     try:
-        stripe.api_key = os.environ.get('STRIPE_SECRET_KEY')
+        stripe_credentials = get_stripe_credentials()
+        if not stripe_credentials['api_key']:
+            flash('Error: Stripe no está configurado correctamente', 'error')
+            return redirect(url_for('subscription.plans'))
+            
+        stripe.api_key = stripe_credentials['api_key']
         
         plan_id = request.form.get('plan_id')
         # Verificar que el plan seleccionado es de nivel superior al actual
@@ -163,8 +176,13 @@ def webhook():
     sig_header = request.headers.get('Stripe-Signature')
     
     try:
+        webhook_secret = get_stripe_credentials()['webhook_secret']
+        if not webhook_secret:
+            current_app.logger.error("Stripe webhook secret not configured")
+            return jsonify({'error': 'Webhook secret not configured'}), 500
+            
         event = stripe.Webhook.construct_event(
-            payload, sig_header, current_app.config['STRIPE_WEBHOOK_SECRET']
+            payload, sig_header, webhook_secret
         )
         current_app.logger.info(f"Webhook event received: {event['type']}")
     except ValueError as e:
