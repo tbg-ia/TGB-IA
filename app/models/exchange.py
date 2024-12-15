@@ -7,7 +7,7 @@ class Exchange(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
-    exchange_type = db.Column(db.String(20), nullable=False)  # 'binance', 'bingx', 'oanda'
+    exchange_type = db.Column(db.String(20), nullable=False)  # 'binance', 'bingx', 'oanda', 'kucoin', 'bybit', 'kraken'
     is_forex = db.Column(db.Boolean, default=False)  # Para distinguir exchanges forex
     api_key = db.Column(db.String(200))
     api_secret_hash = db.Column(db.String(256))

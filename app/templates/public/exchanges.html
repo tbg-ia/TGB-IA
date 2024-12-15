@@ -168,9 +168,16 @@
                         <label class="form-label">Select Exchange</label>
                         <select class="form-select" name="exchange_type" id="exchangeSelect">
                             <option value="">Choose an exchange...</option>
-                            <option value="oanda">OANDA</option>
-                            <option value="bingx">BingX</option>
-                            <option value="binance">Binance</option>
+                            <optgroup label="Crypto Exchanges">
+                                <option value="binance">Binance</option>
+                                <option value="bingx">BingX</option>
+                                <option value="kucoin">KuCoin</option>
+                                <option value="bybit">Bybit</option>
+                                <option value="kraken">Kraken</option>
+                            </optgroup>
+                            <optgroup label="Forex">
+                                <option value="oanda">OANDA</option>
+                            </optgroup>
                         </select>
                     </div>
                     
