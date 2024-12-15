@@ -30,7 +30,7 @@ def plans():
             )
         ).all()
         logging.info(f"Planes encontrados: {len(subscription_plans)}")
-        return render_template('subscription/plans.html', plans=subscription_plans)
+        return render_template('subscription/plans.html', subscription_plans=subscription_plans)
     except Exception as e:
         logging.error(f"Error al cargar la página de planes: {str(e)}")
         flash('Error al cargar los planes de suscripción', 'error')
