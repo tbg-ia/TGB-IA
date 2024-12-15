@@ -424,7 +424,21 @@ def get_plan(plan_id):
             'price': plan.price/100,
             'interval': plan.interval,
             'active_signals': exchange_limits['active_signals'],
-            'apis_per_exchange': exchange_limits['apis_per_exchange']
+            'apis_per_exchange': exchange_limits['apis_per_exchange'],
+            'has_manual_trading': plan.has_manual_trading,
+            'has_automated_trading': plan.has_automated_trading,
+            'has_advanced_trading': plan.has_advanced_trading,
+            'has_basic_analysis': plan.has_basic_analysis,
+            'has_advanced_analysis': plan.has_advanced_analysis,
+            'has_custom_dashboard': plan.has_custom_dashboard,
+            'max_bots': plan.max_bots,
+            'has_custom_bots': plan.has_custom_bots,
+            'has_unlimited_bots': plan.has_unlimited_bots,
+            'has_api_access': plan.has_api_access,
+            'has_custom_apis': plan.has_custom_apis,
+            'support_level': plan.support_level,
+            'trial_days': plan.trial_days,
+            'cancellation_type': plan.cancellation_type
         })
     except Exception as e:
         logging.error(f"Error fetching plan {plan_id}: {str(e)}")
@@ -435,12 +449,23 @@ def get_plan(plan_id):
 @admin_required
 def update_plan(plan_id):
     try:
+        logging.info(f"Actualizando plan {plan_id} con datos: {request.form}")
         plan = SubscriptionPlan.query.get_or_404(plan_id)
         
+        if not request.form.get('name'):
+            raise ValueError("El nombre del plan es requerido")
+        
+        if not request.form.get('price'):
+            raise ValueError("El precio es requerido")
+            
         # Actualizar datos básicos del plan
         plan.name = request.form.get('name')
         plan.description = request.form.get('description')
-        plan.price = int(float(request.form.get('price')) * 100)  # Convertir a centavos
+        try:
+            plan.price = int(float(request.form.get('price', 0)) * 100)  # Convertir a centavos
+        except ValueError:
+            raise ValueError("El precio debe ser un número válido")
+            
         plan.interval = request.form.get('interval', 'month')
         
         # Características básicas
@@ -452,7 +477,11 @@ def update_plan(plan_id):
         plan.has_custom_dashboard = request.form.get('has_custom_dashboard') == 'on'
         
         # Características de bots y API
-        plan.max_bots = int(request.form.get('max_bots', 1))
+        try:
+            plan.max_bots = int(request.form.get('max_bots', 1))
+        except ValueError:
+            raise ValueError("El número máximo de bots debe ser un número entero")
+            
         plan.has_custom_bots = request.form.get('has_custom_bots') == 'on'
         plan.has_unlimited_bots = request.form.get('has_unlimited_bots') == 'on'
         plan.has_api_access = request.form.get('has_api_access') == 'on'
@@ -460,7 +489,11 @@ def update_plan(plan_id):
         
         # Soporte y sistema
         plan.support_level = request.form.get('support_level', 'email')
-        plan.trial_days = int(request.form.get('trial_days', 14))
+        try:
+            plan.trial_days = int(request.form.get('trial_days', 14))
+        except ValueError:
+            raise ValueError("Los días de prueba deben ser un número entero")
+            
         plan.cancellation_type = request.form.get('cancellation_type', 'anytime')
         
         # Actualizar o crear permisos de exchange
@@ -469,19 +502,24 @@ def update_plan(plan_id):
             exchange_permission = ExchangePermission(subscription_plan_id=plan.id)
             db.session.add(exchange_permission)
         
-        exchange_permission.active_signals = int(request.form.get('active_signals', 1))
-        exchange_permission.apis_per_exchange = int(request.form.get('apis_per_exchange', 1))
+        try:
+            exchange_permission.active_signals = int(request.form.get('active_signals', 1))
+            exchange_permission.apis_per_exchange = int(request.form.get('apis_per_exchange', 1))
+        except ValueError:
+            raise ValueError("Los valores de señales activas y APIs por exchange deben ser números enteros")
         
         db.session.commit()
         
+        logging.info(f"Plan {plan_id} actualizado exitosamente")
         flash('Plan actualizado exitosamente', 'success')
         return jsonify({'success': True})
     except ValueError as e:
         db.session.rollback()
+        logging.error(f"Error de validación al actualizar plan {plan_id}: {str(e)}")
         return jsonify({'error': str(e)}), 400
     except Exception as e:
         db.session.rollback()
-        logging.error(f"Error updating plan {plan_id}: {str(e)}")
+        logging.error(f"Error al actualizar plan {plan_id}: {str(e)}")
         return jsonify({'error': 'Error al actualizar el plan'}), 500
 
 @admin_bp.route('/subscription/plans/save', methods=['POST'])
