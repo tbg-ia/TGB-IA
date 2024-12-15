@@ -87,15 +87,18 @@
                     <div class="features-section mb-3">
                         <h6 class="text-muted border-bottom pb-2">Trading</h6>
                         <ul class="list-unstyled">
-                            {% if plan.has_manual_trading %}
-                            <li><i class="bi bi-check-circle text-success"></i> Trading manual</li>
-                            {% endif %}
-                            {% if plan.has_automated_trading %}
-                            <li><i class="bi bi-check-circle text-success"></i> Trading automatizado</li>
-                            {% endif %}
-                            {% if plan.has_advanced_trading %}
-                            <li><i class="bi bi-check-circle text-success"></i> Trading avanzado</li>
-                            {% endif %}
+                            <li>
+                                <i class="bi bi-{% if plan.has_manual_trading %}check-circle text-success{% else %}x-circle text-danger{% endif %}"></i>
+                                Trading manual
+                            </li>
+                            <li>
+                                <i class="bi bi-{% if plan.has_automated_trading %}check-circle text-success{% else %}x-circle text-danger{% endif %}"></i>
+                                Trading automatizado
+                            </li>
+                            <li>
+                                <i class="bi bi-{% if plan.has_advanced_trading %}check-circle text-success{% else %}x-circle text-danger{% endif %}"></i>
+                                Trading avanzado
+                            </li>
                         </ul>
                     </div>
 
@@ -103,15 +106,18 @@
                     <div class="features-section mb-3">
                         <h6 class="text-muted border-bottom pb-2">Análisis</h6>
                         <ul class="list-unstyled">
-                            {% if plan.has_basic_analysis %}
-                            <li><i class="bi bi-check-circle text-success"></i> Análisis básico</li>
-                            {% endif %}
-                            {% if plan.has_advanced_analysis %}
-                            <li><i class="bi bi-check-circle text-success"></i> Análisis avanzado</li>
-                            {% endif %}
-                            {% if plan.has_custom_dashboard %}
-                            <li><i class="bi bi-check-circle text-success"></i> Dashboard personalizado</li>
-                            {% endif %}
+                            <li>
+                                <i class="bi bi-{% if plan.has_basic_analysis %}check-circle text-success{% else %}x-circle text-danger{% endif %}"></i>
+                                Análisis básico
+                            </li>
+                            <li>
+                                <i class="bi bi-{% if plan.has_advanced_analysis %}check-circle text-success{% else %}x-circle text-danger{% endif %}"></i>
+                                Análisis avanzado
+                            </li>
+                            <li>
+                                <i class="bi bi-{% if plan.has_custom_dashboard %}check-circle text-success{% else %}x-circle text-danger{% endif %}"></i>
+                                Dashboard personalizado
+                            </li>
                         </ul>
                     </div>
 
