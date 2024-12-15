@@ -1,34 +1,39 @@
 import os
+import logging
 from flask_mail import Mail
 
+logger = logging.getLogger(__name__)
+
 class EmailConfig:
-    _instance = None
-    mail = Mail()
-    
     def __init__(self):
-        self.MAIL_SERVER = os.environ.get('MAIL_SERVER', 'us2.smtp.mailhostbox.com')
-        self.MAIL_PORT = int(os.environ.get('MAIL_PORT', 587))
-        self.MAIL_USE_TLS = True
-        self.MAIL_USERNAME = os.environ.get('MAIL_USERNAME', 'support@bitxxo.com')
-        self.MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD', '')
-        self.MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER', 'support@bitxxo.com')
+        """Initialize email configuration from environment variables."""
+        self.config = {
+            'MAIL_SERVER': os.environ.get('MAIL_SERVER', 'us2.smtp.mailhostbox.com'),
+            'MAIL_PORT': int(os.environ.get('MAIL_PORT', 587)),
+            'MAIL_USE_TLS': True,
+            'MAIL_USERNAME': os.environ.get('MAIL_USERNAME', 'support@bitxxo.com'),
+            'MAIL_PASSWORD': os.environ.get('MAIL_PASSWORD', ''),
+            'MAIL_DEFAULT_SENDER': os.environ.get('MAIL_DEFAULT_SENDER', 'support@bitxxo.com')
+        }
+        self.mail = None
+        logger.info("Email configuration initialized")
     
-    @classmethod
-    def get_instance(cls):
-        if cls._instance is None:
-            cls._instance = cls()
-        return cls._instance
-    
-    @classmethod
-    def init_app(cls, app):
-        config = cls.get_instance()
-        app.config.update(
-            MAIL_SERVER=config.MAIL_SERVER,
-            MAIL_PORT=config.MAIL_PORT,
-            MAIL_USE_TLS=config.MAIL_USE_TLS,
-            MAIL_USERNAME=config.MAIL_USERNAME,
-            MAIL_PASSWORD=config.MAIL_PASSWORD,
-            MAIL_DEFAULT_SENDER=config.MAIL_DEFAULT_SENDER
-        )
-        cls.mail.init_app(app)
-        return cls.mail
+    def init_mail(self, app):
+        """Initialize Flask-Mail with the current application context."""
+        try:
+            if not self.mail:
+                self.mail = Mail()
+            
+            # Update app config
+            app.config.update(self.config)
+            
+            # Initialize mail with app
+            self.mail.init_app(app)
+            logger.info("Flask-Mail initialized successfully")
+            return self.mail
+        except Exception as e:
+            logger.error(f"Error initializing Flask-Mail: {str(e)}")
+            raise
+
+# Create global instance
+email_config = EmailConfig()

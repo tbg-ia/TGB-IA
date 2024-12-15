@@ -8,6 +8,7 @@ from app.models.trading_bot import TradingBot, Trade
 from app import db
 import logging
 import stripe
+import os
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -270,7 +271,7 @@ def save_email_settings():
 
         # Actualizar la configuración de email en la aplicación
         try:
-            from app.mail.smtp_settings import EmailConfig
+            from app.mail.smtp_settings import email_config as EmailConfig #Renamed to avoid import conflict
             mail = EmailConfig.init_app(current_app)
             
             # Probar la conexión
@@ -484,10 +485,10 @@ def test_email():
     
     try:
         from flask_mail import Message
-        from app.mail.smtp_settings import EmailConfig
+        from app.mail.smtp_settings import email_config
         
         test_email = request.form.get('test_email')
-        mail = EmailConfig.get_instance().mail
+        mail = email_config.init_mail(current_app)
         
         msg = Message(
             'Test de Configuración SMTP',
