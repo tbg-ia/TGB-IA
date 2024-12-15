@@ -1,6 +1,5 @@
 from app import db
 from datetime import datetime
-from app.models.permission import Permission
 
 # Tabla intermedia para la relación muchos a muchos entre planes y permisos
 plan_permissions = db.Table('plan_permissions',
@@ -8,6 +7,10 @@ plan_permissions = db.Table('plan_permissions',
     db.Column('permission_id', db.Integer, db.ForeignKey('permissions.id'), primary_key=True),
     db.Column('created_at', db.DateTime, default=datetime.utcnow)
 )
+
+# Importar después de definir las tablas para evitar referencias circulares
+from app.models.permission import Permission
+from app.models.exchange_permission import ExchangePermission
 
 class SubscriptionPlan(db.Model):
     __tablename__ = 'subscription_plans'
@@ -71,3 +74,17 @@ class SubscriptionPlan(db.Model):
     def has_permission(self, permission_code):
         """Verifica si el plan tiene un permiso específico por su código"""
         return any(p.code == permission_code for p in self.permissions)
+        
+    # Relación con los permisos de exchange
+    exchange_permission = db.relationship('ExchangePermission', 
+                                       backref='subscription_plan',
+                                       uselist=False)
+                                       
+    def get_exchange_limits(self):
+        """Obtiene los límites de exchange para el plan"""
+        if self.exchange_permission:
+            return {
+                'active_signals': self.exchange_permission.active_signals,
+                'apis_per_exchange': self.exchange_permission.apis_per_exchange
+            }
+        return {'active_signals': 1, 'apis_per_exchange': 1}  # valores por defecto
