@@ -1,18 +1,18 @@
 from app import db
 from datetime import datetime
-
-# Tabla intermedia para la relación muchos a muchos entre planes y permisos
-plan_permissions = db.Table('plan_permissions',
-    db.Column('plan_id', db.Integer, db.ForeignKey('subscription_plans.id'), primary_key=True),
-    db.Column('permission_id', db.Integer, db.ForeignKey('permissions.id'), primary_key=True),
-    db.Column('created_at', db.DateTime, default=datetime.utcnow)
-)
-
-# Importar después de definir las tablas para evitar referencias circulares
+from sqlalchemy.orm import relationship
 from app.models.permission import Permission
 from app.models.exchange_permission import ExchangePermission
 
+# Tabla intermedia para la relación muchos a muchos entre planes y permisos
+plan_permissions = db.Table('plan_permissions',
+    db.Column('plan_id', db.Integer, db.ForeignKey('subscription_plans.id', ondelete='CASCADE'), primary_key=True),
+    db.Column('permission_id', db.Integer, db.ForeignKey('permissions.id', ondelete='CASCADE'), primary_key=True),
+    db.Column('created_at', db.DateTime, default=datetime.utcnow)
+)
+
 class SubscriptionPlan(db.Model):
+    """Modelo para los planes de suscripción"""
     __tablename__ = 'subscription_plans'
     
     id = db.Column(db.Integer, primary_key=True)
@@ -75,14 +75,9 @@ class SubscriptionPlan(db.Model):
         """Verifica si el plan tiene un permiso específico por su código"""
         return any(p.code == permission_code for p in self.permissions)
         
-    # Relación con los permisos de exchange
-    exchange_permission = db.relationship('ExchangePermission', 
-                                       backref='subscription_plan',
-                                       uselist=False)
-                                       
     def get_exchange_limits(self):
         """Obtiene los límites de exchange para el plan"""
-        if self.exchange_permission:
+        if hasattr(self, 'exchange_permission') and self.exchange_permission:
             return {
                 'active_signals': self.exchange_permission.active_signals,
                 'apis_per_exchange': self.exchange_permission.apis_per_exchange
