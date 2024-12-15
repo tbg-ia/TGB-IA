@@ -63,71 +63,42 @@
     </div>
     
     <div class="row row-cols-1 row-cols-md-3 mb-3 text-center">
-        <!-- Plan Básico -->
+        {% for plan in subscription_plans %}
         <div class="col">
-            <div class="card mb-4 rounded-3 shadow-sm">
-                <div class="card-header py-3">
-                    <h4 class="my-0 fw-normal">Básico</h4>
+            <div class="card mb-4 rounded-3 {% if plan.name == 'Pro' %}shadow-sm border-primary{% else %}shadow-sm{% endif %}">
+                <div class="card-header py-3 {% if plan.name == 'Pro' %}text-bg-primary border-primary{% endif %}">
+                    <h4 class="my-0 fw-normal">{{ plan.name }}</h4>
+                    {% if current_user.is_admin %}
+                    <button type="button" class="btn btn-sm btn-outline-secondary mt-2" onclick="editPlan({{ plan.id }})">
+                        <i class="bi bi-pencil"></i> Editar
+                    </button>
+                    {% endif %}
                 </div>
                 <div class="card-body">
-                    <h1 class="card-title pricing-card-title">$0.99<small class="text-muted fw-light">/mes</small></h1>
+                    <h1 class="card-title pricing-card-title">${{ "%.2f"|format(plan.price/100) }}<small class="text-muted fw-light">/{{ plan.interval }}</small></h1>
                     <ul class="list-unstyled mt-3 mb-4">
-                        <li>Trading manual</li>
-                        <li>Análisis de mercado básico</li>
-                        <li>Dashboard personalizado</li>
-                        <li>Soporte por email</li>
+                        {% if plan.has_manual_trading %}<li>Trading manual</li>{% endif %}
+                        {% if plan.has_automated_trading %}<li>Trading automatizado</li>{% endif %}
+                        {% if plan.has_advanced_trading %}<li>Trading avanzado</li>{% endif %}
+                        {% if plan.has_basic_analysis %}<li>Análisis básico</li>{% endif %}
+                        {% if plan.has_advanced_analysis %}<li>Análisis avanzado</li>{% endif %}
+                        {% if plan.has_custom_dashboard %}<li>Dashboard personalizado</li>{% endif %}
+                        {% if plan.has_custom_bots %}<li>Bots personalizados</li>{% endif %}
+                        {% if plan.has_unlimited_bots %}<li>Bots ilimitados</li>{% endif %}
+                        {% if plan.has_api_access %}<li>Acceso API</li>{% endif %}
+                        {% if plan.has_custom_apis %}<li>APIs personalizadas</li>{% endif %}
+                        <li>Soporte {{ plan.support_level }}</li>
                     </ul>
                     <form action="{{ url_for('subscription.create_checkout_session') }}" method="POST">
-                        <input type="hidden" name="plan_id" value="basic_monthly">
-                        <button type="submit" class="w-100 btn btn-lg btn-outline-primary">Comenzar</button>
+                        <input type="hidden" name="plan_id" value="{{ plan.id }}">
+                        <button type="submit" class="w-100 btn btn-lg {% if plan.name == 'Pro' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                            {% if plan.name == 'Enterprise' %}Contactar{% else %}Comenzar{% endif %}
+                        </button>
                     </form>
                 </div>
             </div>
         </div>
-
-        <!-- Plan Pro -->
-        <div class="col">
-            <div class="card mb-4 rounded-3 shadow-sm border-primary">
-                <div class="card-header py-3 text-bg-primary border-primary">
-                    <h4 class="my-0 fw-normal">Pro</h4>
-                </div>
-                <div class="card-body">
-                    <h1 class="card-title pricing-card-title">$29.99<small class="text-muted fw-light">/mes</small></h1>
-                    <ul class="list-unstyled mt-3 mb-4">
-                        <li>Trading automatizado</li>
-                        <li>Análisis avanzado</li>
-                        <li>Bots de trading personalizados</li>
-                        <li>Soporte prioritario 24/7</li>
-                    </ul>
-                    <form action="{{ url_for('subscription.create_checkout_session') }}" method="POST">
-                        <input type="hidden" name="plan_id" value="pro_monthly">
-                        <button type="submit" class="w-100 btn btn-lg btn-primary">Comenzar</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <!-- Plan Enterprise -->
-        <div class="col">
-            <div class="card mb-4 rounded-3 shadow-sm">
-                <div class="card-header py-3">
-                    <h4 class="my-0 fw-normal">Enterprise</h4>
-                </div>
-                <div class="card-body">
-                    <h1 class="card-title pricing-card-title">$99.99<small class="text-muted fw-light">/mes</small></h1>
-                    <ul class="list-unstyled mt-3 mb-4">
-                        <li>Trading automatizado avanzado</li>
-                        <li>APIs personalizadas</li>
-                        <li>Bots ilimitados</li>
-                        <li>Soporte dedicado</li>
-                    </ul>
-                    <form action="{{ url_for('subscription.create_checkout_session') }}" method="POST">
-                        <input type="hidden" name="plan_id" value="enterprise_monthly">
-                        <button type="submit" class="w-100 btn btn-lg btn-outline-primary">Contactar</button>
-                    </form>
-                </div>
-            </div>
-        </div>
+        {% endfor %}
     </div>
 
     <div class="row">
