@@ -65,256 +65,208 @@
             </div>
         </div>
     </div>
+
+    <!-- Exchange Status Cards -->
+    <div class="row mt-4">
         {% for exchange in exchanges %}
         <div class="col-md-6 mb-4">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <div class="d-flex align-items-center">
-                        <img src="{{ url_for('static', filename='img/exchanges/' + exchange.name.lower() + '.svg') }}" 
-                             alt="{{ exchange.name }}" class="me-2" style="height: 24px;">
-                        <h5 class="card-title mb-0">{{ exchange.name }}</h5>
-                    </div>
+                    <h5 class="card-title mb-0">Estado {{ exchange.name }}</h5>
                     <span class="badge {% if exchange.is_active %}bg-success{% else %}bg-secondary{% endif %}">
-                        {{ 'Activo' if exchange.is_active else 'Inactivo' }}
-                    </span>
-                </div>
-                <div class="card-body">
-                    <form method="POST" action="{{ url_for('user.save_exchange_config', exchange_id=exchange.id) }}">
-                        <div class="mb-3">
-                            <label class="form-label">API Key</label>
-                            <input type="text" class="form-control" name="api_key" 
-                                   value="{{ exchange.api_key|mask_key if exchange.api_key else '' }}"
-                                   placeholder="Ingresa tu API Key">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">API Secret</label>
-                            <input type="password" class="form-control" name="api_secret" 
-                                   placeholder="Ingresa tu API Secret">
-                        </div>
-                        <div class="mb-3">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" name="is_active" 
-                                       {% if exchange.is_active %}checked{% endif %}>
-                                <label class="form-check-label">Activar Exchange</label>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Guardar Configuración</button>
-                    </form>
-                </div>
-                <div class="card-footer">
-                    <small class="text-muted">
-                        Última actualización: 
-    <!-- Add Exchange Modal -->
-    <div class="modal fade" id="addExchangeModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Add Exchange</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="addExchangeForm">
-                        <div class="mb-3">
-                            <label class="form-label">Select Exchange</label>
-                            <select class="form-select" name="exchange_type" id="exchangeSelect">
-                                <option value="">Choose an exchange...</option>
-                                <option value="oanda">OANDA</option>
-                                <option value="bingx">BingX</option>
-                                <option value="binance">Binance</option>
-                            </select>
-                        </div>
-                        
-                        <!-- OANDA Fields -->
-                        <div id="oandaFields" style="display: none;">
-                            <div class="mb-3">
-                                <label class="form-label">OANDA API Key</label>
-                                <input type="password" class="form-control" name="oanda_api_key" 
-                                       placeholder="Enter your OANDA API Key">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">OANDA Account ID</label>
-                                <input type="text" class="form-control" name="oanda_account_id" 
-                                       placeholder="Enter your OANDA Account ID">
-                            </div>
-                        </div>
-                        
-                        <!-- Other Exchange Fields -->
-                        <div id="otherExchangeFields" style="display: none;">
-                            <div class="mb-3">
-                                <label class="form-label">API Key</label>
-                                <input type="text" class="form-control" name="api_key" 
-                                       placeholder="Enter API Key">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">API Secret</label>
-                                <input type="password" class="form-control" name="api_secret" 
-                                       placeholder="Enter API Secret">
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" onclick="addExchange()">Add Exchange</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Configure Exchange Modal -->
-    <div class="modal fade" id="configureExchangeModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Configure Exchange</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="configureExchangeForm">
-                        <input type="hidden" name="exchange_id" id="configureExchangeId">
-                        <div class="mb-3">
-                            <label class="form-label">API Key</label>
-                            <input type="text" class="form-control" name="api_key" 
-                                   placeholder="Enter new API Key">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">API Secret</label>
-                            <input type="password" class="form-control" name="api_secret" 
-                                   placeholder="Enter new API Secret">
-                        </div>
-                        <div class="form-check form-switch mb-3">
-                            <input class="form-check-input" type="checkbox" name="is_active" id="exchangeActiveSwitch">
-                            <label class="form-check-label">Active</label>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" onclick="updateExchange()">Save Changes</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        document.getElementById('exchangeSelect').addEventListener('change', function() {
-            const oandaFields = document.getElementById('oandaFields');
-            const otherExchangeFields = document.getElementById('otherExchangeFields');
-            
-            if (this.value === 'oanda') {
-                oandaFields.style.display = 'block';
-                otherExchangeFields.style.display = 'none';
-            } else if (this.value) {
-                oandaFields.style.display = 'none';
-                otherExchangeFields.style.display = 'block';
-            } else {
-                oandaFields.style.display = 'none';
-                otherExchangeFields.style.display = 'none';
-            }
-        });
-
-        function addExchange() {
-            const form = document.getElementById('addExchangeForm');
-            const formData = new FormData(form);
-            
-            fetch('/api/exchanges/add', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(Object.fromEntries(formData))
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    window.location.reload();
-                } else {
-                    alert(data.error || 'Error adding exchange');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error adding exchange');
-            });
-        }
-
-        function updateExchange() {
-            const form = document.getElementById('configureExchangeForm');
-            const formData = new FormData(form);
-            
-            fetch('/api/exchanges/update', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(Object.fromEntries(formData))
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    window.location.reload();
-                } else {
-                    alert(data.error || 'Error updating exchange');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error updating exchange');
-            });
-        }
-    </script>
-</div>
-{% endblock %}
-                        {% if exchange.last_updated %}
-                            {{ exchange.last_updated.strftime('%d-%m-%Y %H:%M') }}
-                        {% else %}
-                            Nunca
-                        {% endif %}
-                    </small>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-        
-        <div class="col-md-6 mb-4">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">Estado BingX</h5>
-                    <span class="badge {% if exchange.name == 'BingX' and exchange.is_active %}bg-success{% else %}bg-secondary{% endif %}">
-                        {{ 'Conectado' if exchange.name == 'BingX' and exchange.is_active else 'Desconectado' }}
+                        {{ 'Conectado' if exchange.is_active else 'Desconectado' }}
                     </span>
                 </div>
                 <div class="card-body">
                     <div class="mb-3">
                         <label class="form-label">Estado API</label>
                         <div class="d-flex align-items-center">
-                            <span class="badge {% if exchange.name == 'BingX' and exchange.is_active %}bg-success{% else %}bg-secondary{% endif %} me-2">
-                                {{ 'Activa' if exchange.name == 'BingX' and exchange.is_active else 'Inactiva' }}
+                            <span class="badge {% if exchange.is_active %}bg-success{% else %}bg-secondary{% endif %} me-2">
+                                {{ 'Activa' if exchange.is_active else 'Inactiva' }}
                             </span>
-                            {% if exchange.name == 'BingX' and exchange.last_error %}
+                            {% if exchange.last_error %}
                             <small class="text-danger">{{ exchange.last_error }}</small>
                             {% endif %}
                         </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Balance Disponible</label>
-                        <h4>{{ "%.2f"|format(account_balance|default(0)) }} USDT</h4>
+                        <h4>{{ "%.2f"|format(exchange.balance|default(0)) }} {{ exchange.quote_currency|default('USDT') }}</h4>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Pares Disponibles</label>
-                        <p class="mb-0">{{ exchange.available_pairs|length if exchange.name == 'BingX' else 0 }} pares de trading</p>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Límites de Trading</label>
-                        <ul class="list-unstyled mb-0">
-                            <li>Min: {{ exchange.min_trade_amount|default(10) }} USDT</li>
-                            <li>Max: {{ exchange.max_trade_amount|default(100000) }} USDT</li>
-                            <li>Apalancamiento: hasta {{ exchange.max_leverage|default(20) }}x</li>
-                        </ul>
+                        <label class="form-label">Última Actualización</label>
+                        <p class="mb-0">
+                            {% if exchange.last_updated %}
+                                {{ exchange.last_updated.strftime('%d-%m-%Y %H:%M') }}
+                            {% else %}
+                                Nunca
+                            {% endif %}
+                        </p>
                     </div>
                 </div>
             </div>
         </div>
+        {% endfor %}
     </div>
 </div>
+
+<!-- Add Exchange Modal -->
+<div class="modal fade" id="addExchangeModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Exchange</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addExchangeForm">
+                    <div class="mb-3">
+                        <label class="form-label">Select Exchange</label>
+                        <select class="form-select" name="exchange_type" id="exchangeSelect">
+                            <option value="">Choose an exchange...</option>
+                            <option value="oanda">OANDA</option>
+                            <option value="bingx">BingX</option>
+                            <option value="binance">Binance</option>
+                        </select>
+                    </div>
+                    
+                    <!-- OANDA Fields -->
+                    <div id="oandaFields" style="display: none;">
+                        <div class="mb-3">
+                            <label class="form-label">OANDA API Key</label>
+                            <input type="password" class="form-control" name="oanda_api_key" 
+                                   placeholder="Enter your OANDA API Key">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">OANDA Account ID</label>
+                            <input type="text" class="form-control" name="oanda_account_id" 
+                                   placeholder="Enter your OANDA Account ID">
+                        </div>
+                    </div>
+                    
+                    <!-- Other Exchange Fields -->
+                    <div id="otherExchangeFields" style="display: none;">
+                        <div class="mb-3">
+                            <label class="form-label">API Key</label>
+                            <input type="text" class="form-control" name="api_key" 
+                                   placeholder="Enter API Key">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">API Secret</label>
+                            <input type="password" class="form-control" name="api_secret" 
+                                   placeholder="Enter API Secret">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="addExchange()">Add Exchange</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Configure Exchange Modal -->
+<div class="modal fade" id="configureExchangeModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Configure Exchange</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="configureExchangeForm">
+                    <input type="hidden" name="exchange_id" id="configureExchangeId">
+                    <div class="mb-3">
+                        <label class="form-label">API Key</label>
+                        <input type="text" class="form-control" name="api_key" 
+                               placeholder="Enter new API Key">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">API Secret</label>
+                        <input type="password" class="form-control" name="api_secret" 
+                               placeholder="Enter new API Secret">
+                    </div>
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" name="is_active" id="exchangeActiveSwitch">
+                        <label class="form-check-label">Active</label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="updateExchange()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('exchangeSelect').addEventListener('change', function() {
+        const oandaFields = document.getElementById('oandaFields');
+        const otherExchangeFields = document.getElementById('otherExchangeFields');
+        
+        if (this.value === 'oanda') {
+            oandaFields.style.display = 'block';
+            otherExchangeFields.style.display = 'none';
+        } else if (this.value) {
+            oandaFields.style.display = 'none';
+            otherExchangeFields.style.display = 'block';
+        } else {
+            oandaFields.style.display = 'none';
+            otherExchangeFields.style.display = 'none';
+        }
+    });
+
+    function addExchange() {
+        const form = document.getElementById('addExchangeForm');
+        const formData = new FormData(form);
+        
+        fetch('/api/exchanges/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(Object.fromEntries(formData))
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.reload();
+            } else {
+                alert(data.error || 'Error adding exchange');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error adding exchange');
+        });
+    }
+
+    function updateExchange() {
+        const form = document.getElementById('configureExchangeForm');
+        const formData = new FormData(form);
+        
+        fetch('/api/exchanges/update', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(Object.fromEntries(formData))
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.reload();
+            } else {
+                alert(data.error || 'Error updating exchange');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error updating exchange');
+        });
+    }
+</script>
 {% endblock %}
