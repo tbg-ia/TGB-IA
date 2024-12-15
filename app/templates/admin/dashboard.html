@@ -118,26 +118,38 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h5 class="card-title mb-0">Active Bots</h5>
-                                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#newBotModal">
-                                    <i class="bi bi-plus"></i> New Bot
+                                <h5 class="card-title mb-0">Planes de Suscripción</h5>
+                                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editPlanModal">
+                                    <i class="bi bi-pencil"></i> Editar Planes
                                 </button>
                             </div>
-                            {% for bot in bots %}
-                            <div class="bot-card mb-3 p-2 border rounded">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h6 class="mb-1">{{ bot.trading_pair }}</h6>
-                                        <small class="text-muted">Strategy: {{ bot.strategy }}</small>
-                                    </div>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" 
-                                               {% if bot.active %}checked{% endif %}
-                                               onchange="toggleBot({{ bot.id }})">
-                                    </div>
-                                </div>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Plan</th>
+                                            <th>Señales Activas</th>
+                                            <th>APIs por Exchange</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for plan in subscription_plans %}
+                                        <tr>
+                                            <td>{{ plan.name }}</td>
+                                            <td>{{ plan.get_exchange_limits()['active_signals'] }}</td>
+                                            <td>{{ plan.get_exchange_limits()['apis_per_exchange'] }}</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary" 
+                                                        onclick="editPlan({{ plan.id }})">
+                                                    <i class="bi bi-pencil"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
                             </div>
-                            {% endfor %}
                         </div>
                     </div>
                 </div>
@@ -379,6 +391,90 @@ function createBot() {
             const modal = bootstrap.Modal.getInstance(document.getElementById('newBotModal'));
             modal.hide();
             window.location.reload();
+<!-- Modal Editar Plan -->
+<div class="modal fade" id="editPlanModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Editar Plan de Suscripción</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editPlanForm">
+                    <input type="hidden" id="planId" name="plan_id">
+                    <div class="mb-3">
+                        <label class="form-label">Nombre del Plan</label>
+                        <input type="text" class="form-control" id="planName" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Señales Activas</label>
+                        <input type="number" class="form-control" id="activeSignals" name="active_signals" required min="1">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">APIs por Exchange</label>
+                        <input type="number" class="form-control" id="apisPerExchange" name="apis_per_exchange" required min="1">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Precio (USD)</label>
+                        <input type="number" class="form-control" id="planPrice" name="price" required step="0.01">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="savePlan()">
+                    Guardar Cambios
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function editPlan(planId) {
+    fetch(`/admin/subscription/plans/${planId}`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('planId').value = planId;
+            document.getElementById('planName').value = data.name;
+            document.getElementById('activeSignals').value = data.active_signals;
+            document.getElementById('apisPerExchange').value = data.apis_per_exchange;
+            document.getElementById('planPrice').value = data.price;
+            
+            const modal = new bootstrap.Modal(document.getElementById('editPlanModal'));
+            modal.show();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al cargar los datos del plan');
+        });
+}
+
+function savePlan() {
+    const form = document.getElementById('editPlanForm');
+    const formData = new FormData(form);
+    const planId = formData.get('plan_id');
+
+    fetch(`/admin/subscription/plans/${planId}/update`, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const modal = bootstrap.Modal.getInstance(document.getElementById('editPlanModal'));
+            modal.hide();
+            window.location.reload();
+        } else {
+            alert(data.error || 'Error al actualizar el plan');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error al actualizar el plan');
+    });
+}
+</script>
         } else {
             alert(data.error || 'Error al crear el bot');
         }
@@ -387,6 +483,10 @@ function createBot() {
         console.error('Error:', error);
         alert('Error al crear el bot');
     });
+}
+// Add editPlan function (this is a placeholder, needs actual implementation)
+function editPlan(planId) {
+    alert(`Editing plan with ID: ${planId}`); // Replace with actual modal logic
 }
 </script>
 {% endblock %}

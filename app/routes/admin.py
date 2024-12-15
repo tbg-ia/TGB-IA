@@ -60,9 +60,13 @@ def dashboard():
             'stripe_configured': stripe_configured
         }
         
+        # Obtener planes de suscripción
+        subscription_plans = SubscriptionPlan.query.all()
+        
         return render_template('admin/dashboard.html', 
                              stats=stats,
-                             trades=recent_trades)
+                             trades=recent_trades,
+                             subscription_plans=subscription_plans)
     except Exception as e:
         logging.error(f"Error in admin dashboard: {str(e)}")
         flash('Error loading dashboard data', 'error')
@@ -406,24 +410,56 @@ def subscription_plans():
         flash('Error al cargar los planes de suscripción', 'error')
         return redirect(url_for('admin.dashboard'))
 
-@admin_bp.route('/subscription/plans/<price_id>')
+@admin_bp.route('/subscription/plans/<int:plan_id>')
 @login_required
 @admin_required
-def get_plan(price_id):
+def get_plan(plan_id):
     try:
-        stripe.api_key = current_app.config['STRIPE_SECRET_KEY']
-        price = stripe.Price.retrieve(price_id, expand=['product'])
+        plan = SubscriptionPlan.query.get_or_404(plan_id)
+        exchange_limits = plan.get_exchange_limits()
         
         return jsonify({
-            'name': price.product.name,
-            'description': price.product.description,
-            'price': price.unit_amount/100,
-            'interval': price.recurring.interval,
-            'features': price.product.metadata.get('features', '').split('\n')
+            'name': plan.name,
+            'description': plan.description,
+            'price': plan.price/100,
+            'interval': plan.interval,
+            'active_signals': exchange_limits['active_signals'],
+            'apis_per_exchange': exchange_limits['apis_per_exchange']
         })
     except Exception as e:
-        logging.error(f"Error fetching plan {price_id}: {str(e)}")
+        logging.error(f"Error fetching plan {plan_id}: {str(e)}")
         return jsonify({'error': 'Plan not found'}), 404
+
+@admin_bp.route('/subscription/plans/<int:plan_id>/update', methods=['POST'])
+@login_required
+@admin_required
+def update_plan(plan_id):
+    try:
+        plan = SubscriptionPlan.query.get_or_404(plan_id)
+        
+        # Actualizar datos básicos del plan
+        plan.name = request.form.get('name')
+        plan.price = int(float(request.form.get('price')) * 100)  # Convertir a centavos
+        
+        # Actualizar o crear permisos de exchange
+        exchange_permission = plan.exchange_permission
+        if not exchange_permission:
+            exchange_permission = ExchangePermission(subscription_plan_id=plan.id)
+            db.session.add(exchange_permission)
+        
+        exchange_permission.active_signals = int(request.form.get('active_signals'))
+        exchange_permission.apis_per_exchange = int(request.form.get('apis_per_exchange'))
+        
+        db.session.commit()
+        
+        return jsonify({'success': True})
+    except ValueError as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 400
+    except Exception as e:
+        db.session.rollback()
+        logging.error(f"Error updating plan {plan_id}: {str(e)}")
+        return jsonify({'error': 'Error al actualizar el plan'}), 500
 
 @admin_bp.route('/subscription/plans/save', methods=['POST'])
 @login_required
