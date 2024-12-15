@@ -68,6 +68,9 @@
             <div class="card mb-4 rounded-3 {% if plan.name == 'Pro' %}shadow-sm border-primary{% else %}shadow-sm{% endif %}">
                 <div class="card-header py-3 {% if plan.name == 'Pro' %}text-bg-primary border-primary{% endif %}">
                     <h4 class="my-0 fw-normal">{{ plan.name }}</h4>
+                    {% if plan.description %}
+                    <p class="small text-muted mb-0">{{ plan.description }}</p>
+                    {% endif %}
                     {% if current_user.is_admin %}
                     <button type="button" class="btn btn-sm btn-outline-secondary mt-2" onclick="editPlan({{ plan.id }})">
                         <i class="bi bi-pencil"></i> Editar
@@ -75,31 +78,163 @@
                     {% endif %}
                 </div>
                 <div class="card-body">
-                    <h1 class="card-title pricing-card-title">${{ "%.2f"|format(plan.price/100) }}<small class="text-muted fw-light">/{{ plan.interval }}</small></h1>
-                    <ul class="list-unstyled mt-3 mb-4">
-                        {% if plan.has_manual_trading %}<li>Trading manual</li>{% endif %}
-                        {% if plan.has_automated_trading %}<li>Trading automatizado</li>{% endif %}
-                        {% if plan.has_advanced_trading %}<li>Trading avanzado</li>{% endif %}
-                        {% if plan.has_basic_analysis %}<li>Análisis básico</li>{% endif %}
-                        {% if plan.has_advanced_analysis %}<li>Análisis avanzado</li>{% endif %}
-                        {% if plan.has_custom_dashboard %}<li>Dashboard personalizado</li>{% endif %}
-                        {% if plan.has_custom_bots %}<li>Bots personalizados</li>{% endif %}
-                        {% if plan.has_unlimited_bots %}<li>Bots ilimitados</li>{% endif %}
-                        {% if plan.has_api_access %}<li>Acceso API</li>{% endif %}
-                        {% if plan.has_custom_apis %}<li>APIs personalizadas</li>{% endif %}
-                        <li>Soporte {{ plan.support_level }}</li>
-                    </ul>
-                    <form action="{{ url_for('subscription.create_checkout_session') }}" method="POST">
-                        <input type="hidden" name="plan_id" value="{{ plan.id }}">
-                        <button type="submit" class="w-100 btn btn-lg {% if plan.name == 'Pro' %}btn-primary{% else %}btn-outline-primary{% endif %}">
-                            {% if plan.name == 'Enterprise' %}Contactar{% else %}Comenzar{% endif %}
-                        </button>
-                    </form>
+                    <h1 class="card-title pricing-card-title">
+                        ${{ "%.2f"|format(plan.price/100) }}
+                        <small class="text-muted fw-light">/{{ plan.interval }}</small>
+                    </h1>
+                    
+                    <!-- Trading Features -->
+                    <div class="features-section mb-3">
+                        <h6 class="text-muted border-bottom pb-2">Trading</h6>
+                        <ul class="list-unstyled">
+                            {% if plan.has_manual_trading %}
+                            <li><i class="bi bi-check-circle text-success"></i> Trading manual</li>
+                            {% endif %}
+                            {% if plan.has_automated_trading %}
+                            <li><i class="bi bi-check-circle text-success"></i> Trading automatizado</li>
+                            {% endif %}
+                            {% if plan.has_advanced_trading %}
+                            <li><i class="bi bi-check-circle text-success"></i> Trading avanzado</li>
+                            {% endif %}
+                        </ul>
+                    </div>
+
+                    <!-- Analysis Features -->
+                    <div class="features-section mb-3">
+                        <h6 class="text-muted border-bottom pb-2">Análisis</h6>
+                        <ul class="list-unstyled">
+                            {% if plan.has_basic_analysis %}
+                            <li><i class="bi bi-check-circle text-success"></i> Análisis básico</li>
+                            {% endif %}
+                            {% if plan.has_advanced_analysis %}
+                            <li><i class="bi bi-check-circle text-success"></i> Análisis avanzado</li>
+                            {% endif %}
+                            {% if plan.has_custom_dashboard %}
+                            <li><i class="bi bi-check-circle text-success"></i> Dashboard personalizado</li>
+                            {% endif %}
+                        </ul>
+                    </div>
+
+                    <!-- Bot Features -->
+                    <div class="features-section mb-3">
+                        <h6 class="text-muted border-bottom pb-2">Bots y Señales</h6>
+                        <ul class="list-unstyled">
+                            <li>
+                                <i class="bi bi-robot"></i> 
+                                {% if plan.has_unlimited_bots %}
+                                Bots ilimitados
+                                {% else %}
+                                Máximo {{ plan.max_bots }} bots
+                                {% endif %}
+                            </li>
+                            {% if plan.has_custom_bots %}
+                            <li><i class="bi bi-check-circle text-success"></i> Bots personalizados</li>
+                            {% endif %}
+                            {% if plan.exchange_permission %}
+                            <li>
+                                <i class="bi bi-broadcast"></i> 
+                                {{ plan.exchange_permission.active_signals }} señales activas
+                            </li>
+                            <li>
+                                <i class="bi bi-key"></i>
+                                {{ plan.exchange_permission.apis_per_exchange }} APIs por exchange
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+
+                    <!-- API Access -->
+                    <div class="features-section mb-3">
+                        <h6 class="text-muted border-bottom pb-2">API</h6>
+                        <ul class="list-unstyled">
+                            {% if plan.has_api_access %}
+                            <li><i class="bi bi-check-circle text-success"></i> Acceso API</li>
+                            {% endif %}
+                            {% if plan.has_custom_apis %}
+                            <li><i class="bi bi-check-circle text-success"></i> APIs personalizadas</li>
+                            {% endif %}
+                        </ul>
+                    </div>
+
+                    <!-- Support and System -->
+                    <div class="features-section mb-3">
+                        <h6 class="text-muted border-bottom pb-2">Soporte y Sistema</h6>
+                        <ul class="list-unstyled">
+                            <li>
+                                <i class="bi bi-headset"></i> 
+                                Soporte {{ plan.support_level|title }}
+                            </li>
+                            <li>
+                                <i class="bi bi-calendar-check"></i>
+                                {{ plan.trial_days }} días de prueba
+                            </li>
+                            <li>
+                                <i class="bi bi-clock-history"></i>
+                                Cancelación: {{ plan.cancellation_type|replace('anytime', 'en cualquier momento')|replace('end_of_period', 'fin del período') }}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="mt-4">
+                        <form action="{{ url_for('subscription.create_checkout_session') }}" method="POST">
+                            <input type="hidden" name="plan_id" value="{{ plan.id }}">
+                            <button type="submit" 
+                                class="w-100 btn btn-lg {% if plan.name == 'Pro' %}btn-primary{% else %}btn-outline-primary{% endif %}"
+                                {% if not plan.is_active %}disabled{% endif %}>
+                                {% if plan.name == 'Enterprise' %}
+                                    Contactar
+                                {% else %}
+                                    {% if current_user.is_authenticated and current_user.subscription_type == plan.name.lower() %}
+                                        Plan Actual
+                                    {% else %}
+                                        Comenzar
+                                    {% endif %}
+                                {% endif %}
+                            </button>
+                        </form>
+                        {% if plan.trial_days > 0 %}
+                        <div class="mt-2 text-muted small">
+                            <i class="bi bi-info-circle"></i>
+                            Incluye {{ plan.trial_days }} días de prueba gratis
+                        </div>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
         {% endfor %}
     </div>
+
+    <style>
+    .features-section {
+        text-align: left;
+    }
+    .features-section ul li {
+        margin-bottom: 0.5rem;
+        color: var(--bs-gray-600);
+    }
+    .features-section h6 {
+        margin-bottom: 1rem;
+    }
+    .card {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    .card-body {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    .pricing-card-title {
+        margin-bottom: 1.5rem;
+    }
+    .card-header {
+        min-height: 100px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    </style>
 
     <div class="row">
         <div class="col-md-8 mx-auto text-center">
