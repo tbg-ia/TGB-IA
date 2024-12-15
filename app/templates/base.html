@@ -48,15 +48,20 @@
                                 <i class="bi bi-tag-fill me-1"></i>Planes
                             </a>
                         </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                                Trading
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('crypto.terminal') }}">
+                                <i class="bi bi-graph-up me-1"></i>Terminal
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-dark">
-                                <li><a class="dropdown-item" href="{{ url_for('crypto.terminal') }}">Terminal</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('crypto.exchanges') }}">Exchanges</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('crypto.signalbot') }}">Signal Bot</a></li>
-                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('crypto.exchanges') }}">
+                                <i class="bi bi-currency-exchange me-1"></i>Exchanges
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('crypto.signalbot') }}">
+                                <i class="bi bi-robot me-1"></i>Signal Bot
+                            </a>
                         </li>
                         {% endif %}
                     {% else %}
