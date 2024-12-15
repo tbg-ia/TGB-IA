@@ -232,12 +232,12 @@
         text-align: left;
         padding: 1rem;
         border-radius: 0.5rem;
-        background-color: rgba(var(--bs-dark-rgb), 0.03);
+        background-color: rgba(var(--bs-dark-rgb), 0.8);
         margin-bottom: 1rem;
     }
     .features-section ul li {
         margin-bottom: 0.75rem;
-        color: var(--bs-gray-600);
+        color: var(--bs-light);
         display: flex;
         align-items: center;
         gap: 0.5rem;
@@ -274,7 +274,9 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
-        border-bottom: 2px solid rgba(var(--bs-primary-rgb), 0.1);
+        border-bottom: 2px solid rgba(var(--bs-primary-rgb), 0.3);
+        background-color: rgba(var(--bs-dark-rgb), 0.9);
+        color: var(--bs-light);
     }
     .shadow-hover:hover {
         border-color: var(--bs-primary);
@@ -282,6 +284,14 @@
     .bi {
         font-size: 1.25rem;
         opacity: 0.9;
+        color: var(--bs-light);
+    }
+    .card {
+        background-color: rgba(var(--bs-dark-rgb), 0.95);
+        color: var(--bs-light);
+    }
+    .text-muted {
+        color: var(--bs-gray-300) !important;
     }
     .btn-subscribe {
         padding: 1rem 2rem;
