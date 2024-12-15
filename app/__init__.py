@@ -52,9 +52,11 @@ def create_app():
 
     # Register blueprints
     from app.routes import all_blueprints
+    from app.api.exchanges import exchanges_bp
     
     for blueprint in all_blueprints:
         app.register_blueprint(blueprint)
+    app.register_blueprint(exchanges_bp)
     
     # Register index route
     @app.route('/')
@@ -62,10 +64,13 @@ def create_app():
         return render_template('public/index.html')
 
     with app.app_context():
+        # Import models
+        from app.models.role import Role
+        from app.models.exchange import Exchange  # Import Exchange model
+        
         db.create_all()
         
         # Initialize roles
-        from app.models.role import Role
         Role.insert_roles()
 
     return app
