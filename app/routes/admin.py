@@ -415,48 +415,58 @@ def update_plan(plan_id):
         logging.info(f"Actualizando plan {plan_id} con datos: {request.form}")
         plan = SubscriptionPlan.query.get_or_404(plan_id)
         
-        if not request.form.get('name'):
-            raise ValueError("El nombre del plan es requerido")
+        # Validar campos requeridos
+        required_fields = {
+            'name': "El nombre del plan es requerido",
+            'price': "El precio es requerido",
+            'interval': "El intervalo es requerido"
+        }
         
-        if not request.form.get('price'):
-            raise ValueError("El precio es requerido")
-            
+        for field, message in required_fields.items():
+            if not request.form.get(field):
+                raise ValueError(message)
+        
         # Actualizar datos básicos del plan
         plan.name = request.form.get('name')
         plan.description = request.form.get('description')
+        
+        # Procesar precio
         try:
-            plan.price = int(float(request.form.get('price', 0)) * 100)  # Convertir a centavos
+            price_value = request.form.get('price', '0').replace(',', '.')
+            plan.price = int(float(price_value) * 100)  # Convertir a centavos
         except ValueError:
             raise ValueError("El precio debe ser un número válido")
             
-        plan.interval = request.form.get('interval', 'month')
+        plan.interval = request.form.get('interval')
         
-        # Características básicas
-        plan.has_manual_trading = request.form.get('has_manual_trading') == 'on'
-        plan.has_automated_trading = request.form.get('has_automated_trading') == 'on'
-        plan.has_advanced_trading = request.form.get('has_advanced_trading') == 'on'
-        plan.has_basic_analysis = request.form.get('has_basic_analysis') == 'on'
-        plan.has_advanced_analysis = request.form.get('has_advanced_analysis') == 'on'
-        plan.has_custom_dashboard = request.form.get('has_custom_dashboard') == 'on'
+        # Procesar características booleanas
+        boolean_fields = [
+            'has_manual_trading', 'has_automated_trading', 'has_advanced_trading',
+            'has_basic_analysis', 'has_advanced_analysis', 'has_custom_dashboard',
+            'has_custom_bots', 'has_unlimited_bots', 'has_api_access', 'has_custom_apis'
+        ]
         
-        # Características de bots y API
-        try:
-            plan.max_bots = int(request.form.get('max_bots', 1))
-        except ValueError:
-            raise ValueError("El número máximo de bots debe ser un número entero")
-            
-        plan.has_custom_bots = request.form.get('has_custom_bots') == 'on'
-        plan.has_unlimited_bots = request.form.get('has_unlimited_bots') == 'on'
-        plan.has_api_access = request.form.get('has_api_access') == 'on'
-        plan.has_custom_apis = request.form.get('has_custom_apis') == 'on'
+        for field in boolean_fields:
+            setattr(plan, field, request.form.get(field) == 'on')
         
-        # Soporte y sistema
+        # Procesar campos numéricos
+        numeric_fields = {
+            'max_bots': ('El número máximo de bots debe ser un número entero', int),
+            'trial_days': ('Los días de prueba deben ser un número entero', int),
+            'active_signals': ('Las señales activas deben ser un número entero', int),
+            'apis_per_exchange': ('Las APIs por exchange deben ser un número entero', int)
+        }
+        
+        for field, (error_msg, convert_func) in numeric_fields.items():
+            try:
+                value = request.form.get(field, '0')
+                if value.strip():
+                    setattr(plan, field, convert_func(value))
+            except ValueError:
+                raise ValueError(error_msg)
+        
+        # Configurar soporte y cancelación
         plan.support_level = request.form.get('support_level', 'email')
-        try:
-            plan.trial_days = int(request.form.get('trial_days', 14))
-        except ValueError:
-            raise ValueError("Los días de prueba deben ser un número entero")
-            
         plan.cancellation_type = request.form.get('cancellation_type', 'anytime')
         
         # Actualizar o crear permisos de exchange
@@ -472,10 +482,13 @@ def update_plan(plan_id):
             raise ValueError("Los valores de señales activas y APIs por exchange deben ser números enteros")
         
         db.session.commit()
-        
         logging.info(f"Plan {plan_id} actualizado exitosamente")
-        flash('Plan actualizado exitosamente', 'success')
-        return jsonify({'success': True})
+        
+        return jsonify({
+            'success': True,
+            'message': 'Plan actualizado exitosamente'
+        })
+        
     except ValueError as e:
         db.session.rollback()
         logging.error(f"Error de validación al actualizar plan {plan_id}: {str(e)}")
@@ -483,7 +496,7 @@ def update_plan(plan_id):
     except Exception as e:
         db.session.rollback()
         logging.error(f"Error al actualizar plan {plan_id}: {str(e)}")
-        return jsonify({'error': 'Error al actualizar el plan'}), 500
+        return jsonify({'error': str(e)}), 500
 
 @admin_bp.route('/subscription/plans/save', methods=['POST'])
 @login_required
