@@ -64,8 +64,8 @@ def create_checkout_session():
         selected_plan = plan_id.split('_')[0]
         selected_plan_level = current_plan_level.get(selected_plan, -1)
         
-        # Solo bloquear si intenta cambiar a un plan inferior
-        if selected_plan_level < user_plan_level:
+        # Permitir cambios a planes superiores o iguales, bloquear planes inferiores
+        if selected_plan_level <= user_plan_level and selected_plan != current_plan:
             flash(f'No puedes cambiar a un plan inferior. Tu plan actual es {current_plan.title()}', 'warning')
             return redirect(url_for('subscription.plans'))
         
