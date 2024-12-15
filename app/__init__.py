@@ -32,6 +32,11 @@ def create_app():
         "max_overflow": 20,
     }
     
+    # Stripe Configuration
+    app.config['STRIPE_PUBLIC_KEY'] = os.environ.get('STRIPE_PUBLIC_KEY')
+    app.config['STRIPE_SECRET_KEY'] = os.environ.get('STRIPE_SECRET_KEY')
+    app.config['STRIPE_WEBHOOK_SECRET'] = os.environ.get('STRIPE_WEBHOOK_SECRET')
+    
     # Email configuration
     app.config.update(
         MAIL_SERVER=os.environ.get('MAIL_SERVER'),
