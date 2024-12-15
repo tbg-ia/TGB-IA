@@ -83,22 +83,32 @@
                         <div class="mb-3">
                             <label class="form-label">Stripe Public Key</label>
                             <input type="text" class="form-control" name="stripe_public_key" 
-                                   value="{{ config.get('STRIPE_PUBLIC_KEY', '') }}">
+                                   value="{{ config.get('STRIPE_PUBLIC_KEY', '') }}"
+                                   required>
                             <small class="text-muted">Clave pública de Stripe para el procesamiento de pagos</small>
                         </div>
                         
                         <div class="mb-3">
                             <label class="form-label">Stripe Secret Key</label>
                             <input type="password" class="form-control" name="stripe_secret_key" 
-                                   placeholder="Introduce la clave secreta de Stripe">
+                                   value="{{ config.get('STRIPE_SECRET_KEY', '') }}"
+                                   placeholder="Introduce la clave secreta de Stripe"
+                                   required>
                             <small class="text-muted">Clave secreta de Stripe (nunca compartir)</small>
                         </div>
                         
                         <div class="mb-3">
                             <label class="form-label">Stripe Webhook Secret</label>
                             <input type="password" class="form-control" name="stripe_webhook_secret" 
-                                   placeholder="Introduce el secreto del webhook">
+                                   value="{{ config.get('STRIPE_WEBHOOK_SECRET', '') }}"
+                                   placeholder="Introduce el secreto del webhook"
+                                   required>
                             <small class="text-muted">Secreto para verificar webhooks de Stripe</small>
+                        </div>
+                        
+                        <div class="alert alert-info" role="alert">
+                            <i class="bi bi-info-circle me-2"></i>
+                            Estas credenciales son necesarias para procesar pagos y suscripciones. Asegúrate de configurarlas correctamente.
                         </div>
                         
                         <button type="submit" class="btn btn-primary">Guardar Cambios</button>
