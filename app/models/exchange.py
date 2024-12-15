@@ -1,9 +1,9 @@
 from app import db
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
-
 class Exchange(db.Model):
-    __tablename__ = 'exchange'
+    """Model for managing exchange connections and credentials"""
+    __tablename__ = 'exchanges'
     
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
@@ -25,9 +25,14 @@ class Exchange(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     
     # Relaciones
-    bots = db.relationship('TradingBot', backref='exchange', lazy='dynamic',
+    bots = db.relationship('TradingBot', 
+                          backref=db.backref('exchange', lazy=True),
+                          lazy='dynamic',
+                          cascade='all, delete-orphan',
                           foreign_keys='TradingBot.exchange_id')
-    trades = db.relationship('Trade', backref='exchange', lazy='dynamic',
+    trades = db.relationship('Trade', 
+                           backref=db.backref('exchange', lazy=True),
+                           lazy='dynamic',
                            foreign_keys='Trade.exchange_id')
     
     def __init__(self, **kwargs):
