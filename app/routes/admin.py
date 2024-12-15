@@ -162,9 +162,17 @@ def settings():
             'most_popular_plan': db.session.query(
                 User.subscription_type,
                 db.func.count(User.id).label('count')
-            ).group_by(User.subscription_type).order_by(db.text('count DESC')).first()[0],
+            ).group_by(User.subscription_type).order_by(db.text('count DESC')).first(),
             'retention_rate': 95.5  # Valor por defecto
         }
+        
+        # Obtener las credenciales de Stripe existentes
+        stripe_config = {
+            'STRIPE_PUBLIC_KEY': SystemConfig.get_value('STRIPE_PUBLIC_KEY', ''),
+            'STRIPE_SECRET_KEY': SystemConfig.get_value('STRIPE_SECRET_KEY', ''),
+            'STRIPE_WEBHOOK_SECRET': SystemConfig.get_value('STRIPE_WEBHOOK_SECRET', '')
+        }
+        config_dict.update(stripe_config)
         
         return render_template('admin/settings/index.html',
                              config=config_dict,
@@ -220,6 +228,35 @@ def save_trading_settings():
 @admin_required
 def save_api_settings():
     try:
+        # Validar campos requeridos de Stripe
+        required_stripe_fields = ['stripe_public_key', 'stripe_secret_key', 'stripe_webhook_secret']
+        for field in required_stripe_fields:
+            if not request.form.get(field):
+                flash(f'El campo {field.replace("stripe_", "").replace("_", " ").title()} es requerido', 'error')
+                return redirect(url_for('admin.settings'))
+
+        # Configuración de Stripe
+        stripe_config = {
+            'STRIPE_PUBLIC_KEY': request.form.get('stripe_public_key'),
+            'STRIPE_SECRET_KEY': request.form.get('stripe_secret_key'),
+            'STRIPE_WEBHOOK_SECRET': request.form.get('stripe_webhook_secret')
+        }
+        
+        # Guardar configuración de Stripe
+        for key, value in stripe_config.items():
+            try:
+                SystemConfig.set_value(
+                    key=key,
+                    value=value,
+                    category='payment',
+                    description=f'Stripe API Configuration - {key}',
+                    user_id=current_user.id
+                )
+            except Exception as config_error:
+                logging.error(f"Error saving Stripe config {key}: {str(config_error)}")
+                flash(f'Error al guardar la configuración de Stripe: {key}', 'error')
+                return redirect(url_for('admin.settings'))
+        
         # Configuración de API general
         for key in ['api_rate_limit', 'cache_timeout']:
             value = request.form.get(key)
@@ -232,28 +269,11 @@ def save_api_settings():
                     current_user.id
                 )
         
-        # Configuración de Stripe
-        stripe_config = {
-            'STRIPE_PUBLIC_KEY': request.form.get('stripe_public_key'),
-            'STRIPE_SECRET_KEY': request.form.get('stripe_secret_key'),
-            'STRIPE_WEBHOOK_SECRET': request.form.get('stripe_webhook_secret')
-        }
-        
-        for key, value in stripe_config.items():
-            if value:  # Solo actualizar si se proporcionó un valor
-                SystemConfig.set_value(
-                    key=key,
-                    value=value,
-                    category='payment',
-                    description=f'Stripe API Configuration - {key}',
-                    user_id=current_user.id
-                )
-        
-        flash('Configuración de API actualizada exitosamente')
+        flash('Configuración de API y Stripe actualizada exitosamente', 'success')
         return redirect(url_for('admin.settings'))
     except Exception as e:
         logging.error(f"Error saving API settings: {str(e)}")
-        flash('Error al guardar la configuración de API')
+        flash('Error al guardar la configuración de API', 'error')
         return redirect(url_for('admin.settings'))
 
 @admin_bp.route('/settings/email/save', methods=['POST'])
