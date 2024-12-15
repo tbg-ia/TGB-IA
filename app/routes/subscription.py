@@ -155,6 +155,10 @@ def payment_cancel():
 @subscription_bp.route('/webhook', methods=['POST'])
 def webhook():
     """Maneja los webhooks de Stripe"""
+    if not current_app.config.get('STRIPE_WEBHOOK_SECRET'):
+        current_app.logger.error("STRIPE_WEBHOOK_SECRET no está configurado")
+        return jsonify({'error': 'Webhook secret not configured'}), 500
+        
     payload = request.get_data()
     sig_header = request.headers.get('Stripe-Signature')
     
@@ -162,9 +166,12 @@ def webhook():
         event = stripe.Webhook.construct_event(
             payload, sig_header, current_app.config['STRIPE_WEBHOOK_SECRET']
         )
+        current_app.logger.info(f"Webhook event received: {event['type']}")
     except ValueError as e:
+        current_app.logger.error(f"Error en el payload del webhook: {str(e)}")
         return jsonify({'error': 'Invalid payload'}), 400
     except stripe.error.SignatureVerificationError as e:
+        current_app.logger.error(f"Error en la firma del webhook: {str(e)}")
         return jsonify({'error': 'Invalid signature'}), 400
     
     # Manejar diferentes tipos de eventos
