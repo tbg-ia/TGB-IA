@@ -1,20 +1,22 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container-fluid py-4">
+<div class="container-fluid py-4 bg-dark text-white">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0">Planes y Suscripciones</h2>
+        {% if current_user.is_admin %}
         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newPlanModal">
             <i class="bi bi-gear-fill me-2"></i>Gestionar Planes
         </button>
+        {% endif %}
     </div>
 
     <!-- Estadísticas Generales -->
     <div class="row g-4 mb-4">
         <div class="col-md-3">
-            <div class="card border-0 bg-dark">
+            <div class="card border-0 bg-dark text-white">
                 <div class="card-body">
-                    <h6 class="card-subtitle mb-2 text-muted">Total Suscriptores</h6>
+                    <h6 class="card-subtitle mb-2 text-light">Total Suscriptores</h6>
                     <h2 class="card-title display-6 mb-0">{{ stats.total_subscribers }}</h2>
                 </div>
             </div>
@@ -46,21 +48,43 @@
     </div>
 
     <!-- Lista de Planes -->
-    <div class="card border-0 bg-dark">
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-dark table-hover align-middle mb-0">
-                    <thead>
-                        <tr>
-                            <th class="border-0">Plan</th>
-                            <th class="border-0">Precio (USD)</th>
-                            <th class="border-0">Periodo</th>
-                            <th class="border-0">Suscriptores</th>
-                            <th class="border-0">Estado</th>
-                            <th class="border-0">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+    <div class="row g-4">
+        {% for plan in subscription_plans %}
+        <div class="col-md-4">
+            <div class="card bg-dark text-white h-100">
+                <div class="card-body p-4">
+                    <h3 class="card-title mb-4">{{ plan.name }}</h3>
+                    <div class="price-tag mb-4">
+                        <h1 class="display-4">${{ "%.2f"|format(plan.price/100) }}</h1>
+                        <span class="text-muted">/{{ plan.interval }}</span>
+                    </div>
+                    <p class="card-text">{{ plan.description }}</p>
+                    <ul class="list-unstyled mt-4 mb-4">
+                        {% for feature in plan.features.split('\n') %}
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            {{ feature }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% if current_user.is_admin %}
+                    <div class="mt-4">
+                        <button class="btn btn-outline-light" onclick="editPlan('{{ plan.id }}')">
+                            <i class="bi bi-pencil-fill me-2"></i>Editar Plan
+                        </button>
+                        <div class="form-check form-switch d-inline-block ms-3">
+                            <input class="form-check-input" type="checkbox" role="switch"
+                                   {{ 'checked' if plan.is_active else '' }}
+                                   onchange="togglePlan('{{ plan.id }}')">
+                            <label class="form-check-label">Activo</label>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
                         {% for plan in plans %}
                         <tr>
                             <td>
