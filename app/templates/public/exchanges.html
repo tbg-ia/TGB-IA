@@ -23,10 +23,6 @@
                         <tr>
                             <th>Exchange</th>
                             <th>Markets</th>
-                            <th>Paper Trading</th>
-                            <th>Grid Bot</th>
-                            <th>DCA Bot</th>
-                            <th>Copy Trading</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
@@ -42,10 +38,6 @@
                                 </div>
                             </td>
                             <td>{{ exchange.exchange_type }}</td>
-                            <td><i class="bi bi-check-circle-fill text-success"></i></td>
-                            <td><i class="bi bi-check-circle-fill text-success"></i></td>
-                            <td><i class="bi bi-check-circle-fill text-success"></i></td>
-                            <td><i class="bi bi-check-circle-fill text-success"></i></td>
                             <td>
                                 <span class="badge {% if exchange.is_active %}bg-success{% else %}bg-secondary{% endif %}">
                                     {{ 'Connected' if exchange.is_active else 'Disconnected' }}
