@@ -9,7 +9,7 @@ class SystemConfig(db.Model):
     category = db.Column(db.String(50), nullable=False)  # 'trading', 'system', 'notification'
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    updated_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    updated_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
     def __repr__(self):
         return f'<SystemConfig {self.key}={self.value}>'
