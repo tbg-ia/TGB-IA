@@ -233,17 +233,29 @@ def save_api_settings():
 @admin_required
 def save_email_settings():
     try:
+        # Validar campos requeridos
+        required_fields = ['mail_server', 'mail_port', 'mail_username', 'mail_default_sender']
+        for field in required_fields:
+            if not request.form.get(field):
+                flash(f'El campo {field.replace("mail_", "").replace("_", " ").title()} es requerido', 'error')
+                return redirect(url_for('admin.settings'))
+
+        # Procesar la configuración
         email_config = {
-            'MAIL_SERVER': request.form.get('mail_server'),
-            'MAIL_PORT': request.form.get('mail_port'),
-            'MAIL_USERNAME': request.form.get('mail_username'),
-            'MAIL_PASSWORD': request.form.get('mail_password'),
-            'MAIL_DEFAULT_SENDER': request.form.get('mail_default_sender'),
+            'MAIL_SERVER': request.form.get('mail_server').strip(),
+            'MAIL_PORT': int(request.form.get('mail_port')),
+            'MAIL_USERNAME': request.form.get('mail_username').strip(),
+            'MAIL_DEFAULT_SENDER': request.form.get('mail_default_sender').strip(),
             'MAIL_USE_TLS': request.form.get('mail_use_tls') == 'on'
         }
+
+        # Actualizar contraseña solo si se proporciona una nueva
+        if request.form.get('mail_password'):
+            email_config['MAIL_PASSWORD'] = request.form.get('mail_password').strip()
         
+        # Guardar cada configuración
         for key, value in email_config.items():
-            if value is not None:  # Solo actualizar si se proporcionó un valor
+            try:
                 SystemConfig.set_value(
                     key=key,
                     value=str(value),
@@ -251,15 +263,30 @@ def save_email_settings():
                     description=f'Email Configuration - {key}',
                     user_id=current_user.id
                 )
-        
-        from app.mail.smtp_settings import EmailConfig
-        EmailConfig.init_app(current_app)
-        
-        flash('Configuración de email actualizada exitosamente')
+            except Exception as config_error:
+                logging.error(f"Error saving {key}: {str(config_error)}")
+                flash(f'Error al guardar {key}', 'error')
+                return redirect(url_for('admin.settings'))
+
+        # Actualizar la configuración de email en la aplicación
+        try:
+            from app.mail.smtp_settings import EmailConfig
+            EmailConfig.init_app(current_app)
+            
+            flash('Configuración de email actualizada exitosamente', 'success')
+            return redirect(url_for('admin.settings'))
+        except Exception as email_init_error:
+            logging.error(f"Error initializing email config: {str(email_init_error)}")
+            flash('Error al inicializar la configuración de email', 'error')
+            return redirect(url_for('admin.settings'))
+            
+    except ValueError as ve:
+        logging.error(f"Validation error in email settings: {str(ve)}")
+        flash('Error de validación en los datos ingresados', 'error')
         return redirect(url_for('admin.settings'))
     except Exception as e:
         logging.error(f"Error saving email settings: {str(e)}")
-        flash('Error al guardar la configuración de email')
+        flash('Error al guardar la configuración de email', 'error')
         return redirect(url_for('admin.settings'))
 @admin_bp.route('/settings/notification/save', methods=['POST'])
 @login_required

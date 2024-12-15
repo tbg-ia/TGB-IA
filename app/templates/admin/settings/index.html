@@ -131,40 +131,52 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label class="form-label">Servidor SMTP</label>
+                                    <label class="form-label">Servidor SMTP <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" name="mail_server"
-                                           value="{{ config.get('MAIL_SERVER', '') }}">
+                                           value="{{ config.get('MAIL_SERVER', '') }}" required
+                                           placeholder="ej: smtp.gmail.com">
+                                    <div class="form-text">Servidor SMTP para el envío de emails</div>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label class="form-label">Puerto SMTP</label>
+                                    <label class="form-label">Puerto SMTP <span class="text-danger">*</span></label>
                                     <input type="number" class="form-control" name="mail_port"
-                                           value="{{ config.get('MAIL_PORT', '') }}">
+                                           value="{{ config.get('MAIL_PORT', '587') }}" required
+                                           placeholder="ej: 587">
+                                    <div class="form-text">Puerto común: 587 (TLS) o 465 (SSL)</div>
                                 </div>
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Usuario SMTP</label>
+                            <label class="form-label">Usuario SMTP <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" name="mail_username"
-                                   value="{{ config.get('MAIL_USERNAME', '') }}">
+                                   value="{{ config.get('MAIL_USERNAME', '') }}" required
+                                   placeholder="ej: tu@email.com">
+                            <div class="form-text">Usuario para autenticación SMTP</div>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Contraseña SMTP</label>
                             <input type="password" class="form-control" name="mail_password"
-                                   value="{{ config.get('MAIL_PASSWORD', '') }}">
+                                   placeholder="Dejar en blanco para mantener la contraseña actual">
+                            <div class="form-text">Dejar vacío si no desea cambiar la contraseña actual</div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Email por Defecto</label>
+                            <label class="form-label">Email por Defecto <span class="text-danger">*</span></label>
                             <input type="email" class="form-control" name="mail_default_sender"
-                                   value="{{ config.get('MAIL_DEFAULT_SENDER', '') }}">
+                                   value="{{ config.get('MAIL_DEFAULT_SENDER', '') }}" required
+                                   placeholder="ej: noreply@tudominio.com">
+                            <div class="form-text">Dirección desde la que se enviarán los emails</div>
                         </div>
                         <div class="mb-3 form-check">
                             <input type="checkbox" class="form-check-input" name="mail_use_tls" id="mail_use_tls"
-                                   {% if config.get('MAIL_USE_TLS') == 'True' %}checked{% endif %}>
+                                   {% if config.get('MAIL_USE_TLS', 'True') == 'True' %}checked{% endif %}>
                             <label class="form-check-label" for="mail_use_tls">Usar TLS</label>
+                            <div class="form-text">Recomendado para una conexión segura</div>
                         </div>
-                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save me-2"></i>Guardar Cambios
+                        </button>
                     </form>
                 </div>
 
