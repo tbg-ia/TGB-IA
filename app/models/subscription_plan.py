@@ -45,6 +45,7 @@ class SubscriptionPlan(db.Model):
     is_active = db.Column(db.Boolean, default=True)
     trial_days = db.Column(db.Integer, default=14)
     cancellation_type = db.Column(db.String(20), default='anytime')  # anytime, end_of_period
+    features = db.Column(db.Text)  # Lista de características separadas por nueva línea
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
