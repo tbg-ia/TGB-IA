@@ -49,6 +49,11 @@ def resources():
 @login_required
 def exchange_connection():
     return render_template('public/exchange_connection.html')
+@crypto_bp.route('/support')
+@login_required
+def support():
+    return render_template('public/support.html')
+
 @crypto_bp.route('/bot/<int:bot_id>/trades')
 @login_required
 def get_bot_trades(bot_id):
