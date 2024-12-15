@@ -131,38 +131,148 @@
     </div>
 </div>
 
-<!-- Modal para Nuevo Plan -->
-<div class="modal fade" id="newPlanModal" tabindex="-1">
-    <div class="modal-dialog">
+<!-- Modal para Gestionar Plan -->
+<div class="modal fade" id="planModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content bg-dark">
             <div class="modal-header border-bottom border-secondary">
-                <h5 class="modal-title">Crear Nuevo Plan</h5>
+                <h5 class="modal-title" id="modalTitle">Gestionar Plan</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form id="newPlanForm">
-                    <div class="mb-3">
-                        <label class="form-label">Nombre del Plan</label>
-                        <input type="text" class="form-control" name="name" required>
+                <form id="planForm">
+                    <input type="hidden" name="plan_id" id="plan_id">
+                    
+                    <!-- Información Básica -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Nombre del Plan</label>
+                                <input type="text" class="form-control" name="name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Descripción</label>
+                                <textarea class="form-control" name="description" rows="3" required></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Precio (USD)</label>
+                                <input type="number" class="form-control" name="price" step="0.01" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Periodo de Facturación</label>
+                                <select class="form-select" name="interval" required>
+                                    <option value="month">Mensual</option>
+                                    <option value="year">Anual</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Días de Prueba</label>
+                                <input type="number" class="form-control" name="trial_days" value="14">
+                            </div>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Descripción</label>
-                        <textarea class="form-control" name="description" rows="3" required></textarea>
+
+                    <!-- Características y Límites -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6 class="mb-3">Características del Plan</h6>
+                            <div class="mb-3">
+                                <label class="form-label">Características (una por línea)</label>
+                                <textarea class="form-control" name="features" rows="6" required 
+                                    placeholder="- Acceso a señales de trading&#10;- Análisis técnico básico&#10;- Soporte por email"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="mb-3">Límites y Permisos</h6>
+                            <div class="mb-3">
+                                <label class="form-label">Señales Activas</label>
+                                <input type="number" class="form-control" name="active_signals" value="1">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">APIs por Exchange</label>
+                                <input type="number" class="form-control" name="apis_per_exchange" value="1">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Máximo de Bots</label>
+                                <input type="number" class="form-control" name="max_bots" value="1">
+                            </div>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Precio (USD)</label>
-                        <input type="number" class="form-control" name="price" step="0.01" required>
+
+                    <!-- Funcionalidades -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h6 class="mb-3">Funcionalidades Incluidas</h6>
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="has_manual_trading">
+                                        <label class="form-check-label">Trading Manual</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="has_automated_trading">
+                                        <label class="form-check-label">Trading Automatizado</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="has_advanced_trading">
+                                        <label class="form-check-label">Trading Avanzado</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="has_basic_analysis">
+                                        <label class="form-check-label">Análisis Básico</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="has_advanced_analysis">
+                                        <label class="form-check-label">Análisis Avanzado</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="has_custom_dashboard">
+                                        <label class="form-check-label">Dashboard Personalizado</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="has_api_access">
+                                        <label class="form-check-label">Acceso API</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="has_custom_apis">
+                                        <label class="form-check-label">APIs Personalizadas</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="has_unlimited_bots">
+                                        <label class="form-check-label">Bots Ilimitados</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Periodo de Facturación</label>
-                        <select class="form-select" name="interval" required>
-                            <option value="month">Mensual</option>
-                            <option value="year">Anual</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Características (una por línea)</label>
-                        <textarea class="form-control" name="features" rows="4" required></textarea>
+
+                    <!-- Configuración Adicional -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Nivel de Soporte</label>
+                                <select class="form-select" name="support_level">
+                                    <option value="email">Email</option>
+                                    <option value="priority">Prioridad</option>
+                                    <option value="dedicated">Dedicado</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Tipo de Cancelación</label>
+                                <select class="form-select" name="cancellation_type">
+                                    <option value="anytime">En cualquier momento</option>
+                                    <option value="end_of_period">Fin del periodo</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -178,12 +288,17 @@
 {% block extra_js %}
 <script>
 async function savePlan() {
-    const form = document.getElementById('newPlanForm');
+    const form = document.getElementById('planForm');
     const formData = new FormData(form);
+    const planId = formData.get('plan_id');
     
     try {
-        const response = await fetch("{{ url_for('admin.save_plan') }}", {
-            method: 'POST',
+        const url = planId ? 
+            `{{ url_for('admin.update_plan', plan_id=0) }}`.replace('0', planId) : 
+            "{{ url_for('admin.save_plan') }}";
+            
+        const response = await fetch(url, {
+            method: planId ? 'POST' : 'POST',
             body: formData
         });
         
@@ -194,13 +309,14 @@ async function savePlan() {
             alert(error.error || 'Error al guardar el plan');
         }
     } catch (error) {
+        console.error('Error:', error);
         alert('Error al guardar el plan');
     }
 }
 
-async function togglePlan(priceId) {
+async function togglePlan(planId) {
     try {
-        const response = await fetch(`/admin/subscription/plans/${priceId}/toggle`, {
+        const response = await fetch(`/admin/subscription/plans/${planId}/toggle`, {
             method: 'POST'
         });
         
@@ -210,18 +326,19 @@ async function togglePlan(priceId) {
             window.location.reload();
         }
     } catch (error) {
+        console.error('Error:', error);
         alert('Error al actualizar el estado del plan');
         window.location.reload();
     }
 }
 
-async function deletePlan(priceId) {
+async function deletePlan(planId) {
     if (!confirm('¿Estás seguro de que deseas eliminar este plan?')) {
         return;
     }
     
     try {
-        const response = await fetch(`/admin/subscription/plans/${priceId}`, {
+        const response = await fetch(`/admin/subscription/plans/${planId}`, {
             method: 'DELETE'
         });
         
@@ -232,29 +349,70 @@ async function deletePlan(priceId) {
             alert(error.error || 'Error al eliminar el plan');
         }
     } catch (error) {
+        console.error('Error:', error);
         alert('Error al eliminar el plan');
     }
 }
 
-async function editPlan(priceId) {
+async function editPlan(planId) {
     try {
-        const response = await fetch(`/admin/subscription/plans/${priceId}`);
+        const response = await fetch(`/admin/subscription/plans/${planId}`);
         const plan = await response.json();
         
         // Rellenar el formulario con los datos del plan
-        const form = document.getElementById('newPlanForm');
+        const form = document.getElementById('planForm');
+        form.querySelector('#plan_id').value = planId;
+        
+        // Información básica
         form.querySelector('[name="name"]').value = plan.name;
         form.querySelector('[name="description"]').value = plan.description;
         form.querySelector('[name="price"]').value = plan.price;
         form.querySelector('[name="interval"]').value = plan.interval;
-        form.querySelector('[name="features"]').value = plan.features.join('\n');
+        form.querySelector('[name="trial_days"]').value = plan.trial_days;
+        
+        // Características
+        form.querySelector('[name="features"]').value = plan.features || '';
+        
+        // Límites
+        form.querySelector('[name="active_signals"]').value = plan.active_signals;
+        form.querySelector('[name="apis_per_exchange"]').value = plan.apis_per_exchange;
+        form.querySelector('[name="max_bots"]').value = plan.max_bots;
+        
+        // Funcionalidades
+        form.querySelector('[name="has_manual_trading"]').checked = plan.has_manual_trading;
+        form.querySelector('[name="has_automated_trading"]').checked = plan.has_automated_trading;
+        form.querySelector('[name="has_advanced_trading"]').checked = plan.has_advanced_trading;
+        form.querySelector('[name="has_basic_analysis"]').checked = plan.has_basic_analysis;
+        form.querySelector('[name="has_advanced_analysis"]').checked = plan.has_advanced_analysis;
+        form.querySelector('[name="has_custom_dashboard"]').checked = plan.has_custom_dashboard;
+        form.querySelector('[name="has_api_access"]').checked = plan.has_api_access;
+        form.querySelector('[name="has_custom_apis"]').checked = plan.has_custom_apis;
+        form.querySelector('[name="has_unlimited_bots"]').checked = plan.has_unlimited_bots;
+        
+        // Configuración adicional
+        form.querySelector('[name="support_level"]').value = plan.support_level;
+        form.querySelector('[name="cancellation_type"]').value = plan.cancellation_type;
+        
+        // Actualizar título del modal
+        document.getElementById('modalTitle').textContent = planId ? 'Editar Plan' : 'Crear Nuevo Plan';
         
         // Mostrar el modal
-        const modal = new bootstrap.Modal(document.getElementById('newPlanModal'));
+        const modal = new bootstrap.Modal(document.getElementById('planModal'));
         modal.show();
     } catch (error) {
+        console.error('Error:', error);
         alert('Error al cargar los datos del plan');
     }
+}
+
+function showNewPlanModal() {
+    const form = document.getElementById('planForm');
+    form.reset();
+    form.querySelector('#plan_id').value = '';
+    document.getElementById('modalTitle').textContent = 'Crear Nuevo Plan';
+    
+    const modal = new bootstrap.Modal(document.getElementById('planModal'));
+    modal.show();
 }
 </script>
 {% endblock %}
