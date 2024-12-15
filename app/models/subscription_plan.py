@@ -20,10 +20,11 @@ class SubscriptionPlan(db.Model):
     stripe_price_id = db.Column(db.String(100), unique=True)
     stripe_product_id = db.Column(db.String(100), unique=True)
     features = db.Column(db.Text)
-    max_bots = db.Column(db.Integer, default=1)  # Número máximo de bots permitidos
-    max_trades_per_day = db.Column(db.Integer, default=10)  # Límite de trades por día
-    has_advanced_indicators = db.Column(db.Boolean, default=False)  # Acceso a indicadores avanzados
-    has_api_access = db.Column(db.Boolean, default=False)  # Acceso a API
+    max_bots = db.Column(db.Integer, default=1)
+    alerts_per_day = db.Column(db.Integer, default=100)
+    active_strategies = db.Column(db.Integer, default=20)
+    has_api_access = db.Column(db.Boolean, default=False)
+    supported_exchanges = db.Column(db.ARRAY(db.String), default=list)
     is_active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
