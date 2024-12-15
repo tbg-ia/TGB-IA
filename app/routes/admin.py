@@ -472,3 +472,51 @@ def delete_plan(price_id):
     except Exception as e:
         logging.error(f"Error deleting plan {price_id}: {str(e)}")
         return jsonify({'error': str(e)}), 500
+
+@admin_bp.route('/settings/test-email', methods=['POST'])
+@login_required
+@admin_required
+def test_email():
+    """Envía un email de prueba para verificar la configuración SMTP."""
+    if not request.form.get('test_email'):
+        flash('Por favor, ingrese una dirección de email válida', 'error')
+        return redirect(url_for('admin.settings'))
+    
+    try:
+        from flask_mail import Message
+        from app.mail.smtp_settings import EmailConfig
+        
+        test_email = request.form.get('test_email')
+        mail = EmailConfig.get_instance().mail
+        
+        msg = Message(
+            'Test de Configuración SMTP',
+            sender=current_app.config['MAIL_DEFAULT_SENDER'],
+            recipients=[test_email]
+        )
+        
+        # Establecer el contenido del email
+        msg.body = '''
+            Este es un email de prueba para verificar la configuración SMTP.
+            
+            Si estás recibiendo este mensaje, la configuración de email está funcionando correctamente.
+        '''
+        msg.html = '''
+            <h3>Test de Configuración SMTP</h3>
+            <p>Este es un email de prueba para verificar la configuración SMTP.</p>
+            <p>Si estás recibiendo este mensaje, la configuración de email está funcionando correctamente.</p>
+        '''
+        
+        # Intentar enviar el email
+        with current_app.app_context():
+            mail.send(msg)
+            
+        flash('Email de prueba enviado exitosamente', 'success')
+        logging.info(f"Test email sent successfully to {test_email}")
+        
+    except Exception as e:
+        error_msg = f"Error al enviar el email de prueba: {str(e)}"
+        logging.error(error_msg)
+        flash(error_msg, 'error')
+    
+    return redirect(url_for('admin.settings'))

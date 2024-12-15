@@ -178,6 +178,23 @@
                             <i class="bi bi-save me-2"></i>Guardar Cambios
                         </button>
                     </form>
+
+                    <hr class="my-4">
+                    
+                    <h4>Probar Configuración</h4>
+                    <p class="text-muted">Envía un email de prueba para verificar la configuración SMTP.</p>
+                    
+                    <form method="POST" action="{{ url_for('admin.test_email') }}" class="mt-3">
+                        <div class="mb-3">
+                            <label class="form-label">Email de Prueba</label>
+                            <input type="email" class="form-control" name="test_email" required
+                                   placeholder="Ingresa el email para la prueba">
+                            <div class="form-text">Se enviará un email de prueba a esta dirección</div>
+                        </div>
+                        <button type="submit" class="btn btn-outline-primary">
+                            <i class="bi bi-envelope me-2"></i>Enviar Email de Prueba
+                        </button>
+                    </form>
                 </div>
 
                 <!-- Configuración Notificaciones -->
