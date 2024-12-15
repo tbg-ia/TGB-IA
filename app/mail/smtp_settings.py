@@ -13,27 +13,38 @@ class EmailConfig:
     def init_mail(self, app):
         """Initialize Flask-Mail with the current application context."""
         try:
-            if not self.mail:
+            if self.mail is None:
                 self.mail = Mail()
             
-            # Get configuration from environment
-            app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER')
-            app.config['MAIL_PORT'] = int(os.environ.get('MAIL_PORT', 587))
-            app.config['MAIL_USE_TLS'] = True
-            app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
-            app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
-            app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_DEFAULT_SENDER')
+            # Configuración directa desde variables de entorno
+            config = {
+                'MAIL_SERVER': os.environ.get('MAIL_SERVER'),
+                'MAIL_PORT': int(os.environ.get('MAIL_PORT', 587)),
+                'MAIL_USE_TLS': True,
+                'MAIL_USERNAME': os.environ.get('MAIL_USERNAME'),
+                'MAIL_PASSWORD': os.environ.get('MAIL_PASSWORD'),
+                'MAIL_DEFAULT_SENDER': os.environ.get('MAIL_DEFAULT_SENDER'),
+                'MAIL_USE_SSL': False,
+                'MAIL_MAX_EMAILS': None,
+                'MAIL_ASCII_ATTACHMENTS': False
+            }
             
-            # Validate required settings
-            required_settings = ['MAIL_SERVER', 'MAIL_USERNAME', 'MAIL_PASSWORD']
-            missing_settings = [setting for setting in required_settings if not app.config.get(setting)]
+            # Validar configuración requerida
+            required = ['MAIL_SERVER', 'MAIL_USERNAME', 'MAIL_PASSWORD']
+            missing = [key for key in required if not config.get(key)]
+            if missing:
+                raise ValueError(f"Faltan configuraciones requeridas: {', '.join(missing)}")
             
-            if missing_settings:
-                raise ValueError(f"Missing required email settings: {', '.join(missing_settings)}")
+            # Actualizar configuración de la aplicación
+            app.config.update(config)
             
-            # Initialize mail with app
+            # Inicializar Mail con la aplicación
             self.mail.init_app(app)
-            logger.info("Flask-Mail initialized successfully")
+            
+            # Verificar conexión
+            with self.mail.connect() as conn:
+                logger.info(f"Conexión SMTP establecida con {config['MAIL_SERVER']}:{config['MAIL_PORT']}")
+            
             return self.mail
             
         except Exception as e:

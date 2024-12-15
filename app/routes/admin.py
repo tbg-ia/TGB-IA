@@ -479,71 +479,72 @@ def delete_plan(price_id):
 @admin_required
 def test_email():
     """Envía un email de prueba para verificar la configuración SMTP."""
-    if not request.form.get('test_email'):
+    test_email = request.form.get('test_email')
+    if not test_email:
         flash('Por favor, ingrese una dirección de email válida', 'error')
         return redirect(url_for('admin.settings'))
     
     try:
-        logging.info("Iniciando prueba de email SMTP...")
+        logging.info("=== Iniciando prueba de email SMTP ===")
         
-        # Verificar configuración SMTP
-        required_settings = ['MAIL_SERVER', 'MAIL_USERNAME', 'MAIL_PASSWORD']
-        missing_settings = [setting for setting in required_settings 
-                          if not os.environ.get(setting)]
-        
-        if missing_settings:
-            error_msg = f'Configuración SMTP incompleta. Falta: {", ".join(missing_settings)}'
-            logging.error(error_msg)
-            flash(error_msg, 'error')
-            return redirect(url_for('admin.settings'))
-        
-        logging.info(f"Servidor SMTP: {os.environ.get('MAIL_SERVER')}:{os.environ.get('MAIL_PORT')}")
-        
+        # Importar después de las validaciones para evitar problemas de importación
         from flask_mail import Message
         from app.mail.smtp_settings import email_config
         
-        test_email = request.form.get('test_email')
-        logging.info(f"Enviando email de prueba a: {test_email}")
-        
-        # Inicializar el cliente de correo
+        # Inicializar Mail
         try:
             mail = email_config.init_mail(current_app)
             logging.info("Cliente de correo inicializado correctamente")
         except ValueError as ve:
-            error_msg = f'Error en la configuración de email: {str(ve)}'
+            error_msg = f'Error de configuración SMTP: {str(ve)}'
+            logging.error(error_msg)
+            flash(error_msg, 'error')
+            return redirect(url_for('admin.settings'))
+        except Exception as e:
+            error_msg = f'Error al inicializar cliente SMTP: {str(e)}'
             logging.error(error_msg)
             flash(error_msg, 'error')
             return redirect(url_for('admin.settings'))
         
-        # Crear el mensaje
-        msg = Message(
-            'Test de Configuración SMTP',
-            sender=os.environ.get('MAIL_DEFAULT_SENDER'),
-            recipients=[test_email]
-        )
-        logging.info("Mensaje creado correctamente")
-        
-        msg.body = '''
-            Este es un email de prueba para verificar la configuración SMTP.
+        # Crear mensaje
+        try:
+            msg = Message(
+                subject='Test de Configuración SMTP',
+                sender=os.environ.get('MAIL_DEFAULT_SENDER'),
+                recipients=[test_email]
+            )
             
-            Si estás recibiendo este mensaje, la configuración de email está funcionando correctamente.
-        '''
-        msg.html = '''
-            <h3>Test de Configuración SMTP</h3>
-            <p>Este es un email de prueba para verificar la configuración SMTP.</p>
-            <p>Si estás recibiendo este mensaje, la configuración de email está funcionando correctamente.</p>
-        '''
-        
-        # Intentar enviar el email
-        with current_app.app_context():
-            mail.send(msg)
+            msg.body = 'Este es un email de prueba para verificar la configuración SMTP.'
+            msg.html = '''
+                <h3>Test de Configuración SMTP</h3>
+                <p>Este es un email de prueba para verificar la configuración SMTP.</p>
+                <p>Si estás recibiendo este mensaje, la configuración de email está funcionando correctamente.</p>
+            '''
+            logging.info("Mensaje creado correctamente")
             
-        flash('Email de prueba enviado exitosamente', 'success')
-        logging.info(f"Test email sent successfully to {test_email}")
+        except Exception as e:
+            error_msg = f'Error al crear el mensaje: {str(e)}'
+            logging.error(error_msg)
+            flash(error_msg, 'error')
+            return redirect(url_for('admin.settings'))
         
+        # Enviar email
+        try:
+            with current_app.app_context():
+                with mail.connect() as conn:
+                    conn.send(msg)
+            logging.info(f"Email de prueba enviado exitosamente a {test_email}")
+            flash('Email de prueba enviado exitosamente', 'success')
+            
+        except Exception as e:
+            error_msg = f'Error al enviar el email: {str(e)}'
+            logging.error(error_msg)
+            flash(error_msg, 'error')
+            return redirect(url_for('admin.settings'))
+            
     except Exception as e:
-        error_msg = f"Error al enviar el email de prueba: {str(e)}"
+        error_msg = f"Error general: {str(e)}"
         logging.error(error_msg)
         flash(error_msg, 'error')
-    
+        
     return redirect(url_for('admin.settings'))
