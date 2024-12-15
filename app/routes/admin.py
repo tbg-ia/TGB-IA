@@ -484,19 +484,34 @@ def test_email():
         return redirect(url_for('admin.settings'))
     
     try:
+        # Verificar configuración SMTP
+        required_settings = ['MAIL_SERVER', 'MAIL_USERNAME', 'MAIL_PASSWORD']
+        missing_settings = [setting for setting in required_settings 
+                          if not os.environ.get(setting)]
+        
+        if missing_settings:
+            flash(f'Configuración SMTP incompleta. Falta: {", ".join(missing_settings)}', 'error')
+            return redirect(url_for('admin.settings'))
+        
         from flask_mail import Message
         from app.mail.smtp_settings import email_config
         
         test_email = request.form.get('test_email')
-        mail = email_config.init_mail(current_app)
         
+        # Inicializar el cliente de correo
+        try:
+            mail = email_config.init_mail(current_app)
+        except ValueError as ve:
+            flash(f'Error en la configuración de email: {str(ve)}', 'error')
+            return redirect(url_for('admin.settings'))
+        
+        # Crear el mensaje
         msg = Message(
             'Test de Configuración SMTP',
-            sender=current_app.config['MAIL_DEFAULT_SENDER'],
+            sender=os.environ.get('MAIL_DEFAULT_SENDER'),
             recipients=[test_email]
         )
         
-        # Establecer el contenido del email
         msg.body = '''
             Este es un email de prueba para verificar la configuración SMTP.
             
