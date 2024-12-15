@@ -113,9 +113,20 @@
                         {% else %}
                         <form action="{{ url_for('subscription.create_checkout_session') }}" method="POST">
                             <input type="hidden" name="plan_id" value="{{ plan.id }}">
+                            {% if request.args.get('confirm_same_plan') and request.args.get('plan_id') == plan.id %}
+                            <input type="hidden" name="confirm_same_plan" value="true">
                             <button type="submit" class="btn btn-lg {% if plan.name == 'Pro' %}btn-primary{% else %}btn-outline-light{% endif %} w-100">
-                                Comenzar Ahora
+                                Confirmar Renovación
                             </button>
+                            {% else %}
+                            <button type="submit" class="btn btn-lg {% if plan.name == 'Pro' %}btn-primary{% else %}btn-outline-light{% endif %} w-100">
+                                {% if current_user.subscription_type == plan.name.lower() %}
+                                Renovar Plan
+                                {% else %}
+                                Cambiar a {{ plan.name }}
+                                {% endif %}
+                            </button>
+                            {% endif %}
                         </form>
                         {% endif %}
                     {% else %}

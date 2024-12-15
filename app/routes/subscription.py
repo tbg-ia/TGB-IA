@@ -57,14 +57,23 @@ def create_checkout_session():
         stripe.api_key = stripe_credentials['api_key']
         
         plan_id = request.form.get('plan_id')
-        # Verificar que el plan seleccionado es de nivel superior al actual
+        # Verificar el cambio de plan
         current_plan_level = {'basic': 0, 'pro': 1, 'enterprise': 2}
-        user_plan_level = current_plan_level.get(current_user.subscription_type, -1)
-        selected_plan_level = current_plan_level.get(plan_id.split('_')[0], -1)
+        current_plan = current_user.subscription_type or 'basic'
+        user_plan_level = current_plan_level.get(current_plan, -1)
+        selected_plan = plan_id.split('_')[0]
+        selected_plan_level = current_plan_level.get(selected_plan, -1)
         
-        if selected_plan_level <= user_plan_level:
-            flash('Ya tienes acceso a este plan o uno superior', 'warning')
+        # Solo bloquear si intenta cambiar a un plan inferior
+        if selected_plan_level < user_plan_level:
+            flash(f'No puedes cambiar a un plan inferior. Tu plan actual es {current_plan.title()}', 'warning')
             return redirect(url_for('subscription.plans'))
+        
+        # Si es el mismo plan, verificar si realmente quiere renovar
+        if selected_plan == current_plan:
+            if not request.form.get('confirm_same_plan'):
+                flash('Ya tienes este plan. ¿Deseas renovar tu suscripción?', 'info')
+                return redirect(url_for('subscription.plans', confirm_same_plan=True, plan_id=plan_id))
         
         plan_data = {
             'basic_monthly': {
