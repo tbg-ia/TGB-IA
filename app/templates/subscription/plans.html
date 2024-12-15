@@ -294,13 +294,24 @@ function editPlan(planId) {
 function savePlan() {
     const form = document.getElementById('editPlanForm');
     const formData = new FormData(form);
-    const planId = formData.get('plan_id');
+    const planId = document.getElementById('planId').value;
 
-    // Convertir los campos numéricos
+    // Manejar checkboxes
+    const checkboxFields = [
+        'has_manual_trading', 'has_automated_trading', 'has_advanced_trading',
+        'has_basic_analysis', 'has_advanced_analysis', 'has_custom_dashboard',
+        'has_custom_bots', 'has_unlimited_bots', 'has_api_access', 'has_custom_apis'
+    ];
+
+    checkboxFields.forEach(field => {
+        formData.set(field, document.getElementById(field).checked ? 'on' : 'off');
+    });
+
+    // Asegurar campos numéricos
     ['price', 'max_bots', 'active_signals', 'apis_per_exchange', 'trial_days'].forEach(field => {
-        const value = formData.get(field);
-        if (value) {
-            formData.set(field, parseFloat(value));
+        const value = document.getElementById(field).value;
+        if (value !== '') {
+            formData.set(field, value);
         }
     });
 
@@ -308,19 +319,26 @@ function savePlan() {
         method: 'POST',
         body: formData
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(err => {
+                throw new Error(err.error || 'Error en la respuesta del servidor');
+            });
+        }
+        return response.json();
+    })
     .then(data => {
         if (data.success) {
             const modal = bootstrap.Modal.getInstance(document.getElementById('editPlanModal'));
             modal.hide();
             window.location.reload();
         } else {
-            alert(data.error || 'Error al actualizar el plan');
+            throw new Error(data.error || 'Error al actualizar el plan');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Error al actualizar el plan');
+        alert(error.message || 'Error al actualizar el plan');
     });
 }
 </script>
