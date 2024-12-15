@@ -55,21 +55,21 @@ def create_checkout_session():
         
         plan_data = {
             'basic_monthly': {
-                'price': 99,  # $0.99
-                'name': 'Plan Básico Mensual',
-                'description': 'Trading manual y análisis de mercado básico',
+                'price': 999,  # $9.99
+                'name': 'Plan Básico',
+                'description': 'Trading manual y análisis básico',
                 'stripe_price_id': os.environ.get('STRIPE_BASIC_PRICE_ID')
             },
             'pro_monthly': {
                 'price': 2999,  # $29.99
-                'name': 'Plan Pro Mensual',
-                'description': 'Trading automatizado, análisis avanzado y soporte 24/7',
+                'name': 'Plan Pro',
+                'description': 'Trading automatizado y análisis avanzado',
                 'stripe_price_id': os.environ.get('STRIPE_PRO_PRICE_ID')
             },
             'enterprise_monthly': {
                 'price': 9999,  # $99.99
-                'name': 'Plan Enterprise Mensual',
-                'description': 'Trading automatizado avanzado y APIs personalizadas',
+                'name': 'Plan Enterprise',
+                'description': 'Trading avanzado y APIs personalizadas',
                 'stripe_price_id': os.environ.get('STRIPE_ENTERPRISE_PRICE_ID')
             }
         }
