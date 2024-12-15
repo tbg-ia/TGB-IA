@@ -57,6 +57,9 @@
                 <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editPlanModal">
                     <i class="bi bi-gear-fill me-2"></i>Administrar Planes
                 </button>
+                <span class="badge bg-warning text-dark ms-2">
+                    <i class="bi bi-shield-lock-fill me-1"></i>Modo Administrador
+                </span>
             </div>
             {% endif %}
         </div>
@@ -77,8 +80,8 @@
                     <p class="lead text-muted mb-0 mt-2">{{ plan.description }}</p>
                     {% endif %}
                     {% if current_user.is_admin %}
-                    <button type="button" class="btn btn-sm btn-outline-secondary mt-2" onclick="editPlan({{ plan.id }})">
-                        <i class="bi bi-pencil"></i> Editar
+                    <button type="button" class="btn btn-sm btn-outline-light mt-2" onclick="editPlan({{ plan.id }})">
+                        <i class="bi bi-pencil-square"></i> Editar Plan
                     </button>
                     {% endif %}
                 </div>

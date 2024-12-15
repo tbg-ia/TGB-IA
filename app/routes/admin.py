@@ -344,7 +344,7 @@ def save_notification_settings():
 @admin_bp.route('/subscription/plans')
 @login_required
 @admin_required
-def subscription_plans():
+def manage_subscription_plans():
     try:
         # Obtener estadísticas de suscripciones
         stats = {
