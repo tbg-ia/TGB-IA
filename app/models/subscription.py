@@ -3,7 +3,7 @@ from datetime import datetime
 
 class Subscription(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     plan_type = db.Column(db.String(20), nullable=False)  # 'basic', 'pro', or 'enterprise'
     status = db.Column(db.String(20), nullable=False, default='active')  # active, cancelled, expired, inactive
     amount = db.Column(db.Float, nullable=False)

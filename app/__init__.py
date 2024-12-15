@@ -68,9 +68,13 @@ def create_app():
         return render_template('public/index.html')
 
     with app.app_context():
-        # Import models
+        # Import all models
         from app.models.role import Role
-        from app.models.exchange import Exchange  # Import Exchange model
+        from app.models.user import User
+        from app.models.exchange import Exchange
+        from app.models.trading_bot import TradingBot
+        from app.models.trade import Trade
+        from app.models.subscription import Subscription
         
         db.create_all()
         
