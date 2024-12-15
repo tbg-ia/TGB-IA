@@ -32,7 +32,7 @@
                             <ul class="dropdown-menu dropdown-menu-dark">
                                 <li><a class="dropdown-item" href="{{ url_for('admin.settings') }}">General</a></li>
                                 <li><a class="dropdown-item" href="{{ url_for('admin.config') }}">Sistema</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('admin.subscription_plans') }}">Planes de Suscripción</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('admin.manage_subscription_plans') }}">Planes de Suscripción</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="{{ url_for('admin.settings') }}#email">
                                     Configuración Email
@@ -96,7 +96,7 @@
                             <li><a class="dropdown-item" href="{{ url_for('admin.users') }}">
                                 <i class="bi bi-people me-2"></i>Gestión Usuarios
                             </a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('admin.subscription_plans') }}">
+                            <li><a class="dropdown-item" href="{{ url_for('admin.manage_subscription_plans') }}">
                                 <i class="bi bi-cash-stack me-2"></i>Planes y Suscripciones
                             </a></li>
                             <li><a class="dropdown-item" href="{{ url_for('admin.config') }}">
