@@ -41,6 +41,58 @@
                                     {{ exchange.name }}
                                 </div>
                             </td>
+                            <td>{{ exchange.exchange_type }}</td>
+                            <td><i class="bi bi-check-circle-fill text-success"></i></td>
+                            <td><i class="bi bi-check-circle-fill text-success"></i></td>
+                            <td><i class="bi bi-check-circle-fill text-success"></i></td>
+                            <td><i class="bi bi-check-circle-fill text-success"></i></td>
+                            <td>
+                                <span class="badge {% if exchange.is_active %}bg-success{% else %}bg-secondary{% endif %}">
+                                    {{ 'Connected' if exchange.is_active else 'Disconnected' }}
+                                </span>
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" 
+                                        data-bs-target="#configureExchangeModal" 
+                                        data-exchange-id="{{ exchange.id }}">
+                                    Configure
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Exchanges Table -->
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Exchange</th>
+                            <th>Markets</th>
+                            <th>Paper Trading</th>
+                            <th>Grid Bot</th>
+                            <th>DCA Bot</th>
+                            <th>Copy Trading</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for exchange in exchanges %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img src="{{ url_for('static', filename='img/exchanges/' + exchange.name.lower() + '.svg') }}" 
+                                         alt="{{ exchange.name }}" class="me-2" style="height: 24px;">
+                                    {{ exchange.name }}
+                                </div>
+                            </td>
                             <td>{{ exchange.markets }}</td>
                             <td><i class="bi bi-check-circle-fill text-success"></i></td>
                             <td><i class="bi bi-check-circle-fill text-success"></i></td>
