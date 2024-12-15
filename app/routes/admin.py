@@ -6,6 +6,7 @@ from app.models.subscription import Subscription
 from app.models.system_config import SystemConfig
 from app.models.trading_bot import TradingBot
 from app.models.trade import Trade
+from app.models.subscription_plan import SubscriptionPlan
 from app import db
 import logging
 import stripe
@@ -429,7 +430,12 @@ def get_plan(price_id):
 @admin_required
 def save_plan():
     try:
-        stripe.api_key = current_app.config['STRIPE_SECRET_KEY']
+        # Obtener la clave de Stripe de la configuración del sistema
+        stripe_key = SystemConfig.get_value('STRIPE_SECRET_KEY')
+        if not stripe_key:
+            raise ValueError("Stripe API key not configured")
+        
+        stripe.api_key = stripe_key
         
         name = request.form.get('name')
         description = request.form.get('description')
@@ -437,26 +443,55 @@ def save_plan():
         interval = request.form.get('interval')
         features = request.form.get('features')
         
-        # Crear o actualizar el producto en Stripe
-        product = stripe.Product.create(
-            name=name,
-            description=description,
-            metadata={'features': features}
-        )
+        if not all([name, price, interval]):
+            raise ValueError("Missing required fields")
         
-        # Crear el precio para el producto
-        stripe.Price.create(
-            product=product.id,
-            unit_amount=int(price * 100),  # Convertir a centavos
-            currency='usd',
-            recurring={'interval': interval}
-        )
+        try:
+            # Crear el producto en Stripe
+            product = stripe.Product.create(
+                name=name,
+                description=description,
+                metadata={'features': features}
+            )
+            
+            # Crear el precio en Stripe
+            stripe_price = stripe.Price.create(
+                product=product.id,
+                unit_amount=int(price * 100),  # Convertir a centavos
+                currency='usd',
+                recurring={'interval': interval}
+            )
+            
+            # Guardar en la base de datos local
+            plan = SubscriptionPlan(
+                name=name,
+                description=description,
+                price=int(price * 100),
+                interval=interval,
+                features=features,
+                stripe_product_id=product.id,
+                stripe_price_id=stripe_price.id
+            )
+            
+            db.session.add(plan)
+            db.session.commit()
+            
+            flash('Plan creado exitosamente', 'success')
+            return jsonify({'success': True})
+            
+        except stripe.error.StripeError as e:
+            db.session.rollback()
+            logging.error(f"Stripe API error: {str(e)}")
+            return jsonify({'error': f"Error with Stripe: {str(e)}"}), 500
+            
+    except ValueError as e:
+        logging.error(f"Validation error: {str(e)}")
+        return jsonify({'error': str(e)}), 400
         
-        flash('Plan creado exitosamente', 'success')
-        return jsonify({'success': True})
     except Exception as e:
+        db.session.rollback()
         logging.error(f"Error saving plan: {str(e)}")
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': "An unexpected error occurred"}), 500
 
 @admin_bp.route('/subscription/plans/<price_id>/toggle', methods=['POST'])
 @login_required
