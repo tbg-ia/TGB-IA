@@ -61,6 +61,46 @@
             </div>
         </div>
         {% endfor %}
+        
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Estado BingX</h5>
+                    <span class="badge {% if exchange.name == 'BingX' and exchange.is_active %}bg-success{% else %}bg-secondary{% endif %}">
+                        {{ 'Conectado' if exchange.name == 'BingX' and exchange.is_active else 'Desconectado' }}
+                    </span>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Estado API</label>
+                        <div class="d-flex align-items-center">
+                            <span class="badge {% if exchange.name == 'BingX' and exchange.is_active %}bg-success{% else %}bg-secondary{% endif %} me-2">
+                                {{ 'Activa' if exchange.name == 'BingX' and exchange.is_active else 'Inactiva' }}
+                            </span>
+                            {% if exchange.name == 'BingX' and exchange.last_error %}
+                            <small class="text-danger">{{ exchange.last_error }}</small>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Balance Disponible</label>
+                        <h4>{{ "%.2f"|format(account_balance|default(0)) }} USDT</h4>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Pares Disponibles</label>
+                        <p class="mb-0">{{ exchange.available_pairs|length if exchange.name == 'BingX' else 0 }} pares de trading</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Límites de Trading</label>
+                        <ul class="list-unstyled mb-0">
+                            <li>Min: {{ exchange.min_trade_amount|default(10) }} USDT</li>
+                            <li>Max: {{ exchange.max_trade_amount|default(100000) }} USDT</li>
+                            <li>Apalancamiento: hasta {{ exchange.max_leverage|default(20) }}x</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
