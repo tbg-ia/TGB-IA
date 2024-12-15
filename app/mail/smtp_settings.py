@@ -1,20 +1,17 @@
 import os
 import logging
-from flask_mail import Mail
+from . import mail
 
 logger = logging.getLogger(__name__)
 
 class EmailConfig:
     def __init__(self):
         """Initialize email configuration."""
-        self.mail = None
         logger.info("Email configuration initialized")
     
     def init_mail(self, app):
         """Initialize Flask-Mail with the current application context."""
         try:
-            if self.mail is None:
-                self.mail = Mail()
             
             # Configuración directa desde variables de entorno
             config = {
@@ -39,13 +36,13 @@ class EmailConfig:
             app.config.update(config)
             
             # Inicializar Mail con la aplicación
-            self.mail.init_app(app)
+            mail.init_app(app)
             
             # Verificar conexión
-            with self.mail.connect() as conn:
+            with mail.connect() as conn:
                 logger.info(f"Conexión SMTP establecida con {config['MAIL_SERVER']}:{config['MAIL_PORT']}")
             
-            return self.mail
+            return mail
             
         except Exception as e:
             logger.error(f"Error initializing Flask-Mail: {str(e)}")
