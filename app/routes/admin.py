@@ -7,6 +7,7 @@ from app.models.system_config import SystemConfig
 from app.models.trading_bot import TradingBot
 from app.models.trade import Trade
 from app.models.subscription_plan import SubscriptionPlan
+from app.models.exchange_permission import ExchangePermission
 from app import db
 import logging
 import stripe
