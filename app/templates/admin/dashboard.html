@@ -47,6 +47,25 @@
                 </div>
             </div>
 
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            {% if not stats.stripe_configured %}
+                <div class="alert alert-warning" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    Stripe no está configurado. Por favor, configure las credenciales de Stripe en la 
+                    <a href="{{ url_for('admin.settings') }}" class="alert-link">página de configuración</a>.
+                </div>
+            {% endif %}
+
             <!-- Stats Cards -->
             <div class="row mb-4">
                 <div class="col-md-3">

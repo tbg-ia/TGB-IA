@@ -17,6 +17,7 @@ class Trade(db.Model):
     close_price = db.Column(db.Float)
     close_time = db.Column(db.DateTime)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     
     # Foreign Keys
     exchange_id = db.Column(db.Integer, db.ForeignKey('exchanges.id'), nullable=False)

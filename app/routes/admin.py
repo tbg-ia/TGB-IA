@@ -23,20 +23,40 @@ def dashboard():
         active_bots = db.session.query(db.func.count(TradingBot.id))\
             .filter(TradingBot.active == True).scalar() or 0
         
-        # Obtener trades recientes
-        recent_trades = Trade.query.order_by(Trade.timestamp.desc()).limit(10).all()
-        
-        # Obtener estadísticas de suscripciones
-        total_subscribers = User.query.filter(User.subscription_type != 'basic').count()
-        monthly_revenue = db.session.query(
-            db.func.sum(Subscription.amount)
-        ).filter(Subscription.status == 'active').scalar() or 0
-        
+        try:
+            # Obtener trades recientes con manejo de errores
+            recent_trades = Trade.query.order_by(Trade.created_at.desc()).limit(10).all()
+        except Exception as e:
+            logging.error(f"Error fetching recent trades: {str(e)}")
+            recent_trades = []
+
+        try:
+            # Obtener estadísticas de suscripciones
+            total_subscribers = User.query.filter(User.subscription_type != 'basic').count()
+            monthly_revenue = db.session.query(
+                db.func.sum(Subscription.amount)
+            ).filter(Subscription.status == 'active').scalar() or 0
+        except Exception as e:
+            logging.error(f"Error fetching subscription stats: {str(e)}")
+            total_subscribers = 0
+            monthly_revenue = 0
+
+        # Intentar obtener la configuración de Stripe
+        stripe_configured = False
+        try:
+            stripe_key = SystemConfig.get_value('STRIPE_SECRET_KEY')
+            if stripe_key:
+                stripe.api_key = stripe_key
+                stripe_configured = True
+        except Exception as e:
+            logging.error(f"Error configuring Stripe: {str(e)}")
+
         stats = {
             'total_users': total_users,
             'active_bots': active_bots,
             'total_subscribers': total_subscribers,
-            'monthly_revenue': monthly_revenue
+            'monthly_revenue': monthly_revenue,
+            'stripe_configured': stripe_configured
         }
         
         return render_template('admin/dashboard.html', 
