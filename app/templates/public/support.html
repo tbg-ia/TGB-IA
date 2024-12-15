@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4">Soporte Técnico</h2>
+    
+    <!-- Sección de Contacto -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Contacto Directo</h5>
+                </div>
+                <div class="card-body">
+                    <form id="supportForm">
+                        <div class="mb-3">
+                            <label class="form-label">Asunto</label>
+                            <select class="form-select" name="subject" required>
+                                <option value="">Seleccione un asunto...</option>
+                                <option value="technical">Problema Técnico</option>
+                                <option value="account">Cuenta y Acceso</option>
+                                <option value="billing">Facturación</option>
+                                <option value="feature">Sugerencia de Funcionalidad</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Mensaje</label>
+                            <textarea class="form-control" name="message" rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-send me-2"></i>Enviar Mensaje
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Información de Contacto</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h6><i class="bi bi-envelope me-2"></i>Email</h6>
+                        <p class="mb-0">soporte@tradingplatform.com</p>
+                    </div>
+                    <div class="mb-4">
+                        <h6><i class="bi bi-clock me-2"></i>Horario de Atención</h6>
+                        <p class="mb-0">Lunes a Viernes: 9:00 - 18:00<br>
+                        Sábados: 10:00 - 14:00</p>
+                    </div>
+                    <div class="mb-4">
+                        <h6><i class="bi bi-chat-dots me-2"></i>Chat en Vivo</h6>
+                        <p class="mb-2">Disponible durante el horario de atención</p>
+                        <button class="btn btn-outline-primary">
+                            <i class="bi bi-chat me-2"></i>Iniciar Chat
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- FAQs -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Preguntas Frecuentes</h5>
+        </div>
+        <div class="card-body">
+            <div class="accordion" id="faqAccordion">
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                            ¿Cómo configuro mi cuenta de exchange?
+                        </button>
+                    </h2>
+                    <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Para configurar tu cuenta de exchange, dirígete a la sección de "Exchange Connection" 
+                            donde encontrarás una guía paso a paso para conectar tus exchanges preferidos.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                            ¿Cómo funciona el sistema de suscripciones?
+                        </button>
+                    </h2>
+                    <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Ofrecemos diferentes planes de suscripción adaptados a tus necesidades. 
+                            Puedes ver los detalles en la sección de "Planes" y elegir el que mejor se ajuste a ti.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                            ¿Cómo funciona el bot de trading?
+                        </button>
+                    </h2>
+                    <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Nuestro bot de trading utiliza estrategias automatizadas para operar en los mercados.
+                            Puedes configurar tus preferencias en la sección "Signal Bot".
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
