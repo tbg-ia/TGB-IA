@@ -4,7 +4,8 @@ from app.auth.decorators import admin_required
 from app.models.user import User
 from app.models.subscription import Subscription
 from app.models.system_config import SystemConfig
-from app.models.trading_bot import TradingBot, Trade
+from app.models.trading_bot import TradingBot
+from app.models.trade import Trade
 from app import db
 import logging
 import stripe

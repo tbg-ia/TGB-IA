@@ -1,6 +1,6 @@
 from app.mail.utils import send_trade_notification
 from app.models.user import User
-from app.models.trading_bot import Trade
+from app.models.trade import Trade
 from datetime import datetime, timedelta
 
 def send_daily_summary():
