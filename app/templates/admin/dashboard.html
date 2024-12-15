@@ -124,25 +124,25 @@
                                 </button>
                             </div>
                             <div class="table-responsive">
-                                <table class="table">
+                                <table class="table table-borderless align-middle">
                                     <thead>
-                                        <tr>
+                                        <tr class="text-muted">
                                             <th>Plan</th>
-                                            <th>Señales Activas</th>
-                                            <th>APIs por Exchange</th>
-                                            <th>Acciones</th>
+                                            <th class="text-center">Señales Activas</th>
+                                            <th class="text-center">APIs por Exchange</th>
+                                            <th class="text-center">Acci</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {% for plan in subscription_plans %}
                                         <tr>
-                                            <td>{{ plan.name }}</td>
-                                            <td>{{ plan.get_exchange_limits()['active_signals'] }}</td>
-                                            <td>{{ plan.get_exchange_limits()['apis_per_exchange'] }}</td>
-                                            <td>
-                                                <button class="btn btn-sm btn-outline-primary" 
+                                            <td class="fw-bold">{{ plan.name }}</td>
+                                            <td class="text-center">{{ plan.get_exchange_limits()['active_signals'] }}</td>
+                                            <td class="text-center">{{ plan.get_exchange_limits()['apis_per_exchange'] }}</td>
+                                            <td class="text-center">
+                                                <button class="btn btn-link p-0" 
                                                         onclick="editPlan({{ plan.id }})">
-                                                    <i class="bi bi-pencil"></i>
+                                                    <i class="bi bi-pencil-square text-primary fs-5"></i>
                                                 </button>
                                             </td>
                                         </tr>
@@ -391,6 +391,20 @@ function createBot() {
             const modal = bootstrap.Modal.getInstance(document.getElementById('newBotModal'));
             modal.hide();
             window.location.reload();
+        } else {
+            alert(data.error || 'Error al crear el bot');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error al crear el bot');
+    });
+}
+// Add editPlan function (this is a placeholder, needs actual implementation)
+function editPlan(planId) {
+    alert(`Editing plan with ID: ${planId}`); // Replace with actual modal logic
+}
+</script>
 <!-- Modal Editar Plan -->
 <div class="modal fade" id="editPlanModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
@@ -473,20 +487,6 @@ function savePlan() {
         console.error('Error:', error);
         alert('Error al actualizar el plan');
     });
-}
-</script>
-        } else {
-            alert(data.error || 'Error al crear el bot');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Error al crear el bot');
-    });
-}
-// Add editPlan function (this is a placeholder, needs actual implementation)
-function editPlan(planId) {
-    alert(`Editing plan with ID: ${planId}`); // Replace with actual modal logic
 }
 </script>
 {% endblock %}
