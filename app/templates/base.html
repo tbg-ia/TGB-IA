@@ -63,6 +63,19 @@
                                 <i class="bi bi-robot me-1"></i>Signal Bot
                             </a>
                         </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-book me-1"></i>Resources
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-dark">
+                                <li><a class="dropdown-item" href="{{ url_for('crypto.resources') }}">
+                                    <i class="bi bi-file-text me-2"></i>Documentation
+                                </a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('crypto.exchange_connection') }}">
+                                    <i class="bi bi-gear me-2"></i>Exchange Connection
+                                </a></li>
+                            </ul>
+                        </li>
                         {% endif %}
                     {% else %}
                     <li class="nav-item">

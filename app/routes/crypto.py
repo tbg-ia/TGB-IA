@@ -40,6 +40,15 @@ def plans():
 def user_dashboard():
     return render_template('public/user_dashboard.html')
 
+@crypto_bp.route('/resources')
+@login_required
+def resources():
+    return render_template('public/resources.html')
+
+@crypto_bp.route('/exchange-connection')
+@login_required
+def exchange_connection():
+    return render_template('public/exchange_connection.html')
 @crypto_bp.route('/bot/<int:bot_id>/trades')
 @login_required
 def get_bot_trades(bot_id):

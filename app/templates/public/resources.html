@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4">Recursos y Documentación</h2>
+    
+    <!-- Documentación -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Documentación</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">Guía de Inicio Rápido</h6>
+                                <small><i class="bi bi-book"></i></small>
+                            </div>
+                            <p class="mb-1">Aprende los conceptos básicos para comenzar a operar.</p>
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">Configuración de API</h6>
+                                <small><i class="bi bi-gear"></i></small>
+                            </div>
+                            <p class="mb-1">Guía paso a paso para configurar las APIs de los exchanges.</p>
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">Estrategias de Trading</h6>
+                                <small><i class="bi bi-graph-up"></i></small>
+                            </div>
+                            <p class="mb-1">Documentación sobre las estrategias disponibles.</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recursos Externos -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Recursos Externos</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">TradingView</h5>
+                                    <p class="card-text">Herramienta profesional para análisis técnico y gráficos.</p>
+                                    <a href="https://www.tradingview.com/" target="_blank" class="btn btn-primary">
+                                        <i class="bi bi-box-arrow-up-right me-2"></i>Visitar
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">CoinGecko</h5>
+                                    <p class="card-text">Datos de mercado y análisis fundamentales.</p>
+                                    <a href="https://www.coingecko.com/" target="_blank" class="btn btn-primary">
+                                        <i class="bi bi-box-arrow-up-right me-2"></i>Visitar
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
