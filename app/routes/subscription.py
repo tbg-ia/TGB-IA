@@ -4,7 +4,9 @@ from flask import Blueprint, render_template, jsonify, request, current_app, url
 from flask_login import login_required, current_user
 import stripe
 from datetime import datetime, timedelta
+from sqlalchemy import case
 from app.models.subscription import Subscription, Payment
+from app.models.subscription_plan import SubscriptionPlan
 from app.models.user import User
 from app import db
 
@@ -19,7 +21,16 @@ def plans():
     """Muestra los planes de suscripción disponibles"""
     try:
         logging.info("Accediendo a la página de planes")
-        return render_template('subscription/plans.html')
+        # Obtener los planes de la base de datos
+        subscription_plans = SubscriptionPlan.query.order_by(
+            case(
+                (SubscriptionPlan.name == 'Básico', 1),
+                (SubscriptionPlan.name == 'Pro', 2),
+                (SubscriptionPlan.name == 'Enterprise', 3)
+            )
+        ).all()
+        logging.info(f"Planes encontrados: {len(subscription_plans)}")
+        return render_template('subscription/plans.html', plans=subscription_plans)
     except Exception as e:
         logging.error(f"Error al cargar la página de planes: {str(e)}")
         flash('Error al cargar los planes de suscripción', 'error')
