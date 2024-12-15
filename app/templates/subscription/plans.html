@@ -29,7 +29,6 @@
     <div class="row mb-4">
         <div class="col-md-8 mx-auto text-center">
             <h2 class="display-4 mb-3">Mejora tu experiencia de trading</h2>
-            <p class="lead text-muted">Elige el plan que mejor se adapte a tus necesidades</p>
             {% if current_user.is_authenticated and current_user.subscription_type != 'basic' %}
             <div class="alert alert-info">
                 <i class="bi bi-info-circle-fill me-2"></i>
