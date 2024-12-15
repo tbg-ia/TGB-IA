@@ -51,6 +51,14 @@
                 Ya tienes el plan {{ current_user.subscription_type|title }}. Al actualizar, se ajustará el precio proporcionalmente.
             </div>
             {% endif %}
+
+            {% if current_user.is_admin %}
+            <div class="mb-3">
+                <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editPlanModal">
+                    <i class="bi bi-gear-fill me-2"></i>Administrar Planes
+                </button>
+            </div>
+            {% endif %}
         </div>
     </div>
     
@@ -131,4 +139,95 @@
         </main>
     </div>
 </div>
+
+{% if current_user.is_admin %}
+<!-- Modal Editar Plan -->
+<div class="modal fade" id="editPlanModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Editar Plan de Suscripción</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editPlanForm">
+                    <input type="hidden" id="planId" name="plan_id">
+                    <div class="mb-3">
+                        <label class="form-label">Nombre del Plan</label>
+                        <input type="text" class="form-control" id="planName" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Señales Activas</label>
+                        <input type="number" class="form-control" id="activeSignals" name="active_signals" required min="1">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">APIs por Exchange</label>
+                        <input type="number" class="form-control" id="apisPerExchange" name="apis_per_exchange" required min="1">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Precio (USD)</label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="number" class="form-control" id="planPrice" name="price" required step="0.01">
+                            <span class="input-group-text">/mes</span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="savePlan()">
+                    Guardar Cambios
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function editPlan(planId) {
+    fetch(`/admin/subscription/plans/${planId}`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('planId').value = planId;
+            document.getElementById('planName').value = data.name;
+            document.getElementById('activeSignals').value = data.active_signals;
+            document.getElementById('apisPerExchange').value = data.apis_per_exchange;
+            document.getElementById('planPrice').value = data.price;
+            
+            const modal = new bootstrap.Modal(document.getElementById('editPlanModal'));
+            modal.show();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al cargar los datos del plan');
+        });
+}
+
+function savePlan() {
+    const form = document.getElementById('editPlanForm');
+    const formData = new FormData(form);
+    const planId = formData.get('plan_id');
+
+    fetch(`/admin/subscription/plans/${planId}/update`, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const modal = bootstrap.Modal.getInstance(document.getElementById('editPlanModal'));
+            modal.hide();
+            window.location.reload();
+        } else {
+            alert(data.error || 'Error al actualizar el plan');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error al actualizar el plan');
+    });
+}
+</script>
+{% endif %}
 {% endblock %}
