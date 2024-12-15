@@ -1,20 +1,34 @@
 import os
+from flask_mail import Mail
 
 class EmailConfig:
-    MAIL_SERVER = os.environ.get('MAIL_SERVER', 'smtp.gmail.com')
-    MAIL_PORT = int(os.environ.get('MAIL_PORT', 587))
-    MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS', 'true').lower() == 'true'
-    MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
-    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
-    MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER', 'noreply@bitxxo.com')
+    _instance = None
+    mail = Mail()
     
-    @staticmethod
-    def init_app(app):
+    def __init__(self):
+        self.MAIL_SERVER = os.environ.get('MAIL_SERVER', 'us2.smtp.mailhostbox.com')
+        self.MAIL_PORT = int(os.environ.get('MAIL_PORT', 587))
+        self.MAIL_USE_TLS = True
+        self.MAIL_USERNAME = os.environ.get('MAIL_USERNAME', 'support@bitxxo.com')
+        self.MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD', '')
+        self.MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER', 'support@bitxxo.com')
+    
+    @classmethod
+    def get_instance(cls):
+        if cls._instance is None:
+            cls._instance = cls()
+        return cls._instance
+    
+    @classmethod
+    def init_app(cls, app):
+        config = cls.get_instance()
         app.config.update(
-            MAIL_SERVER=EmailConfig.MAIL_SERVER,
-            MAIL_PORT=EmailConfig.MAIL_PORT,
-            MAIL_USE_TLS=EmailConfig.MAIL_USE_TLS,
-            MAIL_USERNAME=EmailConfig.MAIL_USERNAME,
-            MAIL_PASSWORD=EmailConfig.MAIL_PASSWORD,
-            MAIL_DEFAULT_SENDER=EmailConfig.MAIL_DEFAULT_SENDER
+            MAIL_SERVER=config.MAIL_SERVER,
+            MAIL_PORT=config.MAIL_PORT,
+            MAIL_USE_TLS=config.MAIL_USE_TLS,
+            MAIL_USERNAME=config.MAIL_USERNAME,
+            MAIL_PASSWORD=config.MAIL_PASSWORD,
+            MAIL_DEFAULT_SENDER=config.MAIL_DEFAULT_SENDER
         )
+        cls.mail.init_app(app)
+        return cls.mail

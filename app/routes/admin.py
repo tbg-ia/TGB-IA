@@ -271,13 +271,17 @@ def save_email_settings():
         # Actualizar la configuración de email en la aplicación
         try:
             from app.mail.smtp_settings import EmailConfig
-            EmailConfig.init_app(current_app)
+            mail = EmailConfig.init_app(current_app)
             
-            flash('Configuración de email actualizada exitosamente', 'success')
+            # Probar la conexión
+            with current_app.app_context():
+                mail.connect()
+                
+            flash('Configuración de email actualizada y verificada exitosamente', 'success')
             return redirect(url_for('admin.settings'))
         except Exception as email_init_error:
             logging.error(f"Error initializing email config: {str(email_init_error)}")
-            flash('Error al inicializar la configuración de email', 'error')
+            flash(f'Error al inicializar la configuración de email: {str(email_init_error)}', 'error')
             return redirect(url_for('admin.settings'))
             
     except ValueError as ve:
