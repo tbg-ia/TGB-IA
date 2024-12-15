@@ -80,7 +80,12 @@ def create_app():
         # Import all models
         from app.models.role import Role
         from app.models.user import User
-        from app.models.exchange import Exchange
+        from app.models.base_exchange import BaseExchange
+        from app.models.crypto_exchange import CryptoExchange
+        from app.models.forex_exchange import ForexExchange
+        from app.models.exchanges.binance_exchange import BinanceExchange
+        from app.models.exchanges.bingx_exchange import BingXExchange
+        from app.models.exchanges.oanda_exchange import OandaExchange
         from app.models.trading_bot import TradingBot
         from app.models.trade import Trade
         from app.models.subscription import Subscription
