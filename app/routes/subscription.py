@@ -64,13 +64,13 @@ def create_checkout_session():
         selected_plan = plan_id.split('_')[0]
         selected_plan_level = current_plan_level.get(selected_plan, -1)
         
-        # Permitir cambios a planes superiores o iguales, bloquear planes inferiores
-        if selected_plan_level <= user_plan_level and selected_plan != current_plan:
+        # Verificar el cambio de plan
+        if selected_plan_level < user_plan_level:
+            # Solo bloquear downgrades
             flash(f'No puedes cambiar a un plan inferior. Tu plan actual es {current_plan.title()}', 'warning')
             return redirect(url_for('subscription.plans'))
-        
-        # Si es el mismo plan, verificar si realmente quiere renovar
-        if selected_plan == current_plan:
+        elif selected_plan == current_plan:
+            # Si es el mismo plan, pedir confirmación de renovación
             if not request.form.get('confirm_same_plan'):
                 flash('Ya tienes este plan. ¿Deseas renovar tu suscripción?', 'info')
                 return redirect(url_for('subscription.plans', confirm_same_plan=True, plan_id=plan_id))
