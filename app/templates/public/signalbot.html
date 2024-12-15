@@ -33,14 +33,32 @@
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Par de Trading</label>
                                 <select class="form-select" name="trading_pair" required>
-                                    <option value="BTC-USDT" {% if bot.trading_pair == 'BTC-USDT' %}selected{% endif %}>BTC/USDT</option>
-                                    <option value="ETH-USDT" {% if bot.trading_pair == 'ETH-USDT' %}selected{% endif %}>ETH/USDT</option>
-                                    <option value="BNB-USDT" {% if bot.trading_pair == 'BNB-USDT' %}selected{% endif %}>BNB/USDT</option>
-                                    <option value="SOL-USDT" {% if bot.trading_pair == 'SOL-USDT' %}selected{% endif %}>SOL/USDT</option>
-                                    <option value="XRP-USDT" {% if bot.trading_pair == 'XRP-USDT' %}selected{% endif %}>XRP/USDT</option>
-                                    <option value="DOT-USDT" {% if bot.trading_pair == 'DOT-USDT' %}selected{% endif %}>DOT/USDT</option>
-                                    <option value="ADA-USDT" {% if bot.trading_pair == 'ADA-USDT' %}selected{% endif %}>ADA/USDT</option>
-                                    <option value="AVAX-USDT" {% if bot.trading_pair == 'AVAX-USDT' %}selected{% endif %}>AVAX/USDT</option>
+                                    <!-- Major Pairs -->
+                                    <optgroup label="Major Pairs">
+                                        <option value="BTC-USDT" {% if bot.trading_pair == 'BTC-USDT' %}selected{% endif %}>BTC/USDT</option>
+                                        <option value="ETH-USDT" {% if bot.trading_pair == 'ETH-USDT' %}selected{% endif %}>ETH/USDT</option>
+                                        <option value="BNB-USDT" {% if bot.trading_pair == 'BNB-USDT' %}selected{% endif %}>BNB/USDT</option>
+                                    </optgroup>
+                                    <!-- DeFi Tokens -->
+                                    <optgroup label="DeFi">
+                                        <option value="UNI-USDT" {% if bot.trading_pair == 'UNI-USDT' %}selected{% endif %}>UNI/USDT</option>
+                                        <option value="AAVE-USDT" {% if bot.trading_pair == 'AAVE-USDT' %}selected{% endif %}>AAVE/USDT</option>
+                                        <option value="CAKE-USDT" {% if bot.trading_pair == 'CAKE-USDT' %}selected{% endif %}>CAKE/USDT</option>
+                                    </optgroup>
+                                    <!-- Layer 1 Blockchains -->
+                                    <optgroup label="Layer 1">
+                                        <option value="SOL-USDT" {% if bot.trading_pair == 'SOL-USDT' %}selected{% endif %}>SOL/USDT</option>
+                                        <option value="ADA-USDT" {% if bot.trading_pair == 'ADA-USDT' %}selected{% endif %}>ADA/USDT</option>
+                                        <option value="AVAX-USDT" {% if bot.trading_pair == 'AVAX-USDT' %}selected{% endif %}>AVAX/USDT</option>
+                                        <option value="DOT-USDT" {% if bot.trading_pair == 'DOT-USDT' %}selected{% endif %}>DOT/USDT</option>
+                                    </optgroup>
+                                    <!-- High Cap Alts -->
+                                    <optgroup label="High Cap Alts">
+                                        <option value="XRP-USDT" {% if bot.trading_pair == 'XRP-USDT' %}selected{% endif %}>XRP/USDT</option>
+                                        <option value="MATIC-USDT" {% if bot.trading_pair == 'MATIC-USDT' %}selected{% endif %}>MATIC/USDT</option>
+                                        <option value="LINK-USDT" {% if bot.trading_pair == 'LINK-USDT' %}selected{% endif %}>LINK/USDT</option>
+                                        <option value="ATOM-USDT" {% if bot.trading_pair == 'ATOM-USDT' %}selected{% endif %}>ATOM/USDT</option>
+                                    </optgroup>
                                 </select>
                             </div>
                             <div class="col-md-6 mb-3">
