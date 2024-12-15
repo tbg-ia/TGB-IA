@@ -138,13 +138,38 @@
             <div class="modal-body">
                 <form id="newBotForm">
                     <div class="mb-3">
+                        <label class="form-label">Exchange</label>
+                        <select class="form-select" name="exchange_type" required>
+                            <option value="">Select Exchange</option>
+                            <option value="binance">Binance</option>
+                            <option value="bingx">BingX</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
                         <label class="form-label">Trading Pair</label>
                         <select class="form-select" name="trading_pair" required>
                             <option value="">Select Trading Pair</option>
-                            <option value="BTC/USDT">BTC/USDT</option>
-                            <option value="ETH/USDT">ETH/USDT</option>
-                            <option value="SOL/USDT">SOL/USDT</option>
-                            <option value="BNB/USDT">BNB/USDT</option>
+                            <optgroup label="Major Pairs">
+                                <option value="BTC/USDT">BTC/USDT</option>
+                                <option value="ETH/USDT">ETH/USDT</option>
+                                <option value="BNB/USDT">BNB/USDT</option>
+                                <option value="SOL/USDT">SOL/USDT</option>
+                            </optgroup>
+                            <optgroup label="DeFi">
+                                <option value="UNI/USDT">UNI/USDT</option>
+                                <option value="AAVE/USDT">AAVE/USDT</option>
+                                <option value="CAKE/USDT">CAKE/USDT</option>
+                            </optgroup>
+                            <optgroup label="Layer 1">
+                                <option value="ADA/USDT">ADA/USDT</option>
+                                <option value="DOT/USDT">DOT/USDT</option>
+                                <option value="AVAX/USDT">AVAX/USDT</option>
+                                <option value="MATIC/USDT">MATIC/USDT</option>
+                            </optgroup>
+                            <optgroup label="Meme Coins">
+                                <option value="DOGE/USDT">DOGE/USDT</option>
+                                <option value="SHIB/USDT">SHIB/USDT</option>
+                            </optgroup>
                         </select>
                     </div>
                     <div class="mb-3">
