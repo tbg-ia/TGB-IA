@@ -22,7 +22,7 @@ class Exchange(db.Model):
     trading_fee = db.Column(db.Float, default=0.1)  # Comisión de trading en porcentaje
     last_updated = db.Column(db.DateTime, default=datetime.utcnow)
     last_error = db.Column(db.String(500))
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     
     # Relaciones
     bots = db.relationship('TradingBot', 
