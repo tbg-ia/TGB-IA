@@ -98,12 +98,13 @@
                         <li class="mb-2"><i class="bi bi-robot text-primary me-2"></i>{{ plan.max_bots }} Bots</li>
                         {% endif %}
                         
-                        {% if plan.active_signals > 0 %}
-                        <li class="mb-2"><i class="bi bi-broadcast text-primary me-2"></i>{{ plan.active_signals }} Señales Activas</li>
+                        {% set exchange_limits = plan.get_exchange_limits() %}
+                        {% if exchange_limits.active_signals > 0 %}
+                        <li class="mb-2"><i class="bi bi-broadcast text-primary me-2"></i>{{ exchange_limits.active_signals }} Señales Activas</li>
                         {% endif %}
                         
-                        {% if plan.apis_per_exchange > 0 %}
-                        <li class="mb-2"><i class="bi bi-key text-primary me-2"></i>{{ plan.apis_per_exchange }} APIs por Exchange</li>
+                        {% if exchange_limits.apis_per_exchange > 0 %}
+                        <li class="mb-2"><i class="bi bi-key text-primary me-2"></i>{{ exchange_limits.apis_per_exchange }} APIs por Exchange</li>
                         {% endif %}
                         
                         <!-- Soporte -->
