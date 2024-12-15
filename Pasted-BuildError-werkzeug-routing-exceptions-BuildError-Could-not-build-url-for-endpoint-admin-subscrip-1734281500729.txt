@@ -1,0 +1,35 @@
+BuildError
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'admin.subscription_plans'. Did you mean 'admin.manage_subscription_plans' instead?
+
+Traceback (most recent call last)
+File "/home/runner/New-Repl-1/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 1536, in __call__
+return self.wsgi_app(environ, start_response)
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/New-Repl-1/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 1514, in wsgi_app
+response = self.handle_exception(e)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/New-Repl-1/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 1511, in wsgi_app
+response = self.full_dispatch_request()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/New-Repl-1/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 919, in full_dispatch_request
+rv = self.handle_user_exception(e)
+     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/New-Repl-1/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 917, in full_dispatch_request
+rv = self.dispatch_request()
+     ^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/New-Repl-1/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 902, in dispatch_request
+return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/New-Repl-1/app/__init__.py", line 77, in index
+return render_template('public/index.html')
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/New-Repl-1/.pythonlibs/lib/python3.11/site-packages/flask/templating.py", line 150, in render_template
+return _render(app, template, context)
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/New-Repl-1/.pythonlibs/lib/python3.11/site-packages/flask/templating.py", line 131, in _render
+rv = template.render(context)
+     ^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/New-Repl-1/.pythonlibs/lib/python3.11/site-packages/jinja2/environment.py", line 1304, in render
+self.environment.handle_exception()
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/New-Repl-1/.pythonlibs/lib/python3.11/site-packages/jinja2/environment.py", line 939, in handle_exception
