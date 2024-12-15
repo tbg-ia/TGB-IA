@@ -152,10 +152,85 @@
             <div class="modal-body">
                 <form id="editPlanForm">
                     <input type="hidden" id="planId" name="plan_id">
+                    <!-- Datos básicos -->
                     <div class="mb-3">
                         <label class="form-label">Nombre del Plan</label>
                         <input type="text" class="form-control" id="planName" name="name" required>
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label">Descripción</label>
+                        <textarea class="form-control" id="planDescription" name="description" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Precio (USD)</label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="number" class="form-control" id="planPrice" name="price" required step="0.01">
+                            <select class="form-select" id="planInterval" name="interval" style="max-width: 100px;">
+                                <option value="month">/mes</option>
+                                <option value="year">/año</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Características de Trading -->
+                    <h5 class="mt-4">Características de Trading</h5>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="hasManualTrading" name="has_manual_trading">
+                            <label class="form-check-label">Trading Manual</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="hasAutomatedTrading" name="has_automated_trading">
+                            <label class="form-check-label">Trading Automatizado</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="hasAdvancedTrading" name="has_advanced_trading">
+                            <label class="form-check-label">Trading Avanzado</label>
+                        </div>
+                    </div>
+                    
+                    <!-- Análisis y Dashboard -->
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="hasBasicAnalysis" name="has_basic_analysis">
+                            <label class="form-check-label">Análisis Básico</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="hasAdvancedAnalysis" name="has_advanced_analysis">
+                            <label class="form-check-label">Análisis Avanzado</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="hasCustomDashboard" name="has_custom_dashboard">
+                            <label class="form-check-label">Dashboard Personalizado</label>
+                        </div>
+                    </div>
+                    
+                    <!-- Bots y API -->
+                    <h5 class="mt-4">Bots y API</h5>
+                    <div class="mb-3">
+                        <label class="form-label">Número Máximo de Bots</label>
+                        <input type="number" class="form-control" id="maxBots" name="max_bots" min="1">
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="hasCustomBots" name="has_custom_bots">
+                        <label class="form-check-label">Bots Personalizados</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="hasUnlimitedBots" name="has_unlimited_bots">
+                        <label class="form-check-label">Bots Ilimitados</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="hasApiAccess" name="has_api_access">
+                        <label class="form-check-label">Acceso a API</label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input type="checkbox" class="form-check-input" id="hasCustomApis" name="has_custom_apis">
+                        <label class="form-check-label">APIs Personalizadas</label>
+                    </div>
+                    
+                    <!-- Exchange Permissions -->
+                    <h5 class="mt-4">Permisos de Exchange</h5>
                     <div class="mb-3">
                         <label class="form-label">Señales Activas</label>
                         <input type="number" class="form-control" id="activeSignals" name="active_signals" required min="1">
@@ -164,13 +239,27 @@
                         <label class="form-label">APIs por Exchange</label>
                         <input type="number" class="form-control" id="apisPerExchange" name="apis_per_exchange" required min="1">
                     </div>
+                    
+                    <!-- Configuración del Sistema -->
+                    <h5 class="mt-4">Configuración del Sistema</h5>
                     <div class="mb-3">
-                        <label class="form-label">Precio (USD)</label>
-                        <div class="input-group">
-                            <span class="input-group-text">$</span>
-                            <input type="number" class="form-control" id="planPrice" name="price" required step="0.01">
-                            <span class="input-group-text">/mes</span>
-                        </div>
+                        <label class="form-label">Nivel de Soporte</label>
+                        <select class="form-select" id="supportLevel" name="support_level">
+                            <option value="email">Email</option>
+                            <option value="priority">Prioritario</option>
+                            <option value="dedicated">Dedicado</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Días de Prueba</label>
+                        <input type="number" class="form-control" id="trialDays" name="trial_days" value="14" min="0">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tipo de Cancelación</label>
+                        <select class="form-select" id="cancellationType" name="cancellation_type">
+                            <option value="anytime">En cualquier momento</option>
+                            <option value="end_of_period">Fin del período</option>
+                        </select>
                     </div>
                 </form>
             </div>
@@ -189,11 +278,38 @@ function editPlan(planId) {
     fetch(`/admin/subscription/plans/${planId}`)
         .then(response => response.json())
         .then(data => {
+            // Datos básicos
             document.getElementById('planId').value = planId;
             document.getElementById('planName').value = data.name;
+            document.getElementById('planDescription').value = data.description;
+            document.getElementById('planPrice').value = data.price;
+            document.getElementById('planInterval').value = data.interval;
+            
+            // Características de Trading
+            document.getElementById('hasManualTrading').checked = data.has_manual_trading;
+            document.getElementById('hasAutomatedTrading').checked = data.has_automated_trading;
+            document.getElementById('hasAdvancedTrading').checked = data.has_advanced_trading;
+            
+            // Análisis y Dashboard
+            document.getElementById('hasBasicAnalysis').checked = data.has_basic_analysis;
+            document.getElementById('hasAdvancedAnalysis').checked = data.has_advanced_analysis;
+            document.getElementById('hasCustomDashboard').checked = data.has_custom_dashboard;
+            
+            // Bots y API
+            document.getElementById('maxBots').value = data.max_bots;
+            document.getElementById('hasCustomBots').checked = data.has_custom_bots;
+            document.getElementById('hasUnlimitedBots').checked = data.has_unlimited_bots;
+            document.getElementById('hasApiAccess').checked = data.has_api_access;
+            document.getElementById('hasCustomApis').checked = data.has_custom_apis;
+            
+            // Exchange Permissions
             document.getElementById('activeSignals').value = data.active_signals;
             document.getElementById('apisPerExchange').value = data.apis_per_exchange;
-            document.getElementById('planPrice').value = data.price;
+            
+            // Sistema
+            document.getElementById('supportLevel').value = data.support_level;
+            document.getElementById('trialDays').value = data.trial_days;
+            document.getElementById('cancellationType').value = data.cancellation_type;
             
             const modal = new bootstrap.Modal(document.getElementById('editPlanModal'));
             modal.show();

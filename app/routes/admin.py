@@ -439,7 +439,29 @@ def update_plan(plan_id):
         
         # Actualizar datos básicos del plan
         plan.name = request.form.get('name')
+        plan.description = request.form.get('description')
         plan.price = int(float(request.form.get('price')) * 100)  # Convertir a centavos
+        plan.interval = request.form.get('interval', 'month')
+        
+        # Características básicas
+        plan.has_manual_trading = request.form.get('has_manual_trading') == 'on'
+        plan.has_automated_trading = request.form.get('has_automated_trading') == 'on'
+        plan.has_advanced_trading = request.form.get('has_advanced_trading') == 'on'
+        plan.has_basic_analysis = request.form.get('has_basic_analysis') == 'on'
+        plan.has_advanced_analysis = request.form.get('has_advanced_analysis') == 'on'
+        plan.has_custom_dashboard = request.form.get('has_custom_dashboard') == 'on'
+        
+        # Características de bots y API
+        plan.max_bots = int(request.form.get('max_bots', 1))
+        plan.has_custom_bots = request.form.get('has_custom_bots') == 'on'
+        plan.has_unlimited_bots = request.form.get('has_unlimited_bots') == 'on'
+        plan.has_api_access = request.form.get('has_api_access') == 'on'
+        plan.has_custom_apis = request.form.get('has_custom_apis') == 'on'
+        
+        # Soporte y sistema
+        plan.support_level = request.form.get('support_level', 'email')
+        plan.trial_days = int(request.form.get('trial_days', 14))
+        plan.cancellation_type = request.form.get('cancellation_type', 'anytime')
         
         # Actualizar o crear permisos de exchange
         exchange_permission = plan.exchange_permission
@@ -447,11 +469,12 @@ def update_plan(plan_id):
             exchange_permission = ExchangePermission(subscription_plan_id=plan.id)
             db.session.add(exchange_permission)
         
-        exchange_permission.active_signals = int(request.form.get('active_signals'))
-        exchange_permission.apis_per_exchange = int(request.form.get('apis_per_exchange'))
+        exchange_permission.active_signals = int(request.form.get('active_signals', 1))
+        exchange_permission.apis_per_exchange = int(request.form.get('apis_per_exchange', 1))
         
         db.session.commit()
         
+        flash('Plan actualizado exitosamente', 'success')
         return jsonify({'success': True})
     except ValueError as e:
         db.session.rollback()
