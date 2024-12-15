@@ -47,6 +47,15 @@ def create_app():
     migrate = Migrate(app, db)
     login_manager.init_app(app)
     login_manager.login_view = 'auth.login'
+
+    # Initialize exchange integrations
+    from app.integrations.crypto.binance_client import init_binance
+    from app.integrations.crypto.bingx_client import init_bingx
+    from app.integrations.forex.oanda_client import init_oanda
+    
+    init_binance(app)
+    init_bingx(app)
+    init_oanda(app)
     
     # Initialize mail
     from app.mail import init_app as init_mail
