@@ -16,16 +16,32 @@ class SubscriptionPlan(db.Model):
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text)
     price = db.Column(db.Integer, nullable=False)  # Price in cents
-    interval = db.Column(db.String(20), nullable=False)  # 'month' or 'year'
+    interval = db.Column(db.String(20), nullable=False, default='month')
     stripe_price_id = db.Column(db.String(100), unique=True)
     stripe_product_id = db.Column(db.String(100), unique=True)
-    features = db.Column(db.Text)
+    
+    # Características básicas
+    has_manual_trading = db.Column(db.Boolean, default=True)
+    has_automated_trading = db.Column(db.Boolean, default=False)
+    has_advanced_trading = db.Column(db.Boolean, default=False)
+    has_basic_analysis = db.Column(db.Boolean, default=True)
+    has_advanced_analysis = db.Column(db.Boolean, default=False)
+    has_custom_dashboard = db.Column(db.Boolean, default=True)
+    
+    # Características de bots y API
     max_bots = db.Column(db.Integer, default=1)
-    alerts_per_day = db.Column(db.Integer, default=100)
-    active_strategies = db.Column(db.Integer, default=20)
+    has_custom_bots = db.Column(db.Boolean, default=False)
+    has_unlimited_bots = db.Column(db.Boolean, default=False)
     has_api_access = db.Column(db.Boolean, default=False)
-    supported_exchanges = db.Column(db.ARRAY(db.String), default=list)
+    has_custom_apis = db.Column(db.Boolean, default=False)
+    
+    # Soporte
+    support_level = db.Column(db.String(20), default='email')  # email, priority, dedicated
+    
+    # Sistema
     is_active = db.Column(db.Boolean, default=True)
+    trial_days = db.Column(db.Integer, default=14)
+    cancellation_type = db.Column(db.String(20), default='anytime')  # anytime, end_of_period
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
