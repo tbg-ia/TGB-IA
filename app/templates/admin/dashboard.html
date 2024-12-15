@@ -173,6 +173,41 @@
                             <option value="high">High</option>
                         </select>
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label">Select Events to Monitor</label>
+                        <select class="form-select" name="events" multiple required>
+                            <optgroup label="Price Events">
+                                <option value="price_above">Price Above Level</option>
+                                <option value="price_below">Price Below Level</option>
+                                <option value="price_change">Sudden Price Change</option>
+                                <option value="price_trend">Price Trend Detection</option>
+                            </optgroup>
+                            <optgroup label="Volume Events">
+                                <option value="volume_spike">Volume Spike</option>
+                                <option value="volume_drop">Volume Drop</option>
+                                <option value="unusual_volume">Unusual Volume Activity</option>
+                            </optgroup>
+                            <optgroup label="Technical Indicators">
+                                <option value="rsi_overbought">RSI Overbought</option>
+                                <option value="rsi_oversold">RSI Oversold</option>
+                                <option value="macd_cross">MACD Crossover</option>
+                                <option value="ma_cross">Moving Average Cross</option>
+                                <option value="bollinger_breakout">Bollinger Band Breakout</option>
+                            </optgroup>
+                            <optgroup label="Pattern Recognition">
+                                <option value="support_test">Support Level Test</option>
+                                <option value="resistance_test">Resistance Level Test</option>
+                                <option value="breakout">Breakout Pattern</option>
+                                <option value="breakdown">Breakdown Pattern</option>
+                            </optgroup>
+                            <optgroup label="Market Sentiment">
+                                <option value="news_impact">News Impact</option>
+                                <option value="market_sentiment">Market Sentiment Change</option>
+                                <option value="correlation_change">Correlation Change</option>
+                            </optgroup>
+                        </select>
+                        <small class="form-text text-muted">Mantén presionado Ctrl (Cmd en Mac) para seleccionar múltiples eventos</small>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
