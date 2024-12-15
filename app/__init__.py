@@ -30,11 +30,25 @@ def create_app():
         "pool_size": 10,
         "max_overflow": 20,
     }
+    
+    # Email configuration
+    app.config.update(
+        MAIL_SERVER=os.environ.get('MAIL_SERVER'),
+        MAIL_PORT=int(os.environ.get('MAIL_PORT', 587)),
+        MAIL_USE_TLS=True,
+        MAIL_USERNAME=os.environ.get('MAIL_USERNAME'),
+        MAIL_PASSWORD=os.environ.get('MAIL_PASSWORD'),
+        MAIL_DEFAULT_SENDER=os.environ.get('MAIL_DEFAULT_SENDER')
+    )
 
     # Initialize extensions
     db.init_app(app)
     login_manager.init_app(app)
     login_manager.login_view = 'auth.login'
+    
+    # Initialize mail
+    from app.mail import init_app as init_mail
+    init_mail(app)
 
     # Register blueprints
     from app.routes import all_blueprints
