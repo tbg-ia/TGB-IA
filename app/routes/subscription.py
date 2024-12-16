@@ -212,11 +212,14 @@ def create_checkout_session():
                 'trial_period_days': 7  # 7 días de prueba para nuevas suscripciones
             }
         
-        # Crear sesión de checkout
-        checkout_session = stripe.checkout.Session.create(**checkout_params)
-        
-        # Redireccionar directamente a la página de checkout de Stripe
-        return redirect(checkout_session.url)
+        # Crear sesión de checkout y redireccionar
+        try:
+            checkout_session = stripe.checkout.Session.create(**checkout_params)
+            return redirect(checkout_session.url)
+        except Exception as e:
+            logging.error(f"Error creating checkout session: {str(e)}")
+            flash('Error al crear la sesión de checkout', 'error')
+            return redirect(url_for('subscription.plans'))
         
     except stripe.error.StripeError as e:
         flash(f'Error al procesar el pago: {str(e)}', 'error')
