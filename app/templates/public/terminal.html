@@ -20,16 +20,37 @@
                         <div class="col-12">
                             <div class="row g-3">
                                 <div class="col-md-4">
-                                    <label class="form-label">Par de Trading</label>
-                                    <select class="form-select" id="tradingPair">
-                                        <option value="BTC/USDT">BTC/USDT</option>
-                                        <option value="ETH/USDT">ETH/USDT</option>
-                                        <option value="BNB/USDT">BNB/USDT</option>
-                                        <option value="SOL/USDT">SOL/USDT</option>
-                                        <option value="XRP/USDT">XRP/USDT</option>
-                                        <option value="DOT/USDT">DOT/USDT</option>
-                                        <option value="ADA/USDT">ADA/USDT</option>
-                                        <option value="AVAX/USDT">AVAX/USDT</option>
+                                    <label class="form-label">Exchange</label>
+                                    <select class="form-select" id="exchangeSelect" name="exchange" required>
+                                        <option value="">Seleccionar Exchange</option>
+                                        {% for exchange in exchanges %}
+                                        <option value="{{ exchange.id }}" 
+                                                data-type="{{ exchange.exchange_type }}"
+                                                data-balance="{{ balances[exchange.id] }}">
+                                            {{ exchange.name }} - Balance: {{ "%.2f"|format(balances[exchange.id]) }} USDT
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                    
+                                    <select class="form-select mt-3" id="tradingPair" name="trading_pair" required>
+                                        <option value="">Seleccionar Par</option>
+                                        <optgroup label="Crypto" class="crypto-pairs">
+                                            <option value="BTC/USDT">BTC/USDT - Bitcoin</option>
+                                            <option value="ETH/USDT">ETH/USDT - Ethereum</option>
+                                            <option value="BNB/USDT">BNB/USDT - Binance Coin</option>
+                                            <option value="SOL/USDT">SOL/USDT - Solana</option>
+                                            <option value="XRP/USDT">XRP/USDT - Ripple</option>
+                                            <option value="DOT/USDT">DOT/USDT - Polkadot</option>
+                                            <option value="ADA/USDT">ADA/USDT - Cardano</option>
+                                            <option value="AVAX/USDT">AVAX/USDT - Avalanche</option>
+                                        </optgroup>
+                                        <optgroup label="Forex" class="forex-pairs">
+                                            <option value="EUR/USD">EUR/USD - Euro</option>
+                                            <option value="GBP/USD">GBP/USD - British Pound</option>
+                                            <option value="USD/JPY">USD/JPY - Japanese Yen</option>
+                                            <option value="USD/CAD">USD/CAD - Canadian Dollar</option>
+                                            <option value="AUD/USD">AUD/USD - Australian Dollar</option>
+                                        </optgroup>
                                     </select>
                                 </div>
                                 <div class="col-md-4">
