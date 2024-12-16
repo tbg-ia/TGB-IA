@@ -1,70 +1,44 @@
-// Terminal Forex Trading JavaScript
 document.addEventListener('DOMContentLoaded', function() {
+    // Inicializar TradingView
+    new TradingView.widget({
+        "width": "100%",
+        "height": 400,
+        "symbol": "FX:EURUSD",
+        "interval": "1",
+        "timezone": "Etc/UTC",
+        "theme": "dark",
+        "style": "1",
+        "locale": "es",
+        "toolbar_bg": "#f1f3f6",
+        "enable_publishing": false,
+        "hide_side_toolbar": false,
+        "allow_symbol_change": true,
+        "container_id": "tradingview_chart"
+    });
+
     // Referencias a elementos del DOM
-    const tradingPair = document.getElementById('tradingPair');
-    const tradeUnits = document.getElementById('tradeUnits');
-    const takeProfit = document.getElementById('takeProfit');
-    const stopLoss = document.getElementById('stopLoss');
-    const buyButton = document.getElementById('buyButton');
-    const sellButton = document.getElementById('sellButton');
-    const balanceDisplay = document.getElementById('balanceDisplay');
+    const tradeForm = document.getElementById('tradeForm');
+    const instrument = document.getElementById('instrument');
 
-    // Función para actualizar el balance
-    function updateBalance() {
-        fetch('/api/forex/balance')
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    balanceDisplay.textContent = `${data.balance.toFixed(2)} ${data.currency}`;
-                }
-            })
-            .catch(error => console.error('Error:', error));
-    }
+    // Manejar cambio de instrumento
+    instrument.addEventListener('change', function() {
+        let pair = this.value.replace('_', '');
+        widget.setSymbol(`FX:${pair}`, {
+            interval: '1'
+        });
+    });
 
-    // Función para actualizar posiciones activas
-    function updateActiveTrades() {
-        fetch('/api/forex/positions')
-            .then(response => response.json())
-            .then(data => {
-                const tbody = document.getElementById('activeTrades');
-                tbody.innerHTML = '';
-                data.positions.forEach(position => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${position.instrument}</td>
-                        <td>${position.side}</td>
-                        <td>${position.units}</td>
-                        <td class="${position.pl >= 0 ? 'text-success' : 'text-danger'}">
-                            ${position.pl.toFixed(2)}
-                        </td>
-                        <td>
-                            <button class="btn btn-sm btn-danger" 
-                                    onclick="closePosition('${position.id}')">
-                                Cerrar
-                            </button>
-                        </td>
-                    `;
-                    tbody.appendChild(row);
-                });
-            })
-            .catch(error => console.error('Error:', error));
-    }
-
-    // Función para ejecutar una orden
-    function placeOrder(side) {
+    // Manejar envío del formulario
+    tradeForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
         const data = {
-            instrument: tradingPair.value,
-            units: parseInt(tradeUnits.value),
-            side: side,
-            type: 'MARKET'
+            instrument: formData.get('instrument'),
+            units: parseInt(formData.get('units')),
+            side: formData.get('side'),
+            take_profit: formData.get('take_profit') || null,
+            stop_loss: formData.get('stop_loss') || null
         };
-
-        if (takeProfit.value) {
-            data.takeProfit = parseFloat(takeProfit.value);
-        }
-        if (stopLoss.value) {
-            data.stopLoss = parseFloat(stopLoss.value);
-        }
 
         fetch('/api/forex/order', {
             method: 'POST',
@@ -76,9 +50,8 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert(`Orden ${side} ejecutada exitosamente`);
-                updateBalance();
-                updateActiveTrades();
+                alert('Orden ejecutada exitosamente');
+                updateTrades();
             } else {
                 alert(`Error: ${data.error}`);
             }
@@ -87,49 +60,62 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Error:', error);
             alert('Error al ejecutar la orden');
         });
+    });
+
+    // Función para actualizar la tabla de trades
+    function updateTrades() {
+        fetch('/api/forex/trades')
+            .then(response => response.json())
+            .then(data => {
+                const tbody = document.querySelector('table tbody');
+                tbody.innerHTML = '';
+                data.trades.forEach(trade => {
+                    const row = document.createElement('tr');
+                    row.className = 'trade-row';
+                    row.dataset.tradeId = trade.id;
+                    row.innerHTML = `
+                        <td>${trade.instrument}</td>
+                        <td>${trade.side}</td>
+                        <td>${trade.units}</td>
+                        <td>${trade.price}</td>
+                        <td class="pnl" id="pnl-${trade.id}">Calculating...</td>
+                        <td>
+                            ${trade.status === 'OPEN' ? 
+                                `<button class="btn btn-danger btn-sm" onclick="closeTrade(${trade.id})">Close</button>` :
+                                'Closed'}
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            })
+            .catch(error => console.error('Error:', error));
     }
 
-    // Event listeners
-    if (buyButton) {
-        buyButton.addEventListener('click', () => placeOrder('BUY'));
-    }
-    if (sellButton) {
-        sellButton.addEventListener('click', () => placeOrder('SELL'));
-    }
-
-    // Actualizar datos cada 5 segundos
-    setInterval(() => {
-        updateBalance();
-        updateActiveTrades();
-    }, 5000);
-
-    // Inicializar datos
-    updateBalance();
-    updateActiveTrades();
+    // Actualizar trades cada 5 segundos
+    setInterval(updateTrades, 5000);
+    updateTrades();
 });
 
-// Función para cerrar una posición
-function closePosition(positionId) {
-    if (confirm('¿Estás seguro de que deseas cerrar esta posición?')) {
-        fetch(`/api/forex/position/${positionId}/close`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Posición cerrada exitosamente');
-                updateBalance();
-                updateActiveTrades();
-            } else {
-                alert(`Error: ${data.error}`);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error al cerrar la posición');
-        });
-    }
+function closeTrade(tradeId) {
+    if (!confirm('¿Estás seguro de que deseas cerrar esta operación?')) return;
+    
+    fetch(`/api/forex/trades/${tradeId}/close`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Operación cerrada exitosamente');
+            updateTrades();
+        } else {
+            alert(`Error: ${data.error}`);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error al cerrar la operación');
+    });
 }
