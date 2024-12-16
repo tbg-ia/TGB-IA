@@ -18,7 +18,7 @@ class Subscription(db.Model):
     
     # Relationships
     user = db.relationship('User', backref=db.backref('subscriptions', lazy=True))
-    payments = db.relationship('Payment', backref='subscription', lazy=True)
+    payments = db.relationship('Payment', back_populates='subscription', lazy=True)
 
     def __repr__(self):
         return f'<Subscription {self.plan_type} for user {self.user_id}>'

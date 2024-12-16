@@ -1,17 +1,14 @@
 """
 Subscription management routes and webhook handlers for Stripe integration.
 """
+import os
 import logging
 from datetime import datetime, timedelta
 from flask import Blueprint, jsonify, request, url_for, redirect, flash, current_app
 from flask_login import login_required, current_user
 import stripe
 from app import db
-from app.models.subscription import Subscription
-from app.models.payment import Payment
-from app.models.user import User
-from app.models.subscription_plan import SubscriptionPlan # Added import for SubscriptionPlan
-import os # Added import for os
+from app.models import User, Subscription, Payment, SubscriptionPlan
 
 
 subscription_bp = Blueprint('subscription', __name__)
@@ -47,33 +44,39 @@ def create_checkout_session():
             flash('Plan no encontrado', 'error')
             return redirect(url_for('subscription.plans'))
 
+        # Configurar Stripe con la clave secreta
+        stripe.api_key = current_app.config['STRIPE_SECRET_KEY']
+
         # Configurar los parámetros de checkout
         checkout_params = {
-            'customer': current_user.stripe_customer_id,
-            'customer_email': None if current_user.stripe_customer_id else current_user.email,
             'payment_method_types': ['card'],
             'line_items': [{
-                'price': plan['stripe_price_id'],  # Usar el price ID predefinido de Stripe
+                'price': plan['stripe_price_id'],
                 'quantity': 1
             }],
             'mode': 'subscription',
-            'success_url': url_for('subscription.payment_success', _external=True),
+            'success_url': url_for('subscription.payment_success', _external=True) + '?session_id={CHECKOUT_SESSION_ID}',
             'cancel_url': url_for('subscription.payment_cancel', _external=True),
+            'customer_email': current_user.email if not current_user.stripe_customer_id else None,
+            'client_reference_id': str(current_user.id),
             'metadata': {
                 'user_id': current_user.id,
                 'plan_id': plan_id,
                 'plan_name': plan['name']
             },
-            'subscription_data': {
-                'trial_period_days': 7,  # Período de prueba gratuito de 7 días
-                'metadata': {
-                    'plan_type': plan_id.split('_')[0]  # basic, pro, o enterprise
-                }
-            },
             'allow_promotion_codes': True,
             'billing_address_collection': 'required',
-            'client_reference_id': str(current_user.id)
+            'subscription_data': {
+                'trial_period_days': 7,
+                'metadata': {
+                    'plan_type': plan['name'].lower()
+                }
+            }
         }
+
+        # Si el usuario ya tiene un customer_id en Stripe, usarlo
+        if current_user.stripe_customer_id:
+            checkout_params['customer'] = current_user.stripe_customer_id
         
         # Si es un upgrade, configurar el prorate
         if current_user.subscription:
@@ -83,20 +86,40 @@ def create_checkout_session():
             }
 
         # Crear sesión de checkout y redireccionar
-        try:
-            checkout_session = stripe.checkout.Session.create(**checkout_params)
-            return redirect(checkout_session.url)
-        except Exception as e:
-            logging.error(f"Error creating checkout session: {str(e)}")
-            flash('Error al crear la sesión de checkout', 'error')
-            return redirect(url_for('subscription.plans'))
+        # Crear la sesión de checkout
+        checkout_session = stripe.checkout.Session.create(**checkout_params)
         
+        # Guardar la sesión de checkout en la base de datos
+        try:
+            subscription = Subscription(
+                user_id=current_user.id,
+                plan_type=plan['name'].lower(),
+                status='pending',
+                stripe_subscription_id=None,  # Se actualizará cuando el webhook lo confirme
+                amount=plan.get('price', 0),
+                start_date=datetime.utcnow(),
+                end_date=datetime.utcnow() + timedelta(days=30)  # Por defecto 30 días
+            )
+            db.session.add(subscription)
+            db.session.commit()
+            
+            # Redirigir a la página de checkout de Stripe
+            return redirect(checkout_session.url, code=303)
+            
+        except Exception as e:
+            db.session.rollback()
+            logging.error(f"Error saving subscription: {str(e)}")
+            flash('Error al procesar la suscripción', 'error')
+            return redirect(url_for('subscription.plans'))
+            
     except stripe.error.StripeError as e:
-        flash(f'Error al procesar el pago: {str(e)}', 'error')
+        logging.error(f"Stripe error: {str(e)}")
+        flash('Error al procesar el pago. Por favor, intente nuevamente.', 'error')
         return redirect(url_for('subscription.plans'))
+        
     except Exception as e:
-        logging.error(f"Error inesperado: {str(e)}")
-        flash('Error inesperado', 'error')
+        logging.error(f"Unexpected error: {str(e)}")
+        flash('Ha ocurrido un error inesperado. Por favor, intente nuevamente.', 'error')
         return redirect(url_for('subscription.plans'))
 
 @subscription_bp.route('/webhook', methods=['POST'])

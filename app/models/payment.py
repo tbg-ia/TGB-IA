@@ -23,9 +23,8 @@ class Payment(db.Model):
     
     # Relación con la suscripción
     subscription = db.relationship('Subscription', 
-                                 backref=db.backref('payments', 
-                                                  lazy=True,
-                                                  cascade='all, delete-orphan'))
+                                 back_populates='payments',
+                                 lazy=True)
     
     def __repr__(self):
         return f'<Payment {self.id} - Amount: ${self.amount} - Status: {self.status}>'
