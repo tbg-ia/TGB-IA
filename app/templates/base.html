@@ -43,14 +43,22 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('user.dashboard') }}">Dashboard</a>
                         </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-graph-up me-1"></i>Terminal
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-dark">
+                                <li><a class="dropdown-item" href="{{ url_for('terminal.forex_terminal') }}">
+                                    <i class="bi bi-currency-exchange me-2"></i>Terminal Forex
+                                </a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('crypto.terminal') }}">
+                                    <i class="bi bi-coin me-2"></i>Terminal Crypto
+                                </a></li>
+                            </ul>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('subscription.planes') }}">
                                 <i class="bi bi-tag-fill me-1"></i>Planes
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('crypto.terminal') }}">
-                                <i class="bi bi-graph-up me-1"></i>Terminal
                             </a>
                         </li>
                         <li class="nav-item">
@@ -159,85 +167,15 @@
     </nav>
 
     <div class="container-fluid">
-        <div class="row">
-            {% if current_user.is_authenticated and not current_user.is_admin() %}
-            <!-- Sidebar -->
-            <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse">
-                <div class="position-sticky pt-3">
-                    <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.endpoint == 'user.dashboard' %}active{% endif %}" 
-                               href="{{ url_for('user.dashboard') }}">
-                                <i class="bi bi-house-door me-2"></i>
-                                Dashboard
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.endpoint == 'terminal.forex_terminal' %}active{% endif %}" 
-                               href="{{ url_for('terminal.forex_terminal') }}">
-                                <i class="bi bi-currency-exchange me-2"></i>
-                                Terminal Forex
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.endpoint == 'crypto.terminal' %}active{% endif %}" 
-                               href="{{ url_for('crypto.terminal') }}">
-                                <i class="bi bi-graph-up me-2"></i>
-                                Terminal Crypto
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.endpoint == 'crypto.exchanges' %}active{% endif %}" 
-                               href="{{ url_for('crypto.exchanges') }}">
-                                <i class="bi bi-gear me-2"></i>
-                                Configurar Exchanges
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.endpoint == 'crypto.signalbot' %}active{% endif %}" 
-                               href="{{ url_for('crypto.signalbot') }}">
-                                <i class="bi bi-robot me-2"></i>
-                                Signal Bot
-                            </a>
-                        </li>
-                    </ul>
-                    
-                    <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-                        <span>Recursos</span>
-                    </h6>
-                    <ul class="nav flex-column mb-2">
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.endpoint == 'crypto.resources' %}active{% endif %}" 
-                               href="{{ url_for('crypto.resources') }}">
-                                <i class="bi bi-book me-2"></i>
-                                Documentación
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.endpoint == 'crypto.support' %}active{% endif %}" 
-                               href="{{ url_for('crypto.support') }}">
-                                <i class="bi bi-question-circle me-2"></i>
-                                Soporte
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-info">{{ message }}</div>
+                {% endfor %}
             {% endif %}
-
-            <!-- Main content -->
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                {% with messages = get_flashed_messages() %}
-                    {% if messages %}
-                        {% for message in messages %}
-                            <div class="alert alert-info">{{ message }}</div>
-                        {% endfor %}
-                    {% endif %}
-                {% endwith %}
-                
-                {% block content %}{% endblock %}
-            </main>
-        </div>
+        {% endwith %}
+        
+        {% block content %}{% endblock %}
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
