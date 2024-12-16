@@ -113,27 +113,17 @@
                         {% else %}
                         <form action="{{ url_for('subscription.create_checkout_session') }}" method="POST">
                             <input type="hidden" name="plan_id" value="{{ plan.id }}">
-                            <input type="hidden" name="confirm_plan_change" value="true">
                             <div class="d-grid gap-2">
                                 <button type="submit" class="btn btn-lg {% if plan.name == 'Pro' %}btn-primary{% else %}btn-outline-light{% endif %} w-100">
                                     {% if current_user.subscription_type == plan.name.lower() %}
-                                        <button type="button" class="btn btn-lg btn-primary w-100" 
-                                                data-bs-toggle="modal" 
-                                                data-bs-target="#renewalModal"
-                                                data-plan-id="{{ plan.id }}"
-                                                data-plan-name="{{ plan.name }}"
-                                                data-plan-price="{{ plan.price }}"
-                                                onclick="setupRenewalModal(this)">
-                                            <i class="bi bi-arrow-clockwise me-2"></i>Renovar Plan
-                                        </button>
+                                        <i class="bi bi-check-circle-fill me-2"></i>Plan Actual
                                     {% else %}
-                                        {% set current_level = {'basic': 1, 'pro': 2, 'enterprise': 3}.get(current_user.subscription_type, 0) %}
-                                        {% set plan_level = {'Basic': 1, 'Pro': 2, 'Enterprise': 3}.get(plan.name, 0) %}
-                                        {% if plan_level > current_level %}
-                                            <i class="bi bi-arrow-up-circle-fill me-2"></i>Upgrade a {{ plan.name }}
+                                        {% if plan.name == 'Pro' %}
+                                            <i class="bi bi-arrow-up-circle-fill me-2"></i>
                                         {% else %}
-                                            <i class="bi bi-arrow-down-circle-fill me-2"></i>Downgrade a {{ plan.name }}
+                                            <i class="bi bi-arrow-right-circle-fill me-2"></i>
                                         {% endif %}
+                                        Obtener {{ plan.name }}
                                     {% endif %}
                                 </button>
                             </div>
