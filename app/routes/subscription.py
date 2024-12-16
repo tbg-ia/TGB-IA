@@ -4,14 +4,17 @@ Subscription management routes and webhook handlers for Stripe integration.
 import os
 import logging
 from datetime import datetime, timedelta
-from flask import Blueprint, jsonify, request, url_for, redirect, flash, current_app
+from flask import Blueprint, render_template, jsonify, request, url_for, redirect, flash, current_app
 from flask_login import login_required, current_user
 import stripe
 from app import db
-from app.models import User, Subscription, Payment, SubscriptionPlan
+from app.models.user import User
+from app.models.subscription import Subscription
+from app.models.payment import Payment
+from app.models.subscription_plan import SubscriptionPlan
 
-
-subscription_bp = Blueprint('subscription', __name__)
+# Initialize blueprint with prefix
+subscription_bp = Blueprint('subscription', __name__, url_prefix='/subscription')
 
 def get_plan_details(plan_id):
     """Retrieves plan details from the database based on plan_id."""
@@ -406,4 +409,3 @@ def plans():
         logging.error(f"Error al cargar los planes de suscripción: {str(e)}")
         flash('Error al cargar los planes de suscripción', 'error')
         return redirect(url_for('index'))
-# The rest of the original file's content related to plans and other routes should be integrated here.  This is omitted due to lack of information in the provided edit and to avoid introducing unintended changes.  A complete integration would require the full original file contents.
