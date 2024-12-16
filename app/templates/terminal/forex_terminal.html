@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-body p-0">
+                <div id="tradingview_chart" style="height: 400px;"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-body">
+                <form id="tradeForm">
+                    <div class="mb-3">
+                        <select class="form-select" id="instrument" required>
+                            <option value="EUR_USD">EUR/USD</option>
+                            <option value="GBP_USD">GBP/USD</option>
+                            <option value="USD_JPY">USD/JPY</option>
+                            <option value="AUD_USD">AUD/USD</option>
+                            <option value="USD_CAD">USD/CAD</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Side</label>
+                        <select class="form-select" id="side" required>
+                            <option value="BUY">Buy</option>
+                            <option value="SELL">Sell</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Units</label>
+                        <input type="number" class="form-control" id="units" required min="1">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Take Profit</label>
+                        <input type="number" class="form-control" id="take_profit" step="0.00001" min="0">
+                        <small class="form-text text-muted">Leave empty for no take profit</small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Stop Loss</label>
+                        <input type="number" class="form-control" id="stop_loss" step="0.00001" min="0">
+                        <small class="form-text text-muted">Leave empty for no stop loss</small>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Place Trade</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Active Trades</h5>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Instrument</th>
+                        <th>Side</th>
+                        <th>Units</th>
+                        <th>Open Price</th>
+                        <th>Current P/L</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for trade in trades %}
+                    <tr class="trade-row" data-trade-id="{{ trade.id }}">
+                        <td>{{ trade.instrument }}</td>
+                        <td>{{ trade.side }}</td>
+                        <td>{{ trade.units }}</td>
+                        <td>{{ trade.price }}</td>
+                        <td class="pnl" id="pnl-{{ trade.id }}">Calculating...</td>
+                        <td>
+                            {% if trade.status == 'OPEN' %}
+                            <button class="btn btn-danger btn-sm" onclick="closeTrade({{ trade.id }})">Close</button>
+                            {% else %}
+                            Closed
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/tradingview-widget-api@1.0.0/dist/tradingview-widget-api.min.js"></script>
+<script src="{{ url_for('static', filename='js/terminal_forex.js') }}"></script>
+{% endblock %}
