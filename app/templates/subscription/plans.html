@@ -592,41 +592,38 @@ function savePlan() {
 
 function setupTermsModal(button) {
     const modal = new bootstrap.Modal(document.getElementById('termsModal'));
-    const confirmButton = document.getElementById('confirmTerms');
     const planId = button.dataset.planId;
-    const planName = button.dataset.planName;
-    const currentPlan = button.dataset.currentPlan;
 
     // Asignar el evento onclick al botón de confirmación
-    document.getElementById('confirmTerms').onclick = () => {
+    document.getElementById('confirmTerms').onclick = function() {
         const termsAccepted = document.getElementById('termsAccepted').checked;
         if (!termsAccepted) {
             alert('Debes aceptar los términos y condiciones');
             return;
         }
 
-        // Enviar directamente al checkout de Stripe
-        fetch('/subscription/create-checkout-session', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: `plan_id=${planId}&confirm_plan_change=true`
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.url) {
-                window.location.href = data.url;
-            } else {
-                alert('Error al procesar el pago');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error al procesar la solicitud');
-        });
-        
+        // Crear y enviar el formulario
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/subscription/create-checkout-session';
+
+        // Agregar los campos ocultos
+        const planIdInput = document.createElement('input');
+        planIdInput.type = 'hidden';
+        planIdInput.name = 'plan_id';
+        planIdInput.value = planId;
+        form.appendChild(planIdInput);
+
+        const confirmInput = document.createElement('input');
+        confirmInput.type = 'hidden';
+        confirmInput.name = 'confirm_plan_change';
+        confirmInput.value = 'true';
+        form.appendChild(confirmInput);
+
+        // Agregar el formulario al documento y enviarlo
+        document.body.appendChild(form);
         modal.hide();
+        form.submit();
     };
 
     modal.show();
