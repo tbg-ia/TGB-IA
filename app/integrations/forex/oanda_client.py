@@ -59,11 +59,20 @@ def init_oanda(app):
     account_id = app.config.get('OANDA_ACCOUNT_ID')
     
     if not all([api_key, account_id]):
-        logger.warning("OANDA API credentials not configured")
-        return
-    
-    client = OandaClient.get_instance()
-    if client.init_client(api_key, account_id):
-        logger.info("OANDA integration initialized successfully")
-    else:
-        logger.error("Failed to initialize OANDA integration")
+        logger.warning("Credenciales de OANDA no configuradas")
+        return None
+        
+    try:
+        logger.info(f"Inicializando integración de OANDA con cuenta {account_id}")
+        client = OandaClient.get_instance()
+        
+        if client.init_client(api_key, account_id):
+            logger.info("Integración de OANDA inicializada exitosamente")
+            return client
+        else:
+            logger.error("Falló la inicialización de la integración de OANDA")
+            return None
+            
+    except Exception as e:
+        logger.error(f"Error al inicializar OANDA: {str(e)}")
+        return None

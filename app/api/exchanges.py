@@ -44,21 +44,15 @@ def add_exchange():
                 trading_enabled=False  # Por seguridad, inicialmente deshabilitado
             )
         elif exchange_type == 'oanda':
-            account_id = data.get('account_id')
-            if not account_id:
-                return jsonify({
-                    'success': False,
-                    'error': 'Se requiere account_id para OANDA'
-                }), 400
-                
+            # Para OANDA, usamos las credenciales del sistema
             exchange = ForexExchange(
                 name='OANDA',
                 exchange_type='oanda',
-                api_key=api_key,
+                api_key=current_app.config.get('OANDA_API_KEY'),
                 user_id=current_user.id,
-                account_id=account_id,
+                account_id=current_app.config.get('OANDA_ACCOUNT_ID'),
                 is_active=True,
-                trading_enabled=False
+                trading_enabled=True
             )
         else:
             return jsonify({
