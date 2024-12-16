@@ -1,4 +1,8 @@
 from flask import Blueprint, render_template, flash, redirect, url_for, request, jsonify
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 from flask_login import login_required, current_user
 from app import db
 import logging
@@ -47,14 +51,20 @@ def add_exchange():
             # Create OANDA exchange
             exchange = OandaExchange(
                 user_id=current_user.id,
-                api_key=api_key,
-                account_id=account_id,
+                api_key=os.environ.get('OANDA_API_KEY'),
+                account_id=os.environ.get('OANDA_ACCOUNT_ID'),
                 name='OANDA',
                 exchange_type='oanda',
                 is_forex=True,
                 is_active=True,
                 trading_enabled=True
             )
+            
+            # Initialize OANDA client to verify credentials
+            from app.integrations.forex.oanda_client import OandaClient
+            client = OandaClient.get_instance()
+            if not client.init_client(os.environ.get('OANDA_API_KEY'), os.environ.get('OANDA_ACCOUNT_ID')):
+                return jsonify({'success': False, 'error': 'Invalid OANDA credentials'}), 400
             
         elif exchange_type == 'binance':
             api_secret = data.get('api_secret')
