@@ -3,7 +3,7 @@ from datetime import datetime
 from flask import render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_required, current_user
 from . import billing_bp
-from app.models.subscription import Subscription, Payment
+from app.models import Subscription, Payment
 from app import db
 import stripe
 

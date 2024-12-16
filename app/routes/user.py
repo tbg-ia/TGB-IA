@@ -3,7 +3,8 @@ import logging
 from werkzeug.utils import secure_filename
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_required, current_user
-from app.models.subscription import Subscription, Payment
+from app.models.subscription import Subscription
+from app.models.payment import Payment
 from app.models.trading_bot import TradingBot, Trade
 import stripe
 from app import db
