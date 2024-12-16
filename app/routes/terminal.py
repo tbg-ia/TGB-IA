@@ -47,7 +47,7 @@ def forex_terminal():
             if account_info:
                 balances[exchange.id] = account_info.get('balance', 0.0)
     
-    return render_template('public/terminal_forex.html',
+    return render_template('terminal/forex_terminal.html',
                          exchanges=forex_exchanges,
                          balances=balances)
 
