@@ -2,6 +2,8 @@ from app import db
 from datetime import datetime
 
 class Subscription(db.Model):
+    __tablename__ = 'subscriptions'
+    
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     plan_type = db.Column(db.String(20), nullable=False)  # 'basic', 'pro', or 'enterprise'
@@ -16,31 +18,9 @@ class Subscription(db.Model):
     
     # Relationships
     user = db.relationship('User', backref=db.backref('subscriptions', lazy=True))
+    payments = db.relationship('Payment', backref='subscription', lazy=True)
 
     def __repr__(self):
         return f'<Subscription {self.plan_type} for user {self.user_id}>'
 
-class Payment(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    subscription_id = db.Column(db.Integer, db.ForeignKey('subscription.id'), nullable=False)
-    amount = db.Column(db.Float, nullable=False)
-    status = db.Column(db.String(20), nullable=False)  # success, failed, pending
-    payment_method = db.Column(db.String(50))
-    transaction_id = db.Column(db.String(100))
-    invoice_id = db.Column(db.String(100))
-    invoice_url = db.Column(db.String(500))
-    pdf_url = db.Column(db.String(500))
-    description = db.Column(db.String(200))
-    is_trial = db.Column(db.Boolean, default=False)
-    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    
-    # Relationships
-    subscription = db.relationship('Subscription', backref=db.backref('payments', lazy=True))
-    
-    @property
-    def status_color(self):
-        return {
-            'success': 'success',
-            'failed': 'danger',
-            'pending': 'warning'
-        }.get(self.status, 'secondary')
+# Payment model moved to app/models/payment.py
