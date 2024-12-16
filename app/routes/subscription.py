@@ -5,7 +5,7 @@ from flask_login import login_required, current_user
 import stripe
 from datetime import datetime, timedelta
 from sqlalchemy import case
-from app.models.subscription import Subscription, Payment
+from app.models.subscription import Subscription
 from app.models.subscription_plan import SubscriptionPlan
 from app.models.user import User
 from app import db
@@ -36,6 +36,53 @@ def plans():
         flash('Error al cargar los planes de suscripción', 'error')
         return redirect(url_for('index'))
 
+@subscription_bp.route('/confirm_change', methods=['GET', 'POST'])
+@login_required
+def confirm_change():
+    """Maneja la confirmación de cambio de plan"""
+    try:
+        # Obtener el plan actual y el nuevo plan
+        plan_id = request.args.get('plan_id') or request.form.get('plan_id')
+        if not plan_id:
+            flash('Plan no especificado', 'error')
+            return redirect(url_for('subscription.plans'))
+            
+        new_plan = SubscriptionPlan.query.get(plan_id)
+        if not new_plan:
+            flash('Plan no encontrado', 'error')
+            return redirect(url_for('subscription.plans'))
+            
+        # Obtener el plan actual del usuario
+        current_plan_name = current_user.subscription_type or 'basic'
+        current_plan = SubscriptionPlan.query.filter_by(name=current_plan_name.title()).first()
+        
+        # Determinar si es un upgrade o downgrade
+        plan_levels = {'basic': 1, 'pro': 2, 'enterprise': 3}
+        current_level = plan_levels.get(current_plan_name.lower(), 0)
+        new_level = plan_levels.get(new_plan.name.lower(), 0)
+        is_upgrade = new_level > current_level
+        
+        if request.method == 'POST':
+            # Verificar que se aceptaron los términos
+            if not request.form.get('confirm_plan_change'):
+                flash('Debes aceptar los términos y condiciones', 'warning')
+                return redirect(url_for('subscription.confirm_change', plan_id=plan_id))
+            
+            # Crear sesión de checkout de Stripe
+            return redirect(url_for('subscription.create_checkout_session', 
+                                  plan_id=plan_id, 
+                                  _method='POST'))
+            
+        # Mostrar página de confirmación
+        return render_template('subscription/confirm_change.html',
+                            current_plan=current_plan,
+                            new_plan=new_plan,
+                            is_upgrade=is_upgrade)
+                            
+    except Exception as e:
+        logging.error(f"Error en confirm_change: {str(e)}")
+        flash('Error al procesar la solicitud', 'error')
+        return redirect(url_for('subscription.plans'))
 def get_stripe_credentials():
     """Obtiene las credenciales de Stripe desde SystemConfig"""
     from app.models.system_config import SystemConfig

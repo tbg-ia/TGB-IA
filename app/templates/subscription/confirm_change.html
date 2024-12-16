@@ -106,7 +106,7 @@
                     {% endif %}
 
                     <!-- Formulario de Confirmación -->
-                    <form action="{{ url_for('subscription.create_checkout_session') }}" method="POST">
+                    <form id="planChangeForm" action="{{ url_for('subscription.confirm_change') }}" method="POST" onsubmit="return validateForm(event)">
                         <input type="hidden" name="plan_id" value="{{ new_plan.id }}">
                         <input type="hidden" name="confirm_plan_change" value="true">
                         
@@ -118,9 +118,9 @@
                         </div>
                         
                         <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg">
+                            <button type="submit" class="btn btn-primary btn-lg" id="confirmButton">
                                 <i class="bi bi-check-circle me-2"></i>
-                                Confirmar Cambio de Plan
+                                Confirmar y Proceder al Pago
                             </button>
                             <a href="{{ url_for('subscription.plans') }}" class="btn btn-outline-light">
                                 <i class="bi bi-arrow-left me-2"></i>
@@ -128,6 +128,26 @@
                             </a>
                         </div>
                     </form>
+
+                    <script>
+                        function validateForm(event) {
+                            const termsCheckbox = document.getElementById('termsAccepted');
+                            if (!termsCheckbox.checked) {
+                                event.preventDefault();
+                                alert('Debes aceptar los términos y condiciones para continuar');
+                                return false;
+                            }
+                            return true;
+                        }
+
+                        // Agregar listener al formulario
+                        document.getElementById('planChangeForm').addEventListener('submit', function(event) {
+                            if (validateForm(event)) {
+                                document.getElementById('confirmButton').disabled = true;
+                                document.getElementById('confirmButton').innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Procesando...';
+                            }
+                        });
+                    </script>
                 </div>
             </div>
         </div>
