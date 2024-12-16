@@ -113,20 +113,26 @@
                         {% else %}
                         <form action="{{ url_for('subscription.create_checkout_session') }}" method="POST">
                             <input type="hidden" name="plan_id" value="{{ plan.id }}">
-                            {% if request.args.get('confirm_same_plan') and request.args.get('plan_id') == plan.id %}
-                            <input type="hidden" name="confirm_same_plan" value="true">
-                            <button type="submit" class="btn btn-lg {% if plan.name == 'Pro' %}btn-primary{% else %}btn-outline-light{% endif %} w-100">
-                                Confirmar Renovación
-                            </button>
-                            {% else %}
-                            <button type="submit" class="btn btn-lg {% if plan.name == 'Pro' %}btn-primary{% else %}btn-outline-light{% endif %} w-100">
-                                {% if current_user.subscription_type == plan.name.lower() %}
-                                Renovar Plan
-                                {% else %}
-                                Cambiar a {{ plan.name }}
-                                {% endif %}
-                            </button>
-                            {% endif %}
+                            <div class="d-grid gap-2">
+                                <button type="button" class="btn btn-lg {% if plan.name == 'Pro' %}btn-primary{% else %}btn-outline-light{% endif %} w-100" 
+                                        data-bs-toggle="modal" data-bs-target="#termsModal"
+                                        data-plan-id="{{ plan.id }}"
+                                        data-plan-name="{{ plan.name }}"
+                                        data-current-plan="{{ current_user.subscription_type }}"
+                                        onclick="setupTermsModal(this)">
+                                    {% if current_user.subscription_type == plan.name.lower() %}
+                                        Renovar Plan
+                                    {% else %}
+                                        {% set current_level = {'basic': 1, 'pro': 2, 'enterprise': 3}.get(current_user.subscription_type, 0) %}
+                                        {% set plan_level = {'Basic': 1, 'Pro': 2, 'Enterprise': 3}.get(plan.name, 0) %}
+                                        {% if plan_level > current_level %}
+                                            <i class="bi bi-arrow-up-circle-fill me-2"></i>Upgrade a {{ plan.name }}
+                                        {% else %}
+                                            <i class="bi bi-arrow-down-circle-fill me-2"></i>Downgrade a {{ plan.name }}
+                                        {% endif %}
+                                    {% endif %}
+                                </button>
+                            </div>
                         </form>
                         {% endif %}
                     {% else %}
@@ -238,6 +244,32 @@
         </main>
     </div>
 </div>
+
+<!-- Modal de Términos y Condiciones -->
+<div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-dark text-light">
+      <div class="modal-header">
+        <h5 class="modal-title" id="termsModalLabel">Términos y Condiciones</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Aquí irían los términos y condiciones de Bitxxo Trading.  Por favor, léelos cuidadosamente antes de continuar.</p>
+        <div class="form-check mb-4">
+            <input class="form-check-input" type="checkbox" id="termsAccepted" required>
+            <label class="form-check-label text-light" for="termsAccepted">
+                He leído y acepto los términos y condiciones del cambio de plan
+            </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" id="confirmTerms">Confirmar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 {% if current_user.is_admin %}
 <!-- Modal Editar Plan -->
@@ -468,6 +500,27 @@ function savePlan() {
         console.error('Error:', error);
         alert(error.message || 'Error al actualizar el plan');
     });
+}
+
+function setupTermsModal(button) {
+    const modal = new bootstrap.Modal(document.getElementById('termsModal'));
+    const confirmButton = document.getElementById('confirmTerms');
+    const form = button.closest('form');
+    const planId = button.dataset.planId;
+    const planName = button.dataset.planName;
+    const currentPlan = button.dataset.currentPlan;
+
+    confirmButton.onclick = () => {
+        if (document.getElementById('termsAccepted').checked) {
+            form.querySelector('input[name="plan_id"]').value = planId;
+            form.submit();
+            modal.hide();
+        } else {
+            alert('Debes aceptar los términos y condiciones');
+        }
+    };
+
+    modal.show();
 }
 </script>
 {% endif %}
