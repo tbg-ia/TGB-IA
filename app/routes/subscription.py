@@ -394,4 +394,16 @@ def payment_cancel():
     flash('El proceso de pago fue cancelado.', 'info')
     return redirect(url_for('subscription.plans'))
 
+@subscription_bp.route('/plans')
+@login_required
+def plans():
+    """Muestra los planes de suscripción disponibles."""
+    try:
+        subscription_plans = SubscriptionPlan.query.filter_by(is_active=True).all()
+        return render_template('subscription/plans.html', 
+                             subscription_plans=subscription_plans)
+    except Exception as e:
+        logging.error(f"Error al cargar los planes de suscripción: {str(e)}")
+        flash('Error al cargar los planes de suscripción', 'error')
+        return redirect(url_for('index'))
 # The rest of the original file's content related to plans and other routes should be integrated here.  This is omitted due to lack of information in the provided edit and to avoid introducing unintended changes.  A complete integration would require the full original file contents.
