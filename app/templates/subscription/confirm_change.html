@@ -71,7 +71,24 @@
                     </div>
 
                     <!-- Advertencias -->
-                    {% if not is_upgrade %}
+                    {% if is_upgrade %}
+                    <div class="alert alert-info mb-4">
+                        <h5 class="alert-heading">
+                            <i class="bi bi-info-circle-fill me-2"></i>
+                            Beneficios del Upgrade
+                        </h5>
+                        <p class="mb-0">
+                            Al actualizar a un plan superior, obtendrás acceso a:
+                        </p>
+                        <ul class="mb-0 mt-2">
+                            <li>Mayor número de bots de trading simultáneos</li>
+                            <li>Acceso a APIs y funcionalidades avanzadas</li>
+                            <li>Prioridad en el soporte técnico</li>
+                            <li>Análisis de mercado más detallado</li>
+                            <li>Las configuraciones actuales se mantendrán intactas</li>
+                        </ul>
+                    </div>
+                    {% else %}
                     <div class="alert alert-warning mb-4">
                         <h5 class="alert-heading">
                             <i class="bi bi-exclamation-triangle-fill me-2"></i>
