@@ -318,16 +318,22 @@
         const form = document.getElementById('addExchangeForm');
         const formData = new FormData(form);
         const exchangeType = formData.get('exchange_type');
+        const apiKey = formData.get('api_key');
         
         if (!exchangeType) {
             alert('Por favor seleccione un exchange');
             return;
         }
         
+        if (!apiKey) {
+            alert('Por favor ingrese el API Key');
+            return;
+        }
+        
         // Prepare the data object
         let data = {
             exchange_type: exchangeType,
-            api_key: formData.get('api_key')
+            api_key: apiKey
         };
         
         if (exchangeType === 'oanda') {
