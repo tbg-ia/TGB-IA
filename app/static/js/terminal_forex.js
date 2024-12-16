@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Inicializar TradingView
-    new TradingView.widget({
+    let widget = new TradingView.widget({
         "width": "100%",
         "height": 500,
         "symbol": "FX:EURUSD",
@@ -36,8 +36,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Manejar cambio de instrumento
     instrument.addEventListener('change', function() {
         let pair = this.value.replace('_', '');
-        widget.setSymbol(`FX:${pair}`, {
-            interval: '1'
+        widget.chart().setSymbol(`FX:${pair}`, {
+            interval: '15'
         });
     });
 
