@@ -65,15 +65,18 @@ def create_checkout_session():
         selected_plan_level = current_plan_level.get(selected_plan, -1)
         
         # Verificar el cambio de plan
-        if selected_plan_level < user_plan_level:
-            # Solo bloquear downgrades
-            flash(f'No puedes cambiar a un plan inferior. Tu plan actual es {current_plan.title()}', 'warning')
-            return redirect(url_for('subscription.plans'))
-        elif selected_plan == current_plan:
-            # Si es el mismo plan, pedir confirmación de renovación
-            if not request.form.get('confirm_same_plan'):
-                flash('Ya tienes este plan. ¿Deseas renovar tu suscripción?', 'info')
-                return redirect(url_for('subscription.plans', confirm_same_plan=True, plan_id=plan_id))
+        if selected_plan != current_plan:
+            # Obtener información de los planes para mostrar en la confirmación
+            current_plan_info = SubscriptionPlan.query.filter_by(name=current_plan.title()).first()
+            selected_plan_info = SubscriptionPlan.query.filter_by(name=selected_plan.title()).first()
+            
+            if not request.form.get('confirm_plan_change'):
+                # Redirigir a la página de confirmación con la información necesaria
+                return render_template('subscription/confirm_change.html',
+                    current_plan=current_plan_info,
+                    new_plan=selected_plan_info,
+                    is_upgrade=selected_plan_level > user_plan_level
+                )
         
         plan_data = {
             'basic_monthly': {
