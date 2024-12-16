@@ -215,7 +215,7 @@ def create_checkout_session():
         # Crear sesión de checkout
         checkout_session = stripe.checkout.Session.create(**checkout_params)
         
-        return redirect(checkout_session.url)
+        return jsonify({'url': checkout_session.url})
         
     except stripe.error.StripeError as e:
         flash(f'Error al procesar el pago: {str(e)}', 'error')
