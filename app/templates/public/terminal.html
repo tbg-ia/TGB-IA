@@ -11,6 +11,30 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
+                        <!-- Balance y Estado -->
+                        <div class="col-12 mb-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Balance OANDA</h5>
+                                    <div class="row align-items-center">
+                                        <div class="col">
+                                            <h3 id="balanceDisplay">
+                                                {% if balances %}
+                                                    {% for exchange_id, balance in balances.items() %}
+                                                        {% if exchanges|selectattr('id', 'equalto', exchange_id)|first is defined %}
+                                                            {{ "%.2f"|format(balance) }} USD
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                {% else %}
+                                                    0.00 USD
+                                                {% endif %}
+                                            </h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Gráfico -->
                         <div class="col-12 mb-4">
                             <div id="tradingChart" style="height: 400px;"></div>
@@ -27,10 +51,9 @@
                                         <option value="{{ exchange.id }}" 
                                                 data-type="{{ exchange.exchange_type }}"
                                                 data-balance="{{ balances[exchange.id] }}">
-                                            {{ exchange.name }} - Balance: {{ "%.2f"|format(balances[exchange.id]) }} USDT
+                                            {{ exchange.name }} - Balance: {{ "%.2f"|format(balances[exchange.id]) }} USD
                                         </option>
                                         {% endfor %}
-                                    </select>
                                     
                                     <select class="form-select mt-3" id="tradingPair" name="trading_pair" required>
                                         <option value="">Seleccionar Par</option>
