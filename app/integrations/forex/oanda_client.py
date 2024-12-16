@@ -27,7 +27,9 @@ class OandaClient:
             self._account_id = account_id
             
             # Test connection by getting account details
-            response = self._client.request(f"v3/accounts/{account_id}")
+            from oandapyV20.endpoints.accounts import AccountDetails
+            details = AccountDetails(accountID=account_id)
+            response = self._client.request(details)
             if response and "account" in response:
                 logger.info("OANDA client initialized successfully")
                 return True
@@ -49,7 +51,9 @@ class OandaClient:
     def get_account_info(self):
         """Get account information including balance"""
         try:
-            response = self._client.request(f"v3/accounts/{self._account_id}")
+            from oandapyV20.endpoints.accounts import AccountDetails
+            details = AccountDetails(accountID=self._account_id)
+            response = self._client.request(details)
             if response and "account" in response:
                 account = response["account"]
                 return {
