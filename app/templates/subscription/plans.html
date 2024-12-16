@@ -605,27 +605,28 @@ function setupTermsModal(button) {
             return;
         }
 
-        // Crear y enviar el formulario de checkout
-        const checkoutForm = document.createElement('form');
-        checkoutForm.method = 'POST';
-        checkoutForm.action = '/subscription/create-checkout-session';
-        
-        const planInput = document.createElement('input');
-        planInput.type = 'hidden';
-        planInput.name = 'plan_id';
-        planInput.value = planId;
-        
-        const confirmInput = document.createElement('input');
-        confirmInput.type = 'hidden';
-        confirmInput.name = 'confirm_plan_change';
-        confirmInput.value = 'true';
-        
-        checkoutForm.appendChild(planInput);
-        checkoutForm.appendChild(confirmInput);
-        document.body.appendChild(checkoutForm);
+        // Enviar directamente al checkout de Stripe
+        fetch('/subscription/create-checkout-session', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `plan_id=${planId}&confirm_plan_change=true`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.url) {
+                window.location.href = data.url;
+            } else {
+                alert('Error al procesar el pago');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al procesar la solicitud');
+        });
         
         modal.hide();
-        checkoutForm.submit();
     };
 
     modal.show();
