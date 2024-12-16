@@ -262,19 +262,11 @@
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <!-- Opciones de Pago -->
+        <!-- Método de Pago -->
         <div class="mb-4">
-          <div class="form-check mb-3">
-            <input class="form-check-input" type="radio" name="paymentMethod" id="cardPaypal" checked>
-            <label class="form-check-label d-flex align-items-center" for="cardPaypal">
-              <span class="me-2">Credit Card (Visa, MasterCard), PayPal</span>
-            </label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="paymentMethod" id="crypto">
-            <label class="form-check-label d-flex align-items-center" for="crypto">
-              <span class="me-2">Cryptocurrencies (BTC, ETH, and +50 more)</span>
-            </label>
+          <div class="d-flex align-items-center">
+            <i class="bi bi-credit-card me-2"></i>
+            <span>Pago con tarjeta vía Stripe</span>
           </div>
         </div>
 
@@ -641,30 +633,23 @@ function togglePriceDetails() {
 function processPurchase() {
     const termsAccepted = document.getElementById('termsAccepted').checked;
     if (!termsAccepted) {
-        alert('Please accept the terms of use to continue');
+        alert('Debes aceptar los términos de uso para continuar');
         return;
     }
 
-    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').id;
     const modal = bootstrap.Modal.getInstance(document.getElementById('renewalModal'));
     
     // Enviar el formulario de renovación
     const form = document.createElement('form');
     form.method = 'POST';
-    form.action = '/create-checkout-session';
+    form.action = '/subscription/create-checkout-session';
     
     const planInput = document.createElement('input');
     planInput.type = 'hidden';
     planInput.name = 'plan_id';
-    planInput.value = document.querySelector('#renewalModal button[data-plan-id]').dataset.planId;
-    
-    const methodInput = document.createElement('input');
-    methodInput.type = 'hidden';
-    methodInput.name = 'payment_method';
-    methodInput.value = paymentMethod;
+    planInput.value = document.querySelector('#renewalModal').querySelector('[data-plan-id]').dataset.planId;
     
     form.appendChild(planInput);
-    form.appendChild(methodInput);
     document.body.appendChild(form);
     
     modal.hide();
