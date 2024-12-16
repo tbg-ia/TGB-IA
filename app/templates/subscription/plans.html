@@ -111,14 +111,11 @@
                             <i class="bi bi-check-circle-fill me-2"></i>Plan Actual
                         </button>
                         {% else %}
-                        <form id="checkoutForm{{ plan.id }}" action="{{ url_for('subscription.create_checkout_session') }}" method="POST">
+                        <form action="{{ url_for('subscription.create_checkout_session') }}" method="POST">
                             <input type="hidden" name="plan_id" value="{{ plan.id }}">
                             <input type="hidden" name="confirm_plan_change" value="true">
                             <div class="d-grid gap-2">
-                                <button type="button" class="btn btn-lg {% if plan.name == 'Pro' %}btn-primary{% else %}btn-outline-light{% endif %} w-100" 
-                                        data-bs-toggle="modal" data-bs-target="#termsModal"
-                                        data-form-id="checkoutForm{{ plan.id }}"
-                                        onclick="setupTermsModal(this)">
+                                <button type="submit" class="btn btn-lg {% if plan.name == 'Pro' %}btn-primary{% else %}btn-outline-light{% endif %} w-100">
                                     {% if current_user.subscription_type == plan.name.lower() %}
                                         <button type="button" class="btn btn-lg btn-primary w-100" 
                                                 data-bs-toggle="modal" 
@@ -315,43 +312,10 @@
           </div>
         </div>
 
-        <!-- Términos y Condiciones -->
-        <div class="form-check mb-4">
-          <input class="form-check-input" type="checkbox" id="termsAccepted" required>
-          <label class="form-check-label text-light" for="termsAccepted">
-            I accept WunderTrading Terms of use
-          </label>
-        </div>
-
         <!-- Botón de Compra -->
         <button type="button" class="btn btn-primary w-100 py-3" onclick="processPurchase()">
           Purchase now
         </button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Modal de Términos y Condiciones -->
-<div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content bg-dark text-light">
-      <div class="modal-header">
-        <h5 class="modal-title" id="termsModalLabel">Términos y Condiciones</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <p>Aquí irían los términos y condiciones de Bitxxo Trading. Por favor, léelos cuidadosamente antes de continuar.</p>
-        <div class="form-check mb-4">
-            <input class="form-check-input" type="checkbox" id="termsAccepted" required>
-            <label class="form-check-label text-light" for="termsAccepted">
-                He leído y acepto los términos y condiciones del cambio de plan
-            </label>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-        <button type="button" class="btn btn-primary" id="confirmTerms">Confirmar</button>
       </div>
     </div>
   </div>
@@ -589,27 +553,6 @@ function savePlan() {
     });
 }
 
-function setupTermsModal(button) {
-    const modal = new bootstrap.Modal(document.getElementById('termsModal'));
-    const formId = button.dataset.formId;
-
-    // Asignar el evento onclick al botón de confirmación
-    document.getElementById('confirmTerms').onclick = function() {
-        const termsAccepted = document.getElementById('termsAccepted').checked;
-        if (!termsAccepted) {
-            alert('Debes aceptar los términos y condiciones');
-            return;
-        }
-
-        // Obtener y enviar el formulario existente
-        const form = document.getElementById(formId);
-        modal.hide();
-        form.submit();
-    };
-
-    modal.show();
-}
-
 function setupRenewalModal(button) {
     const modal = new bootstrap.Modal(document.getElementById('renewalModal'));
     const planId = button.dataset.planId;
@@ -630,12 +573,6 @@ function togglePriceDetails() {
 }
 
 function processPurchase() {
-    const termsAccepted = document.getElementById('termsAccepted').checked;
-    if (!termsAccepted) {
-        alert('Debes aceptar los términos de uso para continuar');
-        return;
-    }
-
     const modal = bootstrap.Modal.getInstance(document.getElementById('renewalModal'));
     
     // Enviar el formulario de renovación
