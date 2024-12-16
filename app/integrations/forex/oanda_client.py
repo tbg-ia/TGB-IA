@@ -1,4 +1,5 @@
 import logging
+import os
 from oandapyV20 import API
 from oandapyV20.exceptions import V20Error
 from flask import current_app
@@ -21,13 +22,17 @@ class OandaClient:
     def init_client(self, api_key, account_id):
         """Initialize OANDA client with API credentials"""
         try:
-            self._client = API(access_token=api_key)
+            logger.info(f"Initializing OANDA client with account {account_id}")
+            self._client = API(access_token=api_key, environment="practice")
             self._account_id = account_id
             
             # Test connection by getting account details
-            self._client.request(f"v3/accounts/{account_id}")
-            logger.info("OANDA client initialized successfully")
-            return True
+            response = self._client.request(f"v3/accounts/{account_id}")
+            if response and "account" in response:
+                logger.info("OANDA client initialized successfully")
+                return True
+            logger.error("Invalid response from OANDA API")
+            return False
         except V20Error as e:
             logger.error(f"Error initializing OANDA client: {str(e)}")
             return False
@@ -134,8 +139,8 @@ class OandaClient:
 
 def init_oanda(app):
     """Initialize OANDA client with app configuration."""
-    api_key = app.config.get('OANDA_API_KEY')
-    account_id = app.config.get('OANDA_ACCOUNT_ID')
+    api_key = os.environ.get('OANDA_API_KEY')
+    account_id = os.environ.get('OANDA_ACCOUNT_ID')
     
     if not all([api_key, account_id]):
         logger.warning("Credenciales de OANDA no configuradas")
@@ -147,6 +152,10 @@ def init_oanda(app):
         
         if client.init_client(api_key, account_id):
             logger.info("Integración de OANDA inicializada exitosamente")
+            # Verificar el balance
+            account_info = client.get_account_info()
+            if account_info:
+                logger.info(f"Balance OANDA: {account_info.get('balance')} {account_info.get('currency')}")
             return client
         else:
             logger.error("Falló la inicialización de la integración de OANDA")
