@@ -2,18 +2,31 @@ document.addEventListener('DOMContentLoaded', function() {
     // Inicializar TradingView
     new TradingView.widget({
         "width": "100%",
-        "height": 400,
+        "height": 500,
         "symbol": "FX:EURUSD",
-        "interval": "1",
+        "interval": "15",
         "timezone": "Etc/UTC",
         "theme": "dark",
         "style": "1",
         "locale": "es",
         "toolbar_bg": "#f1f3f6",
         "enable_publishing": false,
+        "withdateranges": true,
         "hide_side_toolbar": false,
         "allow_symbol_change": true,
-        "container_id": "tradingview_chart"
+        "details": true,
+        "hotlist": true,
+        "calendar": true,
+        "studies": [
+            "RSI@tv-basicstudies",
+            "MASimple@tv-basicstudies",
+            "MACD@tv-basicstudies"
+        ],
+        "container_id": "tradingview_chart",
+        "show_popup_button": true,
+        "popup_width": "1000",
+        "popup_height": "650",
+        "hide_volume": false,
     });
 
     // Referencias a elementos del DOM
