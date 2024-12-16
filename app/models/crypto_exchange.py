@@ -12,6 +12,17 @@ class CryptoExchange(BaseExchange):
     min_order_size = db.Column(db.Float, default=10.0)
     max_order_size = db.Column(db.Float, default=1000.0)
     trading_fee = db.Column(db.Float, default=0.1)
+    supports_spot = db.Column(db.Boolean, default=True)
+    supports_margin = db.Column(db.Boolean, default=False)
+    supports_futures = db.Column(db.Boolean, default=False)
+    supports_options = db.Column(db.Boolean, default=False)
+    min_leverage = db.Column(db.Integer, default=1)
+    maker_fee = db.Column(db.Float, default=0.1)
+    taker_fee = db.Column(db.Float, default=0.1)
+    withdrawal_fee = db.Column(db.Float, default=0.0)
+    requires_kyc = db.Column(db.Boolean, default=False)
+    supported_countries = db.Column(db.JSON, default=list)
+    trading_pairs = db.Column(db.JSON, default=dict)
     
     __mapper_args__ = {
         'polymorphic_identity': 'crypto'

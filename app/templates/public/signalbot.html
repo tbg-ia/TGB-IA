@@ -35,14 +35,14 @@
                                 <select class="form-select" name="trading_pair" required>
                                     <!-- Major Pairs -->
                                     <optgroup label="Major Pairs">
-                                        <option value="BTC-USDT" {% if bot.trading_pair == 'BTC-USDT' %}selected{% endif %}>BTC/USDT</option>
-                                        <option value="ETH-USDT" {% if bot.trading_pair == 'ETH-USDT' %}selected{% endif %}>ETH/USDT</option>
-                                        <option value="BNB-USDT" {% if bot.trading_pair == 'BNB-USDT' %}selected{% endif %}>BNB/USDT</option>
-                                        <option value="XRP-USDT" {% if bot.trading_pair == 'XRP-USDT' %}selected{% endif %}>XRP/USDT</option>
-                                        <option value="SOL-USDT" {% if bot.trading_pair == 'SOL-USDT' %}selected{% endif %}>SOL/USDT</option>
-                                        <option value="ADA-USDT" {% if bot.trading_pair == 'ADA-USDT' %}selected{% endif %}>ADA/USDT</option>
-                                        <option value="DOGE-USDT" {% if bot.trading_pair == 'DOGE-USDT' %}selected{% endif %}>DOGE/USDT</option>
-                                        <option value="DOT-USDT" {% if bot.trading_pair == 'DOT-USDT' %}selected{% endif %}>DOT/USDT</option>
+                                        <option value="BTC-USDT" {% if bot.trading_pair == 'BTC-USDT' %}selected{% endif %}>BTC/USDT - Bitcoin</option>
+                                        <option value="ETH-USDT" {% if bot.trading_pair == 'ETH-USDT' %}selected{% endif %}>ETH/USDT - Ethereum</option>
+                                        <option value="BNB-USDT" {% if bot.trading_pair == 'BNB-USDT' %}selected{% endif %}>BNB/USDT - Binance Coin</option>
+                                        <option value="XRP-USDT" {% if bot.trading_pair == 'XRP-USDT' %}selected{% endif %}>XRP/USDT - Ripple</option>
+                                        <option value="SOL-USDT" {% if bot.trading_pair == 'SOL-USDT' %}selected{% endif %}>SOL/USDT - Solana</option>
+                                        <option value="ADA-USDT" {% if bot.trading_pair == 'ADA-USDT' %}selected{% endif %}>ADA/USDT - Cardano</option>
+                                        <option value="DOGE-USDT" {% if bot.trading_pair == 'DOGE-USDT' %}selected{% endif %}>DOGE/USDT - Dogecoin</option>
+                                        <option value="DOT-USDT" {% if bot.trading_pair == 'DOT-USDT' %}selected{% endif %}>DOT/USDT - Polkadot</option>
                                     </optgroup>
                                     <!-- Stablecoins -->
                                     <optgroup label="Stablecoins">
@@ -50,44 +50,54 @@
                                         <option value="DAI-USDT" {% if bot.trading_pair == 'DAI-USDT' %}selected{% endif %}>DAI/USDT</option>
                                         <option value="BUSD-USDT" {% if bot.trading_pair == 'BUSD-USDT' %}selected{% endif %}>BUSD/USDT</option>
                                     </optgroup>
-                                    <!-- DeFi Tokens -->
-                                    <optgroup label="DeFi">
-                                        <option value="UNI-USDT" {% if bot.trading_pair == 'UNI-USDT' %}selected{% endif %}>UNI/USDT</option>
-                                        <option value="AAVE-USDT" {% if bot.trading_pair == 'AAVE-USDT' %}selected{% endif %}>AAVE/USDT</option>
-                                        <option value="CAKE-USDT" {% if bot.trading_pair == 'CAKE-USDT' %}selected{% endif %}>CAKE/USDT</option>
-                                        <option value="SUSHI-USDT" {% if bot.trading_pair == 'SUSHI-USDT' %}selected{% endif %}>SUSHI/USDT</option>
-                                        <option value="CRV-USDT" {% if bot.trading_pair == 'CRV-USDT' %}selected{% endif %}>CRV/USDT</option>
-                                        <option value="SNX-USDT" {% if bot.trading_pair == 'SNX-USDT' %}selected{% endif %}>SNX/USDT</option>
+                                    <!-- DeFi Blue Chips -->
+                                    <optgroup label="DeFi Blue Chips">
+                                        <option value="UNI-USDT" {% if bot.trading_pair == 'UNI-USDT' %}selected{% endif %}>UNI/USDT - Uniswap</option>
+                                        <option value="AAVE-USDT" {% if bot.trading_pair == 'AAVE-USDT' %}selected{% endif %}>AAVE/USDT - Aave</option>
+                                        <option value="MKR-USDT" {% if bot.trading_pair == 'MKR-USDT' %}selected{% endif %}>MKR/USDT - Maker</option>
+                                        <option value="COMP-USDT" {% if bot.trading_pair == 'COMP-USDT' %}selected{% endif %}>COMP/USDT - Compound</option>
+                                        <option value="SNX-USDT" {% if bot.trading_pair == 'SNX-USDT' %}selected{% endif %}>SNX/USDT - Synthetix</option>
+                                        <option value="CRV-USDT" {% if bot.trading_pair == 'CRV-USDT' %}selected{% endif %}>CRV/USDT - Curve</option>
                                     </optgroup>
-                                    <!-- Layer 1 & 2 -->
-                                    <optgroup label="Layer 1 & 2">
-                                        <option value="SOL-USDT" {% if bot.trading_pair == 'SOL-USDT' %}selected{% endif %}>SOL/USDT</option>
-                                        <option value="ADA-USDT" {% if bot.trading_pair == 'ADA-USDT' %}selected{% endif %}>ADA/USDT</option>
-                                        <option value="AVAX-USDT" {% if bot.trading_pair == 'AVAX-USDT' %}selected{% endif %}>AVAX/USDT</option>
-                                        <option value="DOT-USDT" {% if bot.trading_pair == 'DOT-USDT' %}selected{% endif %}>DOT/USDT</option>
-                                        <option value="MATIC-USDT" {% if bot.trading_pair == 'MATIC-USDT' %}selected{% endif %}>MATIC/USDT</option>
-                                        <option value="OP-USDT" {% if bot.trading_pair == 'OP-USDT' %}selected{% endif %}>OP/USDT</option>
-                                        <option value="ARB-USDT" {% if bot.trading_pair == 'ARB-USDT' %}selected{% endif %}>ARB/USDT</option>
+                                    <!-- Layer 1 Ecosystems -->
+                                    <optgroup label="Layer 1 Ecosystems">
+                                        <option value="AVAX-USDT" {% if bot.trading_pair == 'AVAX-USDT' %}selected{% endif %}>AVAX/USDT - Avalanche</option>
+                                        <option value="MATIC-USDT" {% if bot.trading_pair == 'MATIC-USDT' %}selected{% endif %}>MATIC/USDT - Polygon</option>
+                                        <option value="DOT-USDT" {% if bot.trading_pair == 'DOT-USDT' %}selected{% endif %}>DOT/USDT - Polkadot</option>
+                                        <option value="ATOM-USDT" {% if bot.trading_pair == 'ATOM-USDT' %}selected{% endif %}>ATOM/USDT - Cosmos</option>
+                                        <option value="FTM-USDT" {% if bot.trading_pair == 'FTM-USDT' %}selected{% endif %}>FTM/USDT - Fantom</option>
+                                        <option value="NEAR-USDT" {% if bot.trading_pair == 'NEAR-USDT' %}selected{% endif %}>NEAR/USDT - NEAR Protocol</option>
                                     </optgroup>
-                                    <!-- GameFi & Metaverse -->
-                                    <optgroup label="GameFi & Metaverse">
-                                        <option value="AXS-USDT" {% if bot.trading_pair == 'AXS-USDT' %}selected{% endif %}>AXS/USDT</option>
-                                        <option value="SAND-USDT" {% if bot.trading_pair == 'SAND-USDT' %}selected{% endif %}>SAND/USDT</option>
-                                        <option value="MANA-USDT" {% if bot.trading_pair == 'MANA-USDT' %}selected{% endif %}>MANA/USDT</option>
-                                        <option value="IMX-USDT" {% if bot.trading_pair == 'IMX-USDT' %}selected{% endif %}>IMX/USDT</option>
+                                    <!-- Layer 2 Solutions -->
+                                    <optgroup label="Layer 2 Solutions">
+                                        <option value="OP-USDT" {% if bot.trading_pair == 'OP-USDT' %}selected{% endif %}>OP/USDT - Optimism</option>
+                                        <option value="ARB-USDT" {% if bot.trading_pair == 'ARB-USDT' %}selected{% endif %}>ARB/USDT - Arbitrum</option>
+                                        <option value="IMX-USDT" {% if bot.trading_pair == 'IMX-USDT' %}selected{% endif %}>IMX/USDT - Immutable X</option>
+                                        <option value="LRC-USDT" {% if bot.trading_pair == 'LRC-USDT' %}selected{% endif %}>LRC/USDT - Loopring</option>
+                                        <option value="ZKS-USDT" {% if bot.trading_pair == 'ZKS-USDT' %}selected{% endif %}>ZKS/USDT - ZKSpace</option>
                                     </optgroup>
-                                    <!-- AI & Big Data -->
-                                    <optgroup label="AI & Big Data">
-                                        <option value="OCEAN-USDT" {% if bot.trading_pair == 'OCEAN-USDT' %}selected{% endif %}>OCEAN/USDT</option>
-                                        <option value="FET-USDT" {% if bot.trading_pair == 'FET-USDT' %}selected{% endif %}>FET/USDT</option>
-                                        <option value="AGIX-USDT" {% if bot.trading_pair == 'AGIX-USDT' %}selected{% endif %}>AGIX/USDT</option>
+                                    <!-- Gaming & Metaverse -->
+                                    <optgroup label="Gaming & Metaverse">
+                                        <option value="AXS-USDT" {% if bot.trading_pair == 'AXS-USDT' %}selected{% endif %}>AXS/USDT - Axie Infinity</option>
+                                        <option value="SAND-USDT" {% if bot.trading_pair == 'SAND-USDT' %}selected{% endif %}>SAND/USDT - The Sandbox</option>
+                                        <option value="MANA-USDT" {% if bot.trading_pair == 'MANA-USDT' %}selected{% endif %}>MANA/USDT - Decentraland</option>
+                                        <option value="GALA-USDT" {% if bot.trading_pair == 'GALA-USDT' %}selected{% endif %}>GALA/USDT - Gala Games</option>
+                                        <option value="ILV-USDT" {% if bot.trading_pair == 'ILV-USDT' %}selected{% endif %}>ILV/USDT - Illuvium</option>
+                                    </optgroup>
+                                    <!-- AI & Data -->
+                                    <optgroup label="AI & Data">
+                                        <option value="OCEAN-USDT" {% if bot.trading_pair == 'OCEAN-USDT' %}selected{% endif %}>OCEAN/USDT - Ocean Protocol</option>
+                                        <option value="FET-USDT" {% if bot.trading_pair == 'FET-USDT' %}selected{% endif %}>FET/USDT - Fetch.ai</option>
+                                        <option value="AGIX-USDT" {% if bot.trading_pair == 'AGIX-USDT' %}selected{% endif %}>AGIX/USDT - SingularityNET</option>
+                                        <option value="NMR-USDT" {% if bot.trading_pair == 'NMR-USDT' %}selected{% endif %}>NMR/USDT - Numeraire</option>
                                     </optgroup>
                                     <!-- Infrastructure -->
                                     <optgroup label="Infrastructure">
-                                        <option value="LINK-USDT" {% if bot.trading_pair == 'LINK-USDT' %}selected{% endif %}>LINK/USDT</option>
-                                        <option value="GRT-USDT" {% if bot.trading_pair == 'GRT-USDT' %}selected{% endif %}>GRT/USDT</option>
-                                        <option value="ATOM-USDT" {% if bot.trading_pair == 'ATOM-USDT' %}selected{% endif %}>ATOM/USDT</option>
-                                        <option value="FIL-USDT" {% if bot.trading_pair == 'FIL-USDT' %}selected{% endif %}>FIL/USDT</option>
+                                        <option value="LINK-USDT" {% if bot.trading_pair == 'LINK-USDT' %}selected{% endif %}>LINK/USDT - Chainlink</option>
+                                        <option value="GRT-USDT" {% if bot.trading_pair == 'GRT-USDT' %}selected{% endif %}>GRT/USDT - The Graph</option>
+                                        <option value="ATOM-USDT" {% if bot.trading_pair == 'ATOM-USDT' %}selected{% endif %}>ATOM/USDT - Cosmos</option>
+                                        <option value="FIL-USDT" {% if bot.trading_pair == 'FIL-USDT' %}selected{% endif %}>FIL/USDT - Filecoin</option>
+                                        <option value="AR-USDT" {% if bot.trading_pair == 'AR-USDT' %}selected{% endif %}>AR/USDT - Arweave</option>
                                     </optgroup>
                                 </select>
                             </div>
