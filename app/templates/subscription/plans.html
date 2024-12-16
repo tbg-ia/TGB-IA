@@ -593,38 +593,39 @@ function savePlan() {
 function setupTermsModal(button) {
     const modal = new bootstrap.Modal(document.getElementById('termsModal'));
     const confirmButton = document.getElementById('confirmTerms');
-    const form = button.closest('form');
     const planId = button.dataset.planId;
     const planName = button.dataset.planName;
     const currentPlan = button.dataset.currentPlan;
 
-    confirmButton.onclick = () => {
-        if (document.getElementById('termsAccepted').checked) {
-            // Crear el formulario para el checkout
-            const checkoutForm = document.createElement('form');
-            checkoutForm.method = 'POST';
-            checkoutForm.action = '/subscription/create-checkout-session';
-            
-            // Agregar campos necesarios
-            const planInput = document.createElement('input');
-            planInput.type = 'hidden';
-            planInput.name = 'plan_id';
-            planInput.value = planId;
-            
-            const confirmTermsInput = document.createElement('input');
-            confirmTermsInput.type = 'hidden';
-            confirmTermsInput.name = 'confirm_plan_change';
-            confirmTermsInput.value = 'true';
-            
-            checkoutForm.appendChild(planInput);
-            checkoutForm.appendChild(confirmTermsInput);
-            document.body.appendChild(checkoutForm);
-            
-            modal.hide();
-            checkoutForm.submit();
-        } else {
+    // Asignar el evento onclick al botón de confirmación
+    document.getElementById('confirmTerms').onclick = () => {
+        const termsAccepted = document.getElementById('termsAccepted').checked;
+        if (!termsAccepted) {
             alert('Debes aceptar los términos y condiciones');
+            return;
         }
+
+        // Crear y enviar el formulario de checkout
+        const checkoutForm = document.createElement('form');
+        checkoutForm.method = 'POST';
+        checkoutForm.action = '/subscription/create-checkout-session';
+        
+        const planInput = document.createElement('input');
+        planInput.type = 'hidden';
+        planInput.name = 'plan_id';
+        planInput.value = planId;
+        
+        const confirmInput = document.createElement('input');
+        confirmInput.type = 'hidden';
+        confirmInput.name = 'confirm_plan_change';
+        confirmInput.value = 'true';
+        
+        checkoutForm.appendChild(planInput);
+        checkoutForm.appendChild(confirmInput);
+        document.body.appendChild(checkoutForm);
+        
+        modal.hide();
+        checkoutForm.submit();
     };
 
     modal.show();
