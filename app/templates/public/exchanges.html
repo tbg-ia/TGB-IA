@@ -22,8 +22,10 @@
                     <thead>
                         <tr>
                             <th>Exchange</th>
-                            <th>Markets</th>
+                            <th>Type</th>
+                            <th>Balance</th>
                             <th>Status</th>
+                            <th>Last Update</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -37,18 +39,39 @@
                                     {{ exchange.name }}
                                 </div>
                             </td>
-                            <td>{{ exchange.exchange_type }}</td>
+                            <td>
+                                <span class="badge bg-info">{{ exchange.exchange_type }}</span>
+                            </td>
+                            <td>
+                                {% if exchange.is_active %}
+                                    {{ "%.2f"|format(exchange.balance|default(0)) }} {{ exchange.quote_currency|default('USDT') }}
+                                {% else %}
+                                    --
+                                {% endif %}
+                            </td>
                             <td>
                                 <span class="badge {% if exchange.is_active %}bg-success{% else %}bg-secondary{% endif %}">
                                     {{ 'Connected' if exchange.is_active else 'Disconnected' }}
                                 </span>
                             </td>
                             <td>
-                                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" 
-                                        data-bs-target="#configureExchangeModal" 
-                                        data-exchange-id="{{ exchange.id }}">
-                                    Configure
-                                </button>
+                                {% if exchange.last_updated %}
+                                    {{ exchange.last_updated.strftime('%Y-%m-%d %H:%M') }}
+                                {% else %}
+                                    Never
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="btn-group">
+                                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" 
+                                            data-bs-target="#configureExchangeModal" 
+                                            data-exchange-id="{{ exchange.id }}">
+                                        <i class="bi bi-gear-fill"></i> Edit
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="deleteExchange({{ exchange.id }})">
+                                        <i class="bi bi-trash-fill"></i> Delete
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                         {% endfor %}
@@ -290,13 +313,52 @@
     function addExchange() {
         const form = document.getElementById('addExchangeForm');
         const formData = new FormData(form);
+        const exchangeType = formData.get('exchange_type');
+        
+        // Prepare the data object
+        let data = {};
+        if (exchangeType === 'oanda') {
+            data = {
+                exchange_type: exchangeType,
+                api_key: formData.get('oanda_api_key'),
+                account_id: formData.get('oanda_account_id')
+            };
+        } else {
+            data = {
+                exchange_type: exchangeType,
+                api_key: formData.get('api_key'),
+                api_secret: formData.get('api_secret')
+            };
+        }
         
         fetch('/api/exchanges/add', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(Object.fromEntries(formData))
+            body: JSON.stringify(data)
+    function deleteExchange(exchangeId) {
+        if (confirm('¿Estás seguro de que deseas eliminar este exchange?')) {
+            fetch(`/exchanges/delete/${exchangeId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert(data.error || 'Error al eliminar el exchange');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al eliminar el exchange');
+            });
+        }
+    }
         })
         .then(response => response.json())
         .then(data => {
