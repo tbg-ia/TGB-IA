@@ -14,7 +14,7 @@ from app import db
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-subscription_bp = Blueprint('subscription', __name__)
+subscription_bp = Blueprint('subscription', __name__, url_prefix='/subscription')
 
 @subscription_bp.route('/planes')
 def plans():

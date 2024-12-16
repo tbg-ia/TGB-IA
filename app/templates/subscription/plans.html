@@ -608,7 +608,7 @@ function setupTermsModal(button) {
         // Crear y enviar el formulario de checkout
         const checkoutForm = document.createElement('form');
         checkoutForm.method = 'POST';
-        checkoutForm.action = '/subscription/create-checkout-session';
+        checkoutForm.action = '/subscription/confirm_change';
         
         const planInput = document.createElement('input');
         planInput.type = 'hidden';
