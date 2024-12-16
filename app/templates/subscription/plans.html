@@ -600,9 +600,28 @@ function setupTermsModal(button) {
 
     confirmButton.onclick = () => {
         if (document.getElementById('termsAccepted').checked) {
-            form.querySelector('input[name="plan_id"]').value = planId;
-            form.submit();
+            // Crear el formulario para el checkout
+            const checkoutForm = document.createElement('form');
+            checkoutForm.method = 'POST';
+            checkoutForm.action = '/subscription/create-checkout-session';
+            
+            // Agregar campos necesarios
+            const planInput = document.createElement('input');
+            planInput.type = 'hidden';
+            planInput.name = 'plan_id';
+            planInput.value = planId;
+            
+            const confirmTermsInput = document.createElement('input');
+            confirmTermsInput.type = 'hidden';
+            confirmTermsInput.name = 'confirm_plan_change';
+            confirmTermsInput.value = 'true';
+            
+            checkoutForm.appendChild(planInput);
+            checkoutForm.appendChild(confirmTermsInput);
+            document.body.appendChild(checkoutForm);
+            
             modal.hide();
+            checkoutForm.submit();
         } else {
             alert('Debes aceptar los términos y condiciones');
         }
