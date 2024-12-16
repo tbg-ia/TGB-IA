@@ -14,7 +14,37 @@ crypto_bp = Blueprint('crypto', __name__)
 @crypto_bp.route('/terminal')
 @login_required
 def terminal():
-    return render_template('public/terminal.html')
+    from app.models.exchange import Exchange
+    
+    # Obtener los exchanges configurados del usuario
+    user_exchanges = Exchange.query.filter_by(user_id=current_user.id, is_active=True).all()
+    
+    # Obtener el balance de cada exchange
+    exchange_balances = {}
+    for exchange in user_exchanges:
+        try:
+            if exchange.exchange_type == 'binance':
+                from app.integrations.crypto.binance_client import BinanceWrapper
+                client = BinanceWrapper.get_instance()
+                balance = client.get_client().get_asset_balance(asset='USDT')
+                exchange_balances[exchange.id] = float(balance['free'])
+            elif exchange.exchange_type == 'bingx':
+                from app.integrations.crypto.bingx_client import BingXClient
+                client = BingXClient.get_instance()
+                balance = client.get_account_balance()
+                exchange_balances[exchange.id] = float(balance.get('balance', 0))
+            elif exchange.exchange_type == 'oanda':
+                from app.integrations.forex.oanda_client import OandaClient
+                client = OandaClient.get_instance()
+                account_info = client.get_account_info()
+                exchange_balances[exchange.id] = float(account_info.get('balance', 0))
+        except Exception as e:
+            current_app.logger.error(f"Error getting balance for exchange {exchange.id}: {str(e)}")
+            exchange_balances[exchange.id] = 0.0
+    
+    return render_template('public/terminal.html', 
+                         exchanges=user_exchanges,
+                         balances=exchange_balances)
 
 @crypto_bp.route('/exchanges')
 @login_required
@@ -111,6 +141,122 @@ def admin_config():
     configs = SystemConfig.query.order_by(SystemConfig.category, SystemConfig.key).all()
     return render_template('admin/config.html', configs=configs)
 
+@crypto_bp.route('/api/trading/place-order', methods=['POST'])
+@login_required
+def place_order():
+    data = request.get_json()
+    exchange_id = data.get('exchange_id')
+    symbol = data.get('symbol')
+    side = data.get('side')
+    amount = data.get('amount')
+    price = data.get('price')
+    order_type = data.get('type', 'MARKET')
+    
+    if not all([exchange_id, symbol, side, amount]):
+        return jsonify({'success': False, 'error': 'Faltan parámetros requeridos'}), 400
+        
+    exchange = Exchange.query.get(exchange_id)
+    if not exchange or exchange.user_id != current_user.id:
+        return jsonify({'success': False, 'error': 'Exchange no encontrado'}), 404
+        
+    try:
+        if exchange.exchange_type == 'binance':
+            from app.integrations.crypto.binance_client import BinanceWrapper
+            client = BinanceWrapper.get_instance()
+            order = client.place_order(symbol=symbol, side=side, quantity=amount)
+        elif exchange.exchange_type == 'bingx':
+            from app.integrations.crypto.bingx_client import BingXClient
+            client = BingXClient.get_instance()
+            order = client.place_order(symbol=symbol, side=side, quantity=amount, price=price, order_type=order_type)
+        elif exchange.exchange_type == 'oanda':
+            from app.integrations.forex.oanda_client import OandaClient
+            client = OandaClient.get_instance()
+            order = client.place_order(symbol=symbol, side=side, units=amount, price=price)
+            
+        if order:
+            return jsonify({'success': True, 'order': order})
+        return jsonify({'success': False, 'error': 'Error al ejecutar la orden'}), 400
+        
+    except Exception as e:
+        current_app.logger.error(f"Error placing order: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 400
+
+@crypto_bp.route('/api/trading/orderbook')
+@login_required
+def get_orderbook():
+    exchange_id = request.args.get('exchange_id')
+    symbol = request.args.get('symbol')
+    
+    if not exchange_id or not symbol:
+        return jsonify({'success': False, 'error': 'Faltan parámetros requeridos'}), 400
+        
+    exchange = Exchange.query.get(exchange_id)
+    if not exchange or exchange.user_id != current_user.id:
+        return jsonify({'success': False, 'error': 'Exchange no encontrado'}), 404
+        
+    try:
+        orderbook = {'asks': [], 'bids': []}
+        
+        if exchange.exchange_type == 'binance':
+            from app.integrations.crypto.binance_client import BinanceWrapper
+            client = BinanceWrapper.get_instance()
+            depth = client.get_client().get_order_book(symbol=symbol)
+            orderbook['asks'] = depth['asks'][:10]
+            orderbook['bids'] = depth['bids'][:10]
+        elif exchange.exchange_type == 'bingx':
+            from app.integrations.crypto.bingx_client import BingXClient
+            client = BingXClient.get_instance()
+            depth = client.get_orderbook(symbol)
+            if depth:
+                orderbook['asks'] = depth.get('asks', [])[:10]
+                orderbook['bids'] = depth.get('bids', [])[:10]
+        elif exchange.exchange_type == 'oanda':
+            from app.integrations.forex.oanda_client import OandaClient
+            client = OandaClient.get_instance()
+            book = client.get_orderbook(symbol)
+            if book:
+                orderbook['asks'] = [[p, s] for p, s in book.get('asks', [])][:10]
+                orderbook['bids'] = [[p, s] for p, s in book.get('bids', [])][:10]
+                
+        return jsonify(orderbook)
+        
+    except Exception as e:
+        current_app.logger.error(f"Error getting orderbook: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 400
+
+@crypto_bp.route('/api/trading/open-orders')
+@login_required
+def get_open_orders():
+    exchange_id = request.args.get('exchange_id')
+    
+    if not exchange_id:
+        return jsonify({'success': False, 'error': 'Falta ID del exchange'}), 400
+        
+    exchange = Exchange.query.get(exchange_id)
+    if not exchange or exchange.user_id != current_user.id:
+        return jsonify({'success': False, 'error': 'Exchange no encontrado'}), 404
+        
+    try:
+        orders = []
+        
+        if exchange.exchange_type == 'binance':
+            from app.integrations.crypto.binance_client import BinanceWrapper
+            client = BinanceWrapper.get_instance()
+            orders = client.get_client().get_open_orders()
+        elif exchange.exchange_type == 'bingx':
+            from app.integrations.crypto.bingx_client import BingXClient
+            client = BingXClient.get_instance()
+            orders = client.get_open_orders()
+        elif exchange.exchange_type == 'oanda':
+            from app.integrations.forex.oanda_client import OandaClient
+            client = OandaClient.get_instance()
+            orders = client.get_open_orders()
+            
+        return jsonify({'orders': orders})
+        
+    except Exception as e:
+        current_app.logger.error(f"Error getting open orders: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 400
 @crypto_bp.route('/admin/config/<int:config_id>')
 @login_required
 @admin_required
