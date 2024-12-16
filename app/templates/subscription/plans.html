@@ -6,10 +6,14 @@
     <div class="text-center mb-5">
         <h1 class="display-4 fw-bold text-white mb-3">Planes de Suscripción</h1>
         <p class="lead text-light mb-4">Elige el plan que mejor se adapte a tus necesidades de trading</p>
-        {% if current_user.is_authenticated and current_user.subscription_type != 'basic' %}
+        {% if current_subscription %}
         <div class="alert alert-info d-inline-block">
             <i class="bi bi-info-circle me-2"></i>
-            Tu plan actual: <strong>{{ current_user.subscription_type|title }}</strong>
+            Tu plan actual: <strong>{{ current_subscription.plan_type|title }}</strong>
+            <br>
+            <small class="text-muted">
+                Válido hasta: {{ current_subscription.end_date.strftime('%d/%m/%Y') }}
+            </small>
         </div>
         {% endif %}
 
