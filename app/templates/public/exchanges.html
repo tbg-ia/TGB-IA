@@ -186,7 +186,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form id="addExchangeForm" onsubmit="event.preventDefault(); addExchange();">
+                <form id="addExchangeForm">
                     <div class="mb-3">
                         <label class="form-label">Select Exchange</label>
                         <select class="form-select" name="exchange_type" id="exchangeSelect">
@@ -254,7 +254,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="submit" class="btn btn-primary">Add Exchange</button>
+                <button type="button" class="btn btn-primary" onclick="addExchange(event)">Add Exchange</button>
             </div>
         </div>
     </div>
@@ -312,7 +312,9 @@
         }
     });
 
-    function addExchange() {
+    function addExchange(event) {
+        event.preventDefault();
+        
         const form = document.getElementById('addExchangeForm');
         const formData = new FormData(form);
         const exchangeType = formData.get('exchange_type');
@@ -335,6 +337,7 @@
                 return;
             }
             data.account_id = accountId;
+            console.log('Enviando datos de OANDA:', JSON.stringify(data));
         } else {
             const apiSecret = formData.get('api_secret');
             if (!apiSecret) {
@@ -351,17 +354,24 @@
             },
             body: JSON.stringify(data)
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(responseData => {
+            console.log('Respuesta del servidor:', responseData);
+            if (responseData.success) {
+                alert('Exchange agregado exitosamente');
                 window.location.reload();
             } else {
-                alert(data.error || 'Error al agregar exchange');
+                alert(responseData.error || 'Error al agregar exchange');
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Error al agregar exchange');
+            alert('Error al agregar exchange: ' + error.message);
         });
     }
 

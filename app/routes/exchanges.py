@@ -1,6 +1,9 @@
 from flask import Blueprint, render_template, flash, redirect, url_for, request, jsonify
 from flask_login import login_required, current_user
 from app import db
+import logging
+
+logger = logging.getLogger(__name__)
 from app.models.base_exchange import BaseExchange
 from app.models.exchanges.binance_exchange import BinanceExchange
 from app.models.exchanges.bingx_exchange import BingXExchange
@@ -20,6 +23,9 @@ def list_exchanges():
 def add_exchange():
     """Add a new exchange connection."""
     data = request.get_json()
+    if not data:
+        return jsonify({'success': False, 'error': 'No data provided'}), 400
+        
     exchange_type = data.get('exchange_type')
     api_key = data.get('api_key')
     
@@ -27,18 +33,22 @@ def add_exchange():
         return jsonify({'success': False, 'error': 'Missing required fields'}), 400
     
     try:
+        logger.info(f"Adding new exchange of type: {exchange_type}")
         if exchange_type == 'oanda':
             account_id = data.get('account_id')
             if not account_id:
                 return jsonify({'success': False, 'error': 'OANDA Account ID is required'}), 400
-                
+            
+            # Create OANDA exchange
             exchange = OandaExchange(
                 user_id=current_user.id,
                 api_key=api_key,
                 account_id=account_id,
                 name='OANDA',
                 exchange_type='oanda',
-                is_forex=True
+                is_forex=True,
+                is_active=True,
+                trading_enabled=True
             )
             
         elif exchange_type == 'binance':
@@ -70,9 +80,11 @@ def add_exchange():
         else:
             return jsonify({'success': False, 'error': 'Invalid exchange type'}), 400
         
+        logger.info("Adding exchange to database")
         db.session.add(exchange)
         db.session.commit()
-        return jsonify({'success': True})
+        logger.info("Exchange added successfully")
+        return jsonify({'success': True, 'message': 'Exchange added successfully'})
         
     except Exception as e:
         db.session.rollback()
