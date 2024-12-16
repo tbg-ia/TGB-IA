@@ -44,7 +44,7 @@
                             <a class="nav-link" href="{{ url_for('user.dashboard') }}">Dashboard</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('subscription.plans') }}">
+                            <a class="nav-link" href="{{ url_for('subscription.planes') }}">
                                 <i class="bi bi-tag-fill me-1"></i>Planes
                             </a>
                         </li>
@@ -84,7 +84,7 @@
                         {% endif %}
                     {% else %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('subscription.plans') }}">
+                        <a class="nav-link" href="{{ url_for('subscription.planes') }}">
                             <i class="bi bi-tag-fill me-1"></i>Planes
                         </a>
                     </li>
@@ -139,7 +139,7 @@
                                 <i class="bi bi-gear me-2"></i>Configuración Cuenta
                             </a></li>
                             {% if not current_user.is_admin() %}
-                            <li><a class="dropdown-item" href="{{ url_for('subscription.plans') }}">
+                            <li><a class="nav-link" href="{{ url_for('subscription.planes') }}">
                                 <i class="bi bi-stars me-2"></i>Mi Suscripción
                             </a></li>
                             <li><a class="dropdown-item" href="{{ url_for('user.billing') }}">

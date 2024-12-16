@@ -22,14 +22,13 @@ def get_plan_details(plan_id):
         plan = SubscriptionPlan.query.get(plan_id)
         if plan:
             return {
-                'stripe_price_id': plan.stripe_price_id, #Assumed this exists in the model
+                'stripe_price_id': plan.stripe_price_id,
                 'name': plan.name
             }
         return None
     except Exception as e:
         logging.error(f"Error retrieving plan details: {str(e)}")
         return None
-
 
 @subscription_bp.route('/create-checkout-session', methods=['POST'])
 @login_required
@@ -39,13 +38,13 @@ def create_checkout_session():
         plan_id = request.form.get('plan_id')
         if not plan_id:
             flash('Plan no especificado', 'error')
-            return redirect(url_for('subscription.plans'))
+            return redirect(url_for('subscription.planes'))
 
         # Obtener detalles del plan
         plan = get_plan_details(plan_id)
         if not plan:
             flash('Plan no encontrado', 'error')
-            return redirect(url_for('subscription.plans'))
+            return redirect(url_for('subscription.planes'))
 
         # Configurar Stripe con la clave secreta
         stripe.api_key = current_app.config['STRIPE_SECRET_KEY']
@@ -89,7 +88,6 @@ def create_checkout_session():
             }
 
         # Crear sesión de checkout y redireccionar
-        # Crear la sesión de checkout
         checkout_session = stripe.checkout.Session.create(**checkout_params)
         
         # Guardar la sesión de checkout en la base de datos
@@ -98,32 +96,31 @@ def create_checkout_session():
                 user_id=current_user.id,
                 plan_type=plan['name'].lower(),
                 status='pending',
-                stripe_subscription_id=None,  # Se actualizará cuando el webhook lo confirme
+                stripe_subscription_id=None,
                 amount=plan.get('price', 0),
                 start_date=datetime.utcnow(),
-                end_date=datetime.utcnow() + timedelta(days=30)  # Por defecto 30 días
+                end_date=datetime.utcnow() + timedelta(days=30)
             )
             db.session.add(subscription)
             db.session.commit()
             
-            # Redirigir a la página de checkout de Stripe
             return redirect(checkout_session.url, code=303)
             
         except Exception as e:
             db.session.rollback()
             logging.error(f"Error saving subscription: {str(e)}")
             flash('Error al procesar la suscripción', 'error')
-            return redirect(url_for('subscription.plans'))
+            return redirect(url_for('subscription.planes'))
             
     except stripe.error.StripeError as e:
         logging.error(f"Stripe error: {str(e)}")
         flash('Error al procesar el pago. Por favor, intente nuevamente.', 'error')
-        return redirect(url_for('subscription.plans'))
+        return redirect(url_for('subscription.planes'))
         
     except Exception as e:
         logging.error(f"Unexpected error: {str(e)}")
         flash('Ha ocurrido un error inesperado. Por favor, intente nuevamente.', 'error')
-        return redirect(url_for('subscription.plans'))
+        return redirect(url_for('subscription.planes'))
 
 @subscription_bp.route('/webhook', methods=['POST'])
 def webhook():
@@ -179,7 +176,6 @@ def webhook():
 def handle_subscription_created(subscription_object):
     """Maneja la creación de una nueva suscripción"""
     try:
-        # Crear nueva suscripción en la base de datos
         user = User.query.get(subscription_object.metadata.get('user_id'))
         if not user:
             logging.error(f"Usuario no encontrado: {subscription_object.metadata.get('user_id')}")
@@ -211,7 +207,6 @@ def handle_subscription_updated(subscription_object):
             logging.error(f"Suscripción no encontrada: {subscription_object.id}")
             return
 
-        # Actualizar estado y tipo de plan
         subscription.status = subscription_object.status
         subscription.plan_type = subscription_object.metadata.get('plan_type', subscription.plan_type)
         
@@ -235,7 +230,6 @@ def handle_subscription_deleted(subscription_object):
         subscription.status = 'cancelled'
         subscription.end_date = datetime.fromtimestamp(subscription_object.canceled_at)
         
-        # Revocar accesos
         subscription.user.subscription_type = None
         subscription.user.has_active_subscription = False
         
@@ -256,7 +250,6 @@ def handle_subscription_trial_will_end(subscription_object):
             logging.error(f"Suscripción no encontrada: {subscription_object.id}")
             return
             
-        # Notificar al usuario
         from app.email.utils import send_trial_ending_email
         send_trial_ending_email(subscription.user)
         
@@ -277,12 +270,10 @@ def handle_subscription_update_applied(subscription_object):
             logging.error(f"Suscripción no encontrada: {subscription_object.id}")
             return
             
-        # Actualizar el plan
         new_plan = subscription_object.items.data[0].price.product
         subscription.plan_type = new_plan
         subscription.user.subscription_type = new_plan
         
-        # Notificar al usuario
         from app.email.utils import send_plan_update_success_email
         send_plan_update_success_email(subscription.user, new_plan)
         
@@ -303,7 +294,6 @@ def handle_subscription_update_expired(subscription_object):
             logging.error(f"Suscripción no encontrada: {subscription_object.id}")
             return
             
-        # Notificar al usuario
         from app.email.utils import send_plan_update_expired_email
         send_plan_update_expired_email(subscription.user)
         
@@ -324,10 +314,8 @@ def handle_invoice_paid(invoice):
             logging.error(f"Suscripción no encontrada: {invoice.subscription}")
             return
             
-        # Obtener la URL del PDF de la factura
         invoice_obj = stripe.Invoice.retrieve(invoice.id)
         
-        # Registrar el pago
         payment = Payment(
             subscription_id=subscription.id,
             amount=invoice.amount_paid / 100,
@@ -359,7 +347,6 @@ def handle_invoice_payment_failed(invoice):
             logging.error(f"Suscripción no encontrada: {invoice.subscription}")
             return
             
-        # Registrar el intento fallido
         payment = Payment(
             subscription_id=subscription.id,
             amount=invoice.amount_due / 100,
@@ -370,7 +357,6 @@ def handle_invoice_payment_failed(invoice):
         
         db.session.add(payment)
         
-        # Si es el último intento, marcar como inactiva
         if invoice.next_payment_attempt is None:
             subscription.status = 'inactive'
             subscription.user.subscription_type = 'basic'
@@ -380,8 +366,6 @@ def handle_invoice_payment_failed(invoice):
     except Exception as e:
         logging.error(f"Error en handle_invoice_payment_failed: {str(e)}")
         db.session.rollback()
-
-
 
 @subscription_bp.route('/payment/success')
 @login_required
@@ -395,11 +379,11 @@ def payment_success():
 def payment_cancel():
     """Maneja la cancelación del pago"""
     flash('El proceso de pago fue cancelado.', 'info')
-    return redirect(url_for('subscription.plans'))
+    return redirect(url_for('subscription.planes'))
 
-@subscription_bp.route('/plans')
+@subscription_bp.route('/planes')
 @login_required
-def plans():
+def planes():
     """Muestra los planes de suscripción disponibles."""
     if not current_user.is_authenticated:
         flash('Por favor inicia sesión para ver los planes disponibles.', 'info')

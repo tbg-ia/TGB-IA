@@ -33,7 +33,7 @@ def signalbot():
 
 @crypto_bp.route('/subscription/plans')
 def plans():
-    return redirect(url_for('subscription.plans'))
+    return redirect(url_for('subscription.planes'))
 
 @crypto_bp.route('/user-dashboard')
 @login_required
