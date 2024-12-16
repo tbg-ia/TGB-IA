@@ -23,11 +23,16 @@ def list_exchanges():
 def add_exchange():
     """Add a new exchange connection."""
     data = request.get_json()
+    logger.info(f"Received data for exchange addition: {data}")
+    
     if not data:
+        logger.error("No data provided in request")
         return jsonify({'success': False, 'error': 'No data provided'}), 400
         
     exchange_type = data.get('exchange_type')
     api_key = data.get('api_key')
+    
+    logger.info(f"Processing exchange addition - Type: {exchange_type}")
     
     if not exchange_type or not api_key:
         return jsonify({'success': False, 'error': 'Missing required fields'}), 400
