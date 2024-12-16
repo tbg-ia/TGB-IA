@@ -401,11 +401,14 @@ def payment_cancel():
 @login_required
 def plans():
     """Muestra los planes de suscripción disponibles."""
+    logging.info(f"Accediendo a la página de planes. Usuario autenticado: {current_user.is_authenticated}")
     try:
         subscription_plans = SubscriptionPlan.query.filter_by(is_active=True).all()
+        logging.info(f"Planes encontrados: {len(subscription_plans)}")
         return render_template('subscription/plans.html', 
-                             subscription_plans=subscription_plans)
+                             subscription_plans=subscription_plans,
+                             current_user=current_user)
     except Exception as e:
         logging.error(f"Error al cargar los planes de suscripción: {str(e)}")
         flash('Error al cargar los planes de suscripción', 'error')
-        return redirect(url_for('index'))
+        return redirect(url_for('auth.login'))
