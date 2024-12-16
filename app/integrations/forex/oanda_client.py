@@ -40,17 +40,96 @@ class OandaClient:
 
     def get_account_id(self):
         return self._account_id
-
+        
+    def get_account_info(self):
+        """Get account information including balance"""
+        try:
+            response = self._client.request(f"v3/accounts/{self._account_id}")
+            if response and "account" in response:
+                account = response["account"]
+                return {
+                    "balance": float(account.get("balance", 0)),
+                    "currency": account.get("currency", "USD"),
+                    "margin_rate": float(account.get("marginRate", 0)),
+                }
+            return None
+        except V20Error as e:
+            logger.error(f"Error getting account info: {str(e)}")
+            return None
+            
     def get_price(self, instrument):
         """Get current price for an instrument"""
         try:
-            params = {"instruments": instrument}
-            response = self._client.request("v3/instruments/{}/candles".format(instrument))
+            response = self._client.request(f"v3/instruments/{instrument}/candles")
             if response and "candles" in response:
                 return float(response["candles"][-1]["mid"]["c"])
             return None
         except V20Error as e:
             logger.error(f"Error getting price for {instrument}: {str(e)}")
+            return None
+            
+    def get_orderbook(self, instrument):
+        """Get order book for an instrument"""
+        try:
+            response = self._client.request(f"v3/instruments/{instrument}/orderBook")
+            if response and "orderBook" in response:
+                book = response["orderBook"]
+                return {
+                    "asks": [[float(price), float(size)] for price, size in book.get("asks", [])],
+                    "bids": [[float(price), float(size)] for price, size in book.get("bids", [])]
+                }
+            return None
+        except V20Error as e:
+            logger.error(f"Error getting orderbook: {str(e)}")
+            return None
+            
+    def get_open_orders(self):
+        """Get list of open orders"""
+        try:
+            response = self._client.request(f"v3/accounts/{self._account_id}/orders")
+            if response and "orders" in response:
+                return [{
+                    "id": order["id"],
+                    "instrument": order["instrument"],
+                    "units": float(order["units"]),
+                    "price": float(order.get("price", 0)),
+                    "type": order["type"]
+                } for order in response["orders"]]
+            return []
+        except V20Error as e:
+            logger.error(f"Error getting open orders: {str(e)}")
+            return []
+            
+    def place_order(self, symbol, side, units, price=None):
+        """Place a new order"""
+        try:
+            order_data = {
+                "order": {
+                    "type": "MARKET" if price is None else "LIMIT",
+                    "instrument": symbol,
+                    "units": str(units if side.upper() == "BUY" else -units),
+                }
+            }
+            
+            if price is not None:
+                order_data["order"]["price"] = str(price)
+                
+            response = self._client.request(
+                f"v3/accounts/{self._account_id}/orders",
+                "POST",
+                data=order_data
+            )
+            
+            if response and "orderFillTransaction" in response:
+                return {
+                    "id": response["orderFillTransaction"]["id"],
+                    "price": float(response["orderFillTransaction"]["price"]),
+                    "units": float(response["orderFillTransaction"]["units"])
+                }
+            return None
+                
+        except V20Error as e:
+            logger.error(f"Error placing order: {str(e)}")
             return None
 
 def init_oanda(app):
