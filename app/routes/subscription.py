@@ -64,19 +64,32 @@ def create_checkout_session():
         selected_plan = plan_id.split('_')[0]
         selected_plan_level = current_plan_level.get(selected_plan, -1)
         
-        # Verificar el cambio de plan
-        if selected_plan != current_plan:
-            # Obtener información de los planes para mostrar en la confirmación
-            current_plan_info = SubscriptionPlan.query.filter_by(name=current_plan.title()).first()
-            selected_plan_info = SubscriptionPlan.query.filter_by(name=selected_plan.title()).first()
+        try:
+            logging.info(f"Procesando cambio de plan: {current_plan} -> {selected_plan}")
             
-            if not request.form.get('confirm_plan_change'):
-                # Redirigir a la página de confirmación con la información necesaria
-                return render_template('subscription/confirm_change.html',
-                    current_plan=current_plan_info,
-                    new_plan=selected_plan_info,
-                    is_upgrade=selected_plan_level > user_plan_level
-                )
+            # Verificar el cambio de plan
+            if selected_plan != current_plan:
+                # Obtener información de los planes para mostrar en la confirmación
+                current_plan_info = SubscriptionPlan.query.filter_by(name=current_plan.title()).first()
+                selected_plan_info = SubscriptionPlan.query.filter_by(id=plan_id).first()
+                
+                if not current_plan_info or not selected_plan_info:
+                    logging.error(f"Plan no encontrado: current={current_plan}, selected={plan_id}")
+                    flash('Error al obtener información del plan', 'error')
+                    return redirect(url_for('subscription.plans'))
+                
+                if not request.form.get('confirm_plan_change'):
+                    logging.info("Redirigiendo a página de confirmación")
+                    # Redirigir a la página de confirmación con la información necesaria
+                    return render_template('subscription/confirm_change.html',
+                        current_plan=current_plan_info,
+                        new_plan=selected_plan_info,
+                        is_upgrade=selected_plan_level > user_plan_level
+                    )
+        except Exception as e:
+            logging.error(f"Error al procesar cambio de plan: {str(e)}")
+            flash('Error inesperado al procesar la solicitud', 'error')
+            return redirect(url_for('subscription.plans'))
         
         plan_data = {
             'basic_monthly': {
