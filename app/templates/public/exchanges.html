@@ -225,13 +225,15 @@
                     <div id="oandaFields" style="display: none;">
                         <div class="mb-3">
                             <label class="form-label">OANDA API Key</label>
-                            <input type="password" class="form-control" name="oanda_api_key" 
-                                   placeholder="Enter your OANDA API Key">
+                            <input type="password" class="form-control" name="api_key" 
+                                   placeholder="Enter your OANDA API Key" required>
+                            <div class="form-text">Your OANDA API key from the OANDA platform</div>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">OANDA Account ID</label>
-                            <input type="text" class="form-control" name="oanda_account_id" 
-                                   placeholder="Enter your OANDA Account ID">
+                            <input type="text" class="form-control" name="account_id" 
+                                   placeholder="Enter your OANDA Account ID" required>
+                            <div class="form-text">Your OANDA account ID (e.g., 001-001-1234567-001)</div>
                         </div>
                     </div>
                     
@@ -315,20 +317,31 @@
         const formData = new FormData(form);
         const exchangeType = formData.get('exchange_type');
         
+        if (!exchangeType) {
+            alert('Por favor seleccione un exchange');
+            return;
+        }
+        
         // Prepare the data object
-        let data = {};
+        let data = {
+            exchange_type: exchangeType,
+            api_key: formData.get('api_key')
+        };
+        
         if (exchangeType === 'oanda') {
-            data = {
-                exchange_type: exchangeType,
-                api_key: formData.get('oanda_api_key'),
-                account_id: formData.get('oanda_account_id')
-            };
+            const accountId = formData.get('account_id');
+            if (!accountId) {
+                alert('Por favor ingrese el Account ID de OANDA');
+                return;
+            }
+            data.account_id = accountId;
         } else {
-            data = {
-                exchange_type: exchangeType,
-                api_key: formData.get('api_key'),
-                api_secret: formData.get('api_secret')
-            };
+            const apiSecret = formData.get('api_secret');
+            if (!apiSecret) {
+                alert('Por favor ingrese el API Secret');
+                return;
+            }
+            data.api_secret = apiSecret;
         }
         
         fetch('/api/exchanges/add', {
