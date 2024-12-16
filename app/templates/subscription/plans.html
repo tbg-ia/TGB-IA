@@ -121,7 +121,15 @@
                                         data-current-plan="{{ current_user.subscription_type }}"
                                         onclick="setupTermsModal(this)">
                                     {% if current_user.subscription_type == plan.name.lower() %}
-                                        Renovar Plan
+                                        <button type="button" class="btn btn-lg btn-primary w-100" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#renewalModal"
+                                                data-plan-id="{{ plan.id }}"
+                                                data-plan-name="{{ plan.name }}"
+                                                data-plan-price="{{ plan.price }}"
+                                                onclick="setupRenewalModal(this)">
+                                            <i class="bi bi-arrow-clockwise me-2"></i>Renovar Plan
+                                        </button>
                                     {% else %}
                                         {% set current_level = {'basic': 1, 'pro': 2, 'enterprise': 3}.get(current_user.subscription_type, 0) %}
                                         {% set plan_level = {'Basic': 1, 'Pro': 2, 'Enterprise': 3}.get(plan.name, 0) %}
@@ -245,6 +253,94 @@
     </div>
 </div>
 
+<!-- Modal de Renovación -->
+<div class="modal fade" id="renewalModal" tabindex="-1" aria-labelledby="renewalModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-dark text-light">
+      <div class="modal-header border-0">
+        <h5 class="modal-title" id="renewalModalLabel">Account upgrade</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Opciones de Pago -->
+        <div class="mb-4">
+          <div class="form-check mb-3">
+            <input class="form-check-input" type="radio" name="paymentMethod" id="cardPaypal" checked>
+            <label class="form-check-label d-flex align-items-center" for="cardPaypal">
+              <span class="me-2">Credit Card (Visa, MasterCard), PayPal</span>
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="paymentMethod" id="crypto">
+            <label class="form-check-label d-flex align-items-center" for="crypto">
+              <span class="me-2">Cryptocurrencies (BTC, ETH, and +50 more)</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Detalles del Plan -->
+        <div class="bg-dark p-3 rounded mb-4">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <span>Premium</span>
+            <div class="d-flex align-items-center">
+              <span class="text-muted me-2">(347 days)</span>
+              <i class="bi bi-arrow-right"></i>
+              <span class="ms-2">Premium (365 days)</span>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <h6 class="text-muted mb-2">Price of subscription</h6>
+            <h3 class="mb-0">$37.78</h3>
+          </div>
+
+          <div class="mb-3">
+            <h6 class="text-muted mb-2">First payment approx. discount</h6>
+            <h3 class="text-success mb-0">95%</h3>
+            <small class="text-muted">Your 347 days of Premium will convert to 365 days of Premium</small>
+          </div>
+
+          <div class="text-muted small">
+            <p class="mb-1">Next payment will occur in 365 days</p>
+            <p class="mb-0" onclick="togglePriceDetails()" style="cursor: pointer;">
+              <i class="bi bi-info-circle me-1"></i>
+              See price details
+            </p>
+          </div>
+
+          <div id="priceDetails" class="mt-3 d-none">
+            <div class="d-flex justify-content-between mb-2">
+              <span>12 months</span>
+              <span>$1079.4</span>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+              <span>Period Discount</span>
+              <span>$(323.82)</span>
+            </div>
+            <div class="d-flex justify-content-between">
+              <span>First payment approx. discount based on your current subscription</span>
+              <span>(95)%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Términos y Condiciones -->
+        <div class="form-check mb-4">
+          <input class="form-check-input" type="checkbox" id="termsAccepted" required>
+          <label class="form-check-label text-light" for="termsAccepted">
+            I accept WunderTrading Terms of use
+          </label>
+        </div>
+
+        <!-- Botón de Compra -->
+        <button type="button" class="btn btn-primary w-100 py-3" onclick="processPurchase()">
+          Purchase now
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Modal de Términos y Condiciones -->
 <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
@@ -254,7 +350,7 @@
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <p>Aquí irían los términos y condiciones de Bitxxo Trading.  Por favor, léelos cuidadosamente antes de continuar.</p>
+        <p>Aquí irían los términos y condiciones de Bitxxo Trading. Por favor, léelos cuidadosamente antes de continuar.</p>
         <div class="form-check mb-4">
             <input class="form-check-input" type="checkbox" id="termsAccepted" required>
             <label class="form-check-label text-light" for="termsAccepted">
@@ -521,6 +617,58 @@ function setupTermsModal(button) {
     };
 
     modal.show();
+}
+
+function setupRenewalModal(button) {
+    const modal = new bootstrap.Modal(document.getElementById('renewalModal'));
+    const planId = button.dataset.planId;
+    const planName = button.dataset.planName;
+    const planPrice = parseFloat(button.dataset.planPrice) / 100;
+    
+    // Actualizar precios y descuentos en el modal
+    document.querySelector('#renewalModal .modal-body').innerHTML = document.querySelector('#renewalModal .modal-body').innerHTML
+        .replace('$37.78', `$${planPrice.toFixed(2)}`)
+        .replace('Premium', planName);
+    
+    modal.show();
+}
+
+function togglePriceDetails() {
+    const details = document.getElementById('priceDetails');
+    details.classList.toggle('d-none');
+}
+
+function processPurchase() {
+    const termsAccepted = document.getElementById('termsAccepted').checked;
+    if (!termsAccepted) {
+        alert('Please accept the terms of use to continue');
+        return;
+    }
+
+    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').id;
+    const modal = bootstrap.Modal.getInstance(document.getElementById('renewalModal'));
+    
+    // Enviar el formulario de renovación
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '/create-checkout-session';
+    
+    const planInput = document.createElement('input');
+    planInput.type = 'hidden';
+    planInput.name = 'plan_id';
+    planInput.value = document.querySelector('#renewalModal button[data-plan-id]').dataset.planId;
+    
+    const methodInput = document.createElement('input');
+    methodInput.type = 'hidden';
+    methodInput.name = 'payment_method';
+    methodInput.value = paymentMethod;
+    
+    form.appendChild(planInput);
+    form.appendChild(methodInput);
+    document.body.appendChild(form);
+    
+    modal.hide();
+    form.submit();
 }
 </script>
 {% endif %}
