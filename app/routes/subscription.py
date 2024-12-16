@@ -78,14 +78,15 @@ def create_checkout_session():
                     flash('Error al obtener información del plan', 'error')
                     return redirect(url_for('subscription.plans'))
                 
+                # Si no hay confirmación de términos, mostrar error
                 if not request.form.get('confirm_plan_change'):
-                    logging.info("Redirigiendo a página de confirmación")
-                    # Redirigir a la página de confirmación con la información necesaria
-                    return render_template('subscription/confirm_change.html',
-                        current_plan=current_plan_info,
-                        new_plan=selected_plan_info,
-                        is_upgrade=selected_plan_level > user_plan_level
-                    )
+                    logging.warning("Intento de cambio de plan sin aceptar términos")
+                    flash('Debes aceptar los términos y condiciones para cambiar de plan', 'warning')
+                    return redirect(url_for('subscription.plans'))
+                
+                logging.info(f"Cambio de plan confirmado: {current_plan} -> {selected_plan}")
+                is_upgrade = selected_plan_level > user_plan_level
+                logging.info(f"Tipo de cambio: {'upgrade' if is_upgrade else 'downgrade'}")
         except Exception as e:
             logging.error(f"Error al procesar cambio de plan: {str(e)}")
             flash('Error inesperado al procesar la solicitud', 'error')
