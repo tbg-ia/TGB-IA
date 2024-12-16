@@ -1,10 +1,13 @@
 from flask import Blueprint, jsonify, request, current_app
 from flask_login import login_required, current_user
 from app import db
-from app.models.exchange import Exchange
+from app.models.base_exchange import BaseExchange
+from app.models.crypto_exchange import CryptoExchange
+from app.models.forex_exchange import ForexExchange
 from app.integrations.crypto import init_crypto
 from app.integrations.forex import init_forex
 import logging
+from datetime import datetime
 
 exchanges_bp = Blueprint('exchanges', __name__, url_prefix='/api/exchanges')
 logger = logging.getLogger(__name__)
@@ -12,51 +15,97 @@ logger = logging.getLogger(__name__)
 @exchanges_bp.route('/add', methods=['POST'])
 @login_required
 def add_exchange():
+    """Agrega un nuevo exchange con sus credenciales"""
     try:
         data = request.get_json()
-        exchange_type = data.get('exchange_type')
+        logger.info(f"Procesando solicitud para agregar exchange: {data.get('exchange_type')}")
         
-        if not exchange_type:
-            return jsonify({'success': False, 'error': 'Exchange type is required'}), 400
+        if not data:
+            return jsonify({'success': False, 'error': 'No se proporcionaron datos'}), 400
             
-        # Crear nuevo exchange
-        exchange = Exchange(
-            name=exchange_type.upper(),
-            exchange_type=exchange_type,
-            api_key=data.get('api_key'),
-            user_id=current_user.id,
-            is_active=True
-        )
-        
-        # Manejar credenciales específicas de OANDA
-        if exchange_type == 'oanda':
-            exchange.account_id = data.get('oanda_account_id')
-            if not exchange.account_id:
-                return jsonify({'success': False, 'error': 'OANDA Account ID is required'}), 400
-        
-        # Establecer API secret
+        exchange_type = data.get('exchange_type')
+        api_key = data.get('api_key')
         api_secret = data.get('api_secret')
-        if api_secret:
-            exchange.set_api_secret(api_secret)
         
-        db.session.add(exchange)
-        db.session.commit()
+        if not exchange_type or not api_key or not api_secret:
+            return jsonify({
+                'success': False, 
+                'error': 'Se requieren exchange_type, api_key y api_secret'
+            }), 400
         
-        # Inicializar integración según el tipo de exchange
+        # Crear instancia según el tipo de exchange
         if exchange_type in ['binance', 'bingx']:
-            init_crypto(current_app)
+            exchange = CryptoExchange(
+                name=exchange_type.upper(),
+                exchange_type=exchange_type,
+                api_key=api_key,
+                user_id=current_user.id,
+                is_active=True,
+                trading_enabled=False  # Por seguridad, inicialmente deshabilitado
+            )
         elif exchange_type == 'oanda':
-            init_forex(current_app)
+            account_id = data.get('account_id')
+            if not account_id:
+                return jsonify({
+                    'success': False,
+                    'error': 'Se requiere account_id para OANDA'
+                }), 400
+                
+            exchange = ForexExchange(
+                name='OANDA',
+                exchange_type='oanda',
+                api_key=api_key,
+                user_id=current_user.id,
+                account_id=account_id,
+                is_active=True,
+                trading_enabled=False
+            )
+        else:
+            return jsonify({
+                'success': False,
+                'error': f'Tipo de exchange no soportado: {exchange_type}'
+            }), 400
         
-        return jsonify({
-            'success': True,
-            'message': 'Exchange added successfully',
-            'exchange': exchange.to_dict()
-        })
+        # Establecer y validar credenciales
+        success, error = exchange.set_api_secret(api_secret)
+        if not success:
+            return jsonify({'success': False, 'error': error}), 400
+            
+        # Validar credenciales completas
+        is_valid, error = exchange.validate_credentials()
+        if not is_valid:
+            return jsonify({'success': False, 'error': error}), 400
         
+        try:
+            db.session.add(exchange)
+            db.session.commit()
+            
+            # Inicializar integración según el tipo
+            if exchange_type in ['binance', 'bingx']:
+                init_crypto(current_app)
+            elif exchange_type == 'oanda':
+                init_forex(current_app)
+                
+            exchange.update_connection_status('connected')
+            db.session.commit()
+            
+            logger.info(f"Exchange {exchange_type} agregado exitosamente para usuario {current_user.id}")
+            return jsonify({
+                'success': True,
+                'message': 'Exchange agregado exitosamente',
+                'exchange': exchange.to_dict()
+            })
+            
+        except Exception as e:
+            db.session.rollback()
+            logger.error(f"Error al guardar exchange en base de datos: {str(e)}")
+            return jsonify({
+                'success': False,
+                'error': 'Error al guardar en base de datos'
+            }), 500
+            
     except Exception as e:
-        logger.error(f"Error adding exchange: {str(e)}")
-        db.session.rollback()
+        logger.error(f"Error al agregar exchange: {str(e)}")
         return jsonify({'success': False, 'error': str(e)}), 500
 
 @exchanges_bp.route('/update', methods=['POST'])
