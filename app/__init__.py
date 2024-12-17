@@ -5,8 +5,8 @@ from flask_login import LoginManager
 from flask_migrate import Migrate
 from .extensions import db
 
-from .billing import billing_bp
-from .subscription import subscription_bp
+from .routes.billing import billing_bp
+from .routes.subscription import subscription_bp
 
 all_blueprints = [billing_bp, subscription_bp]
 
