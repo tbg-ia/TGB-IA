@@ -56,11 +56,19 @@ def create_checkout_session():
         stripe.api_key = current_app.config['STRIPE_SECRET_KEY']
 
         # Configurar los parámetros de checkout
+        # Verify stripe_price_id exists
+        if not plan.get('stripe_price_id'):
+            flash('Error: Plan no configurado correctamente', 'error')
+            return redirect(url_for('subscription.planes'))
+            
         checkout_params = {
             'payment_method_types': ['card'],
             'line_items': [{
                 'price': plan['stripe_price_id'],
-                'quantity': 1
+                'quantity': 1,
+                'adjustable_quantity': {
+                    'enabled': False
+                }
             }],
             'mode': 'subscription',
             'success_url': url_for('subscription.payment_success', _external=True) + '?session_id={CHECKOUT_SESSION_ID}',
