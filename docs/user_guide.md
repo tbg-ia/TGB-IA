@@ -1,20 +1,22 @@
-# Manual de Usuario
 
-## Introducción
-Bienvenido a la Plataforma de Trading de Criptomonedas. Esta guía te ayudará a entender y utilizar todas las funcionalidades disponibles según tu plan de suscripción.
+# Manual de Usuario
 
 ## Tipos de Cuenta
 
-### Plan Básico ($9.99/mes)
-- Trading manual
-- Análisis de mercado básico
+### Plan Básico ($0.99/mes)
+- Trading manual y automatizado
+- Análisis básico y avanzado
 - Dashboard personalizado
+- Soporte por email
+- 7 días de prueba gratis
 
-### Plan Pro ($29.99/mes)
-- Trading automatizado
+### Plan Enterprise ($99.99/mes)
+- Trading avanzado
+- APIs personalizadas
 - Análisis avanzado
 - Soporte prioritario
-- Acceso a bots de trading
+- Acceso ilimitado a bots
+- 7 días de prueba gratis
 
 ## Funcionalidades
 
@@ -28,17 +30,15 @@ Bienvenido a la Plataforma de Trading de Criptomonedas. Esta guía te ayudará a
 - Estado de tus operaciones
 - Rendimiento de inversiones
 
-### 3. Trading Manual
+### 3. Trading Manual y Automatizado
 - Comprar/vender criptomonedas
 - Ver historial de operaciones
 - Análisis de mercado
-
-### 4. Trading Automatizado (Plan Pro)
 - Configurar bots de trading
 - Establecer parámetros
 - Monitorear rendimiento
 
-### 5. Gestión de Cuenta
+### 4. Gestión de Cuenta
 - Actualizar perfil
 - Cambiar suscripción
 - Configurar notificaciones
@@ -59,5 +59,5 @@ Bienvenido a la Plataforma de Trading de Criptomonedas. Esta guía te ayudará a
 
 ## Soporte
 - Email: support@plataforma.com
-- Chat en vivo (usuarios Pro)
+- Chat en vivo (usuarios Enterprise)
 - Centro de ayuda
