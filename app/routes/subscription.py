@@ -46,6 +46,12 @@ def create_checkout_session():
             flash('Plan no encontrado', 'error')
             return redirect(url_for('subscription.planes'))
 
+        # Verificar si el usuario ya tiene una suscripción activa
+        existing_subscription = Subscription.query.filter_by(
+            user_id=current_user.id,
+            status='active'
+        ).first()
+
         # Configurar Stripe con la clave secreta
         stripe.api_key = current_app.config['STRIPE_SECRET_KEY']
 
