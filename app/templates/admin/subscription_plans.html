@@ -49,7 +49,7 @@
 
     <!-- Lista de Planes -->
     <div class="row g-4">
-        {% for plan in subscription_plans %}
+        {% for plan in subscription_plans|sort(attribute='price') %}
         <div class="col-md-4">
             <div class="card bg-dark text-white h-100">
                 <div class="card-body p-4">
