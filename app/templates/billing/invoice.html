@@ -1,100 +1,116 @@
+
 {% extends "base.html" %}
 
 {% block content %}
 <div class="container py-5">
-    <div class="row">
-        <div class="col-md-12 mb-4">
-            <h2>Información de Facturación</h2>
+    <!-- Current Plan -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary">
+            <h5 class="card-title mb-0 text-white">Plan Actual</h5>
         </div>
-    </div>
-
-    <!-- Resumen de Suscripción -->
-    <div class="row mb-4">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header bg-primary">
-                    <h5 class="card-title mb-0 text-white">Plan Actual</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h4>Plan {{ subscription.plan_type|title }}</h4>
-                            <p class="text-muted mb-0">
-                                Válido hasta: {{ subscription.end_date.strftime('%d-%m-%Y') }}
-                            </p>
-                            <p class="text-muted">
-                                Próximo cobro: ${{ "%.2f"|format(subscription.amount) }}
-                            </p>
-                        </div>
-                        <div class="col-md-6 text-end">
-                            <span class="badge bg-{{ 'success' if subscription.status == 'active' else 'warning' }}">
-                                {{ subscription.status|title }}
-                            </span>
-                            {% if subscription.trial_end and subscription.trial_end > now %}
-                                <span class="badge bg-info ms-2">Periodo de prueba</span>
-                            {% endif %}
-                        </div>
+        <div class="card-body">
+            {% if subscription %}
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4>Plan {{ subscription.plan_type|title }}</h4>
+                        <p class="mb-2">
+                            <i class="bi bi-calendar-event me-2"></i>
+                            Válido hasta: {{ subscription.end_date.strftime('%d-%m-%Y') }}
+                        </p>
+                        <p class="mb-2">
+                            <i class="bi bi-currency-dollar me-2"></i>
+                            Precio: ${{ "%.2f"|format(subscription.amount) }}/mes
+                        </p>
+                        {% if subscription.status == 'active' %}
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle me-2"></i>
+                                Su suscripción se renovará automáticamente el {{ subscription.end_date.strftime('%d-%m-%Y') }}
+                            </div>
+                        {% else %}
+                            <div class="alert alert-warning">
+                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                Tu plan estará disponible hasta el {{ subscription.end_date.strftime('%d-%m-%Y') }}. No se renovará automáticamente.
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6 text-end">
+                        {% if subscription.status == 'active' %}
+                            <a href="{{ url_for('subscription.planes') }}" class="btn btn-outline-primary mb-2">
+                                <i class="bi bi-arrow-up-circle me-2"></i>Cambiar Plan
+                            </a>
+                            <form action="{{ url_for('subscription.cancel') }}" method="POST" class="d-inline">
+                                <button type="submit" class="btn btn-outline-danger mb-2">
+                                    <i class="bi bi-x-circle me-2"></i>Cancelar Suscripción
+                                </button>
+                            </form>
+                        {% else %}
+                            <a href="{{ url_for('subscription.planes') }}" class="btn btn-primary">
+                                <i class="bi bi-check-circle me-2"></i>Activar Suscripción
+                            </a>
+                        {% endif %}
                     </div>
                 </div>
-            </div>
+            {% else %}
+                <div class="text-center py-4">
+                    <i class="bi bi-star h1 mb-3"></i>
+                    <p class="text-muted mb-4">No tienes un plan activo</p>
+                    <a href="{{ url_for('subscription.planes') }}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle me-2"></i>Seleccionar Plan
+                    </a>
+                </div>
+            {% endif %}
         </div>
     </div>
 
-    <!-- Métodos de Pago -->
-    <div class="row mb-4">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">Métodos de Pago Guardados</h5>
-                    <button class="btn btn-sm btn-primary" onclick="addPaymentMethod()">
-                        <i class="bi bi-plus-lg"></i> Agregar método de pago
-                    </button>
-                </div>
-                <div class="card-body">
-                    {% if payment_methods %}
-                        <div class="row">
-                            {% for method in payment_methods %}
-                            <div class="col-md-6 mb-3">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <div class="d-flex align-items-center">
-                                                <i class="bi bi-credit-card me-3 fs-4"></i>
-                                                <div>
-                                                    <h6 class="mb-0">{{ method.card.brand|title }} •••• {{ method.card.last4 }}</h6>
-                                                    <small class="text-muted">Expira: {{ method.card.exp_month }}/{{ method.card.exp_year }}</small>
-                                                </div>
-                                            </div>
-                                            <div class="dropdown">
-                                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                                    <i class="bi bi-three-dots-vertical"></i>
-                                                </button>
-                                                <ul class="dropdown-menu">
-                                                    <li><a class="dropdown-item" href="#" onclick="setDefaultPaymentMethod('{{ method.id }}')">Establecer por defecto</a></li>
-                                                    <li><a class="dropdown-item text-danger" href="#" onclick="removePaymentMethod('{{ method.id }}')">Eliminar</a></li>
-                                                </ul>
-                                            </div>
-                                        </div>
+    <!-- Payment Methods -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Métodos de Pago Guardados</h5>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-info mb-4">
+                <i class="bi bi-shield-lock me-2"></i>
+                <strong>Nota de Seguridad:</strong> BitXXO Trading no almacena sus credenciales de pago. Estas se cifran y se transmiten a Stripe a través de su API que utilizamos para procesar todos los pagos. Esta API nos permite crear un enlace protegido al método de pago para futuras transacciones de forma segura.
+            </div>
+            
+            {% if payment_methods %}
+                <div class="row">
+                    {% for method in payment_methods %}
+                    <div class="col-md-6 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <i class="bi bi-credit-card me-2"></i>
+                                        {{ method.card.brand|title }} •••• {{ method.card.last4 }}
+                                        <br>
+                                        <small class="text-muted">Expira: {{ method.card.exp_month }}/{{ method.card.exp_year }}</small>
+                                    </div>
+                                    <div>
+                                        <button class="btn btn-sm btn-outline-danger" onclick="removePaymentMethod('{{ method.id }}')">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
-                            {% endfor %}
                         </div>
-                    {% else %}
-                        <div class="text-center py-4">
-                            <i class="bi bi-credit-card h1 mb-3 d-block"></i>
-                            <p class="text-muted mb-4">No hay métodos de pago guardados</p>
-                            <button class="btn btn-primary" onclick="addPaymentMethod()">
-                                <i class="bi bi-plus-lg"></i> Agregar método de pago
-                            </button>
-                        </div>
-                    {% endif %}
+                    </div>
+                    {% endfor %}
                 </div>
-            </div>
+            {% else %}
+                <div class="text-center py-4">
+                    <i class="bi bi-credit-card h1 mb-3"></i>
+                    <p class="text-muted mb-4">No hay métodos de pago guardados</p>
+                </div>
+            {% endif %}
+            
+            <button class="btn btn-primary mt-3" onclick="addPaymentMethod()">
+                <i class="bi bi-plus-lg me-2"></i>Agregar Método de Pago
+            </button>
         </div>
     </div>
 
-    <!-- Historial de Facturación -->
+    <!-- Billing History -->
     <div class="card">
         <div class="card-header">
             <h5 class="card-title mb-0">Historial de Facturación</h5>
@@ -123,14 +139,16 @@
                             </td>
                             <td>${{ "%.2f"|format(invoice.amount) }}</td>
                             <td>
-                                <span class="badge bg-{{ invoice.status_color }}">
+                                <span class="badge bg-{{ 'success' if invoice.status == 'paid' else 'warning' }}">
                                     {{ invoice.status|title }}
                                 </span>
                             </td>
                             <td>
+                                {% if invoice.pdf_url %}
                                 <a href="{{ invoice.pdf_url }}" target="_blank" class="btn btn-sm btn-outline-secondary">
                                     <i class="bi bi-download"></i>
                                 </a>
+                                {% endif %}
                             </td>
                         </tr>
                         {% endfor %}
@@ -149,7 +167,7 @@
     </div>
 </div>
 
-<!-- Modal para Agregar/Actualizar Método de Pago -->
+<!-- Payment Method Modal -->
 <div class="modal fade" id="paymentMethodModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -158,17 +176,12 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <div class="mb-4">
-                    <div id="card-element" class="form-control"></div>
-                    <div id="card-errors" class="text-danger mt-2"></div>
-                </div>
+                <div id="card-element" class="form-control mb-3"></div>
+                <div id="card-errors" class="text-danger"></div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" id="savePaymentButton" onclick="savePaymentMethod()">
-                    <span id="buttonText">Guardar</span>
-                    <span id="buttonSpinner" class="spinner-border spinner-border-sm d-none" role="status"></span>
-                </button>
+                <button type="button" class="btn btn-primary" onclick="savePaymentMethod()">Guardar</button>
             </div>
         </div>
     </div>
@@ -187,44 +200,21 @@
         modal.show();
         
         if (!cardElement) {
-            cardElement = elements.create('card', {
-                style: {
-                    base: {
-                        color: '#fff',
-                        fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
-                        fontSmoothing: 'antialiased',
-                        fontSize: '16px',
-                        '::placeholder': {
-                            color: '#aab7c4'
-                        }
-                    },
-                    invalid: {
-                        color: '#fa755a',
-                        iconColor: '#fa755a'
-                    }
-                }
-            });
+            cardElement = elements.create('card');
             cardElement.mount('#card-element');
         }
     }
     
     async function savePaymentMethod() {
-        const button = document.getElementById('savePaymentButton');
-        const buttonText = document.getElementById('buttonText');
-        const buttonSpinner = document.getElementById('buttonSpinner');
+        const button = document.querySelector('#paymentMethodModal .btn-primary');
         const errorElement = document.getElementById('card-errors');
         
         try {
             button.disabled = true;
-            buttonText.classList.add('d-none');
-            buttonSpinner.classList.remove('d-none');
             
             const {setupIntent, error} = await stripe.createPaymentMethod({
                 type: 'card',
                 card: cardElement,
-                billing_details: {
-                    email: '{{ current_user.email }}'
-                }
             });
             
             if (error) {
@@ -232,15 +222,10 @@
                 return;
             }
             
-            // Enviar el paymentMethod.id al servidor
             const response = await fetch('/billing/update-payment-method', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    payment_method_id: setupIntent.payment_method
-                })
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({payment_method_id: setupIntent.payment_method})
             });
             
             if (response.ok) {
@@ -249,33 +234,10 @@
                 const data = await response.json();
                 errorElement.textContent = data.error || 'Error al guardar el método de pago';
             }
-            
         } catch (e) {
             errorElement.textContent = 'Error al procesar el pago';
         } finally {
             button.disabled = false;
-            buttonText.classList.remove('d-none');
-            buttonSpinner.classList.add('d-none');
-        }
-    }
-    
-    async function setDefaultPaymentMethod(methodId) {
-        try {
-            const response = await fetch('/billing/set-default-payment-method', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    payment_method_id: methodId
-                })
-            });
-            
-            if (response.ok) {
-                location.reload();
-            }
-        } catch (e) {
-            console.error('Error al establecer método de pago por defecto:', e);
         }
     }
     
@@ -287,12 +249,8 @@
         try {
             const response = await fetch('/billing/remove-payment-method', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    payment_method_id: methodId
-                })
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({payment_method_id: methodId})
             });
             
             if (response.ok) {
