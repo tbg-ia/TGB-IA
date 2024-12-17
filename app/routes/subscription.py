@@ -20,13 +20,12 @@ def get_plan_details(plan_id):
     """Retrieves plan details from the database based on plan_id."""
     try:
         plan = SubscriptionPlan.query.get(plan_id)
-        if not plan:
-            return None
-        return {
-            'stripe_price_id': plan.stripe_price_id,
-            'name': plan.name,
-            'price': plan.price
-        }
+        if plan:
+            return {
+                'stripe_price_id': plan.stripe_price_id,
+                'name': plan.name
+            }
+        return None
     except Exception as e:
         logging.error(f"Error retrieving plan details: {str(e)}")
         return None
@@ -57,16 +56,19 @@ def create_checkout_session():
         stripe.api_key = current_app.config['STRIPE_SECRET_KEY']
 
         # Configurar los parámetros de checkout
-        stripe_price_id = plan.get('stripe_price_id')
-        if not stripe_price_id:
+        # Verify stripe_price_id exists
+        if not plan.get('stripe_price_id'):
             flash('Error: Plan no configurado correctamente', 'error')
             return redirect(url_for('subscription.planes'))
-
+            
         checkout_params = {
             'payment_method_types': ['card'],
             'line_items': [{
-                'price': stripe_price_id,
-                'quantity': 1
+                'price': plan['stripe_price_id'],
+                'quantity': 1,
+                'adjustable_quantity': {
+                    'enabled': False
+                }
             }],
             'mode': 'subscription',
             'success_url': url_for('subscription.payment_success', _external=True) + '?session_id={CHECKOUT_SESSION_ID}',
