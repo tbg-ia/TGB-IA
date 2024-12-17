@@ -73,8 +73,30 @@ def create_checkout_session():
 
         stripe_price_id = plan.get('stripe_price_id')
         if not stripe_price_id:
-            flash('Error: Plan no configurado correctamente', 'error')
-            return redirect(url_for('subscription.planes'))
+            logging.error(f"Plan {plan_id} missing stripe_price_id")
+            try:
+                # Create product if it doesn't exist
+                product = stripe.Product.create(
+                    name=plan['name'],
+                    description=SubscriptionPlan.query.get(plan_id).description
+                )
+                # Create price for the product
+                price = stripe.Price.create(
+                    product=product.id,
+                    unit_amount=plan['price'],
+                    currency='usd',
+                    recurring={'interval': 'month'}
+                )
+                # Update plan with Stripe IDs
+                subscription_plan = SubscriptionPlan.query.get(plan_id)
+                subscription_plan.stripe_product_id = product.id
+                subscription_plan.stripe_price_id = price.id
+                db.session.commit()
+                stripe_price_id = price.id
+            except Exception as e:
+                logging.error(f"Error creating Stripe product/price: {str(e)}")
+                flash('Error: Plan no configurado correctamente', 'error')
+                return redirect(url_for('subscription.planes'))
 
         checkout_params = {
             'payment_method_types': ['card'],
