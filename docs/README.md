@@ -1,83 +1,45 @@
-# Plataforma de Trading de Criptomonedas
+
+# Plataforma de Trading - Documentación
 
 ## Descripción
-Plataforma web para trading de criptomonedas con bot automatizado. Permite a los usuarios realizar operaciones de trading manual y automatizado según su plan de suscripción.
+Plataforma web para trading de criptomonedas y forex con soporte para bots automatizados y diferentes planes de suscripción.
 
-## Características Principales
-- Sistema de autenticación de usuarios
+## Características
+- Trading manual y automatizado
+- Integración con múltiples exchanges (Binance, BingX, Oanda)
+- Sistema de suscripciones con período de prueba
 - Panel de administración
-- Panel de usuario con diferentes niveles de acceso
-- Bot de trading automatizado
-- Integración con exchanges de criptomonedas
-- Sistema de suscripciones (Basic/Pro)
+- Gestión de usuarios y permisos
+- Procesamiento de pagos con Stripe
+- Sistema de notificaciones por email
 
 ## Estructura del Proyecto
 ```
-/mi_plataforma/
-├── app/                               # Directorio principal
-│   ├── __init__.py                   # Inicialización de Flask
-│   ├── config.py                     # Configuración
-│   ├── routes/                       # Rutas de la aplicación
-│   │   ├── auth.py                   # Autenticación
-│   │   └── crypto.py                 # Trading
-│   ├── models/                       # Modelos de datos
-│   │   ├── user.py                   # Modelo de Usuario
-│   │   └── trading_bot.py            # Modelo del Bot
-│   ├── templates/                    # Plantillas HTML
-│   │   ├── admin/                    # Vistas de administrador
-│   │   └── public/                   # Vistas públicas
-│   └── auth/                         # Lógica de autenticación
-│       └── decorators.py             # Decoradores de permisos
-├── migrations/                       # Migraciones de base de datos
-└── run.py                           # Punto de entrada
+/app/
+├── api/                # API endpoints
+├── auth/              # Autenticación
+├── billing/           # Gestión de pagos
+├── email/             # Sistema de emails
+├── forms/             # Formularios
+├── integrations/      # Integraciones con exchanges
+├── mail/              # Plantillas de email
+├── models/            # Modelos de datos
+├── routes/            # Rutas de la aplicación
+├── static/            # Archivos estáticos
+└── templates/         # Plantillas HTML
 ```
 
-## Requisitos
-- Python 3.x
-- PostgreSQL
-- Dependencias en requirements.txt
+## Módulos Principales
+1. Trading (Crypto/Forex)
+2. Gestión de Suscripciones
+3. Facturación
+4. Panel de Administración
+5. Sistema de Notificaciones
 
-## Configuración
-1. Clonar el repositorio
-2. Instalar dependencias:
-   ```bash
-   pip install -r requirements.txt
-   ```
-3. Configurar variables de entorno:
-   - DATABASE_URL
-   - FLASK_SECRET_KEY
-   - BINANCE_API_KEY
-   - BINANCE_API_SECRET
-
-## Niveles de Usuario
-### Usuario Básico
-- Trading manual
-- Análisis de mercado básico
-- Dashboard personalizado
-
-### Usuario Pro
-- Trading automatizado
-- Análisis avanzado
-- Soporte prioritario
-- Acceso a bots de trading
-
-### Administrador
-- Gestión de usuarios
-- Monitoreo de bots
-- Configuración del sistema
-
-## Desarrollo
-El proyecto está desarrollado en Flask con:
-- Flask-SQLAlchemy para la base de datos
-- Flask-Login para autenticación
-- Bootstrap para el frontend
-- Python-Binance para integración con Binance
-
-## Estado del Proyecto
-En desarrollo activo. Características principales implementadas:
+## Estado Actual
 - [x] Sistema de autenticación
+- [x] Integración con Stripe
+- [x] Trading manual
+- [x] Trading automatizado
+- [x] Gestión de suscripciones
 - [x] Panel de administración
-- [x] Dashboard de usuario
-- [ ] Integración completa con Binance
-- [ ] Sistema de notificaciones
-- [ ] Más exchanges y pares de trading
