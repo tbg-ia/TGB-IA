@@ -1,16 +1,15 @@
 import os
-import os
 from flask import Flask
 from flask import render_template
-from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_migrate import Migrate
-from sqlalchemy.orm import DeclarativeBase
+from .extensions import db
 
-class Base(DeclarativeBase):
-    pass
+from .billing import billing_bp
+from .subscription import subscription_bp
 
-db = SQLAlchemy(model_class=Base)
+all_blueprints = [billing_bp, subscription_bp]
+
 login_manager = LoginManager()
 
 @login_manager.user_loader
