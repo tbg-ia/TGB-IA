@@ -71,11 +71,14 @@ def create_app():
     from app.routes import all_blueprints
     from app.api.exchanges import exchanges_bp as api_exchanges_bp
     from app.routes.exchanges import exchanges_bp
-    
+    from app.routes.oanda import oanda_bp # Added import for oanda blueprint
+
     for blueprint in all_blueprints:
         app.register_blueprint(blueprint)
     app.register_blueprint(api_exchanges_bp)
     app.register_blueprint(exchanges_bp)
+    app.register_blueprint(oanda_bp, url_prefix='/api/oanda') # Added blueprint registration for oanda
+
     
     # Register index route
     @app.route('/')
