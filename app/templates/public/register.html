@@ -2,52 +2,74 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container-fluid min-vh-100 d-flex align-items-center bg-dark">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card bg-dark border-0">
-                    <div class="row g-0">
-                        <div class="col-md-6">
-                            <div class="bg-primary bg-gradient text-white p-5 h-100 rounded-start">
-                                <h2 class="display-6 mb-3">Crear Cuenta Nueva</h2>
-                                <p class="text-white-50">Únete a nuestra plataforma de trading</p>
+<div class="container">
+    <div class="row justify-content-center align-items-center min-vh-100">
+        <div class="col-md-8">
+            <div class="card bg-dark border-0 shadow">
+                <div class="row g-0">
+                    <div class="col-md-6 p-5" style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);">
+                        <div class="d-flex flex-column justify-content-center h-100 text-white">
+                            <h2 class="display-6 fw-bold mb-3">Crear Cuenta Nueva</h2>
+                            <p class="lead mb-4">Únete a nuestra plataforma de trading</p>
+                            <div class="d-none d-md-block">
+                                <p class="mb-0 opacity-75">Trade smarter with our advanced tools</p>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="card-body p-4">
-                                <h5 class="text-white mb-4">Registro</h5>
-                                <form method="POST">
-                                    <div class="mb-3">
-                                        <label class="form-label text-white">Nombre de Usuario</label>
-                                        <input type="text" class="form-control bg-dark text-white border-secondary" name="username" placeholder="Ingresa tu nombre de usuario">
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card-body p-5">
+                            <h2 class="card-title text-center mb-4">Registro</h2>
+                            
+                            <form method="POST">
+                                <div class="mb-3">
+                                    <label class="form-label">Nombre de Usuario</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-dark border-secondary">
+                                            <i class="bi bi-person"></i>
+                                        </span>
+                                        <input type="text" class="form-control bg-dark border-secondary" name="username" placeholder="Ingresa tu nombre de usuario" required>
                                     </div>
-                                    <div class="mb-3">
-                                        <label class="form-label text-white">Correo Electrónico</label>
-                                        <input type="email" class="form-control bg-dark text-white border-secondary" name="email" placeholder="example@email.com">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Correo Electrónico</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-dark border-secondary">
+                                            <i class="bi bi-envelope"></i>
+                                        </span>
+                                        <input type="email" class="form-control bg-dark border-secondary" name="email" placeholder="example@email.com" required>
                                     </div>
-                                    <div class="mb-3">
-                                        <label class="form-label text-white">Contraseña</label>
-                                        <input type="password" class="form-control bg-dark text-white border-secondary" name="password" placeholder="Enter your password">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Contraseña</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-dark border-secondary">
+                                            <i class="bi bi-lock"></i>
+                                        </span>
+                                        <input type="password" class="form-control bg-dark border-secondary" name="password" placeholder="Enter your password" required>
                                     </div>
-                                    <div class="mb-3">
-                                        <label class="form-label text-white">Confirmar Contraseña</label>
-                                        <input type="password" class="form-control bg-dark text-white border-secondary" name="confirm_password" placeholder="Confirm your password">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Confirmar Contraseña</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-dark border-secondary">
+                                            <i class="bi bi-lock-fill"></i>
+                                        </span>
+                                        <input type="password" class="form-control bg-dark border-secondary" name="confirm_password" placeholder="Confirm your password" required>
                                     </div>
-                                    <div class="mb-3">
-                                        <div class="form-check">
-                                            <input type="checkbox" class="form-check-input" name="terms">
-                                            <label class="form-check-label text-white">I accept the <a href="#" class="text-primary">Terms and Conditions</a></label>
-                                        </div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" name="terms" required>
+                                        <label class="form-check-label">I accept the <a href="#" class="text-primary">Terms and Conditions</a></label>
                                     </div>
-                                    <div class="d-grid">
-                                        <button type="submit" class="btn btn-primary">Registrarse</button>
-                                    </div>
-                                    <p class="text-center text-white mt-3 mb-0">
-                                        Already have an account? <a href="{{ url_for('auth.login') }}" class="text-primary">Login</a>
-                                    </p>
-                                </form>
-                            </div>
+                                </div>
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-primary btn-lg">Registrarse</button>
+                                </div>
+                                <div class="text-center mt-4">
+                                    <p class="mb-0">Already have an account? <a href="{{ url_for('auth.login') }}" class="text-primary text-decoration-none">Login</a></p>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
