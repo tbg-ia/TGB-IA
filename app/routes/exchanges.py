@@ -45,14 +45,18 @@ def add_exchange():
         logger.info(f"Adding new exchange of type: {exchange_type}")
         if exchange_type == 'oanda':
             account_id = data.get('account_id')
+            api_key = data.get('api_key')
+            
             if not account_id:
                 return jsonify({'success': False, 'error': 'OANDA Account ID is required'}), 400
+            if not api_key:
+                return jsonify({'success': False, 'error': 'OANDA API Key is required'}), 400
             
             # Create OANDA exchange
             exchange = OandaExchange(
                 user_id=current_user.id,
-                api_key=os.environ.get('OANDA_API_KEY'),
-                account_id=os.environ.get('OANDA_ACCOUNT_ID'),
+                api_key=api_key,
+                account_id=account_id,
                 name='OANDA',
                 exchange_type='oanda',
                 is_forex=True,
