@@ -27,18 +27,39 @@ def list_exchanges():
 def add_exchange():
     try:
         data = request.get_json()
+        logger.info(f"Recibiendo solicitud para agregar exchange: {data.get('exchange_type')}")
         
         # Validar datos requeridos
-        if not all([data.get('exchange_type'), data.get('api_key'), data.get('api_secret')]):
-            return jsonify({'success': False, 'error': 'Faltan datos requeridos'})
+        required_fields = ['exchange_type', 'api_key', 'api_secret']
+        if data.get('exchange_type') == 'oanda':
+            required_fields.append('account_id')
             
-        # Crear instancia de exchange según tipo
-        exchange = BaseExchange(
-            name=data['exchange_type'].upper(),
-            exchange_type=data['exchange_type'],
-            api_key=data['api_key'],
-            user_id=current_user.id
-        )
+        if not all(data.get(field) for field in required_fields):
+            return jsonify({'success': False, 'error': 'Faltan campos requeridos'})
+            
+        # Crear instancia según tipo de exchange
+        if data['exchange_type'] == 'oanda':
+            from app.models.exchanges.oanda_exchange import OandaExchange
+            exchange = OandaExchange(
+                name='OANDA',
+                exchange_type='oanda',
+                api_key=data['api_key'],
+                account_id=data['account_id'],
+                user_id=current_user.id
+            )
+        elif data['exchange_type'] in ['binance', 'bingx']:
+            from app.models.crypto_exchange import CryptoExchange
+            exchange = CryptoExchange(
+                name=data['exchange_type'].upper(),
+                exchange_type=data['exchange_type'],
+                api_key=data['api_key'],
+                user_id=current_user.id
+            )
+        else:
+            return jsonify({
+                'success': False,
+                'error': f'Tipo de exchange no soportado: {data["exchange_type"]}'
+            }), 400
         
         # Encriptar y guardar API secret
         success, error = exchange.set_api_secret(data['api_secret'])
