@@ -1,3 +1,4 @@
+
 {% extends "base.html" %}
 
 {% block content %}
@@ -16,9 +17,9 @@
                 <form id="tradeForm">
                     <div class="mb-3">
                         <select class="form-select" id="instrument" required>
-                            {% for code, name in forex_instruments %}
-                            <option value="{{ code }}">{{ name }}</option>
-                            {% endfor %}
+                            <option value="EUR_USD">EUR/USD</option>
+                            <option value="GBP_USD">GBP/USD</option>
+                            <option value="USD_JPY">USD/JPY</option>
                         </select>
                     </div>
                     <div class="mb-3">
@@ -35,12 +36,14 @@
                     <div class="mb-3">
                         <label class="form-label">Take Profit</label>
                         <input type="number" class="form-control" id="take_profit" step="0.00001" min="0">
-                        <small class="form-text text-muted">Leave empty for no take profit</small>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Stop Loss</label>
                         <input type="number" class="form-control" id="stop_loss" step="0.00001" min="0">
-                        <small class="form-text text-muted">Leave empty for no stop loss</small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Webhook URL</label>
+                        <input type="text" class="form-control" id="webhook_url" value="https://176.9.64.242:443/webhook">
                     </div>
                     <button type="submit" class="btn btn-primary w-100">Place Trade</button>
                 </form>
@@ -64,23 +67,7 @@
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody>
-                    {% for trade in trades %}
-                    <tr class="trade-row" data-trade-id="{{ trade.id }}">
-                        <td>{{ trade.instrument }}</td>
-                        <td>{{ trade.side }}</td>
-                        <td>{{ trade.units }}</td>
-                        <td>{{ trade.price }}</td>
-                        <td class="pnl" id="pnl-{{ trade.id }}">Calculating...</td>
-                        <td>
-                            {% if trade.status == 'OPEN' %}
-                            <button class="btn btn-danger btn-sm" onclick="closeTrade({{ trade.id }})">Close</button>
-                            {% else %}
-                            Closed
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% endfor %}
+                <tbody id="tradesList">
                 </tbody>
             </table>
         </div>
@@ -89,7 +76,6 @@
 {% endblock %}
 
 {% block extra_js %}
-<!-- TradingView Widget BEGIN -->
 <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
 <script src="{{ url_for('static', filename='js/terminal_forex.js') }}"></script>
 {% endblock %}
