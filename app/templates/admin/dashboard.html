@@ -1,3 +1,4 @@
+
 {% extends "base.html" %}
 
 {% block content %}
@@ -8,7 +9,7 @@
             <div class="position-sticky pt-3">
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('admin.dashboard') }}">
+                        <a class="nav-link active" href="{{ url_for('admin.dashboard') }}">
                             <i class="bi bi-speedometer2 me-2"></i>
                             Dashboard
                         </a>
@@ -38,12 +39,11 @@
         <!-- Contenido principal -->
         <main class="col-md-9 col-lg-10 px-md-4">
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
-                <h1 class="h2">Dashboard</h1>
-                <div class="btn-toolbar mb-2 mb-md-0">
-                    <div class="btn-group me-2">
-                        <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
-                    </div>
+                <h1 class="h2">Panel de Control</h1>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="exportData()">
+                        <i class="bi bi-download me-2"></i>Exportar Datos
+                    </button>
                 </div>
             </div>
 
@@ -60,97 +60,118 @@
 
             {% if not stats.stripe_configured %}
                 <div class="alert alert-warning" role="alert">
-                    <i class="bi bi-exclamation-triangle-fill"></i>
-                    Stripe no está configurado. Por favor, configure las credenciales de Stripe en la 
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    Stripe no está configurado. Por favor, configure las credenciales en la 
                     <a href="{{ url_for('admin.settings') }}" class="alert-link">página de configuración</a>.
                 </div>
             {% endif %}
 
             <!-- Stats Cards -->
-            <div class="row mb-4">
+            <div class="row g-4 mb-4">
                 <div class="col-md-3">
-                    <div class="card">
+                    <div class="card bg-primary text-white">
                         <div class="card-body">
-                            <h6 class="card-subtitle mb-2 text-muted">Total Users</h6>
-                            <h2 class="card-title mb-0">{{ stats.total_users }}</h2>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="card-subtitle mb-2">Total Usuarios</h6>
+                                    <h2 class="card-title mb-0">{{ stats.total_users }}</h2>
+                                </div>
+                                <i class="bi bi-people fs-1"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="card">
+                    <div class="card bg-success text-white">
                         <div class="card-body">
-                            <h6 class="card-subtitle mb-2 text-muted">Active Bots</h6>
-                            <h2 class="card-title mb-0">{{ stats.active_bots }}</h2>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="card-subtitle mb-2">Bots Activos</h6>
+                                    <h2 class="card-title mb-0">{{ stats.active_bots }}</h2>
+                                </div>
+                                <i class="bi bi-robot fs-1"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="card">
+                    <div class="card bg-info text-white">
                         <div class="card-body">
-                            <h6 class="card-subtitle mb-2 text-muted">Total Subscribers</h6>
-                            <h2 class="card-title mb-0">{{ stats.total_subscribers }}</h2>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="card-subtitle mb-2">Suscriptores</h6>
+                                    <h2 class="card-title mb-0">{{ stats.total_subscribers }}</h2>
+                                </div>
+                                <i class="bi bi-person-check fs-1"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="card">
+                    <div class="card bg-warning text-white">
                         <div class="card-body">
-                            <h6 class="card-subtitle mb-2 text-muted">Monthly Revenue</h6>
-                            <h2 class="card-title mb-0">${{ "%.2f"|format(stats.monthly_revenue|float / 100) }}</h2>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="card-subtitle mb-2">Ingresos Mensuales</h6>
+                                    <h2 class="card-title mb-0">${{ "%.2f"|format(stats.monthly_revenue|float / 100) }}</h2>
+                                </div>
+                                <i class="bi bi-currency-dollar fs-1"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Trading Performance Chart -->
+            <!-- Gráficos y Tablas -->
             <div class="row mb-4">
+                <!-- Gráfico de Rendimiento -->
                 <div class="col-md-8">
                     <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Rendimiento del Sistema</h5>
+                        </div>
                         <div class="card-body">
-                            <h5 class="card-title">Trading Performance</h5>
-                            <div style="position: relative; height: 300px; width: 100%;">
-                                <canvas id="tradingChart"></canvas>
-                            </div>
+                            <canvas id="performanceChart" height="300"></canvas>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h5 class="card-title mb-0">Planes de Suscripción</h5>
-                                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editPlanModal">
-                                    <i class="bi bi-pencil"></i> Editar Planes
-                                </button>
-                            </div>
-                            <div class="table-responsive">
-                                <table class="table table-borderless align-middle">
-                                    <thead>
-                                        <tr class="text-muted">
-                                            <th>Plan</th>
-                                            <th class="text-center">Señales Activas</th>
-                                            <th class="text-center">APIs por Exchange</th>
-                                            <th class="text-center">Acci</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for plan in subscription_plans %}
-                                        <tr>
-                                            <td class="fw-bold">{{ plan.name }}</td>
-                                            <td class="text-center">{{ plan.get_exchange_limits()['active_signals'] }}</td>
-                                            <td class="text-center">{{ plan.get_exchange_limits()['apis_per_exchange'] }}</td>
-                                            <td class="text-center">
-                                                <button class="btn btn-link p-0" 
-                                                        onclick="editPlan({{ plan.id }})">
-                                                    <i class="bi bi-pencil-square text-primary fs-5"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+
+                <!-- Este espacio se ha dejado intencionalmente vacío -->
+            </div>
+
+            <!-- Actividad Reciente -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Actividad Reciente</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Usuario</th>
+                                    <th>Acción</th>
+                                    <th>Plan</th>
+                                    <th>Fecha</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for trade in trades %}
+                                <tr>
+                                    <td>{{ trade.user.username }}</td>
+                                    <td>{{ trade.symbol }}</td>
+                                    <td>{{ trade.order_type }}</td>
+                                    <td>{{ trade.created_at.strftime('%d-%m-%Y %H:%M') }}</td>
+                                    <td>
+                                        <span class="badge bg-{{ 'success' if trade.status == 'closed' else 'warning' }}">
+                                            {{ trade.status }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -158,182 +179,64 @@
     </div>
 </div>
 
-<!-- New Bot Modal -->
-<div class="modal fade" id="newBotModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Create New Trading Bot</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <form id="newBotForm">
-                    <div class="mb-3">
-                        <label class="form-label">Exchange</label>
-                        <select class="form-select" name="exchange_type" required>
-                            <option value="">Select Exchange</option>
-                            <option value="binance">Binance</option>
-                            <option value="bingx">BingX</option>
-                            <option value="oanda">OANDA (Forex)</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Trading Pair</label>
-                        <select class="form-select" name="trading_pair" required>
-                            <option value="">Select Trading Pair</option>
-                            <optgroup label="Major Pairs">
-                                <option value="BTC/USDT">BTC/USDT</option>
-                                <option value="ETH/USDT">ETH/USDT</option>
-                                <option value="BNB/USDT">BNB/USDT</option>
-                                <option value="SOL/USDT">SOL/USDT</option>
-                            </optgroup>
-                            <optgroup label="DeFi">
-                                <option value="UNI/USDT">UNI/USDT</option>
-                                <option value="AAVE/USDT">AAVE/USDT</option>
-                                <option value="CAKE/USDT">CAKE/USDT</option>
-                            </optgroup>
-                            <optgroup label="Layer 1">
-                                <option value="ADA/USDT">ADA/USDT</option>
-                                <option value="DOT/USDT">DOT/USDT</option>
-                                <option value="AVAX/USDT">AVAX/USDT</option>
-                                <option value="MATIC/USDT">MATIC/USDT</option>
-                            </optgroup>
-                            <optgroup label="Meme Coins">
-                                <option value="DOGE/USDT">DOGE/USDT</option>
-                                <option value="SHIB/USDT">SHIB/USDT</option>
-                            </optgroup>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Strategy</label>
-                        <select class="form-select" name="strategy" required>
-                            <option value="">Select Strategy</option>
-                            <option value="grid">Grid Trading</option>
-                            <option value="dca">DCA</option>
-                            <option value="momentum">Momentum</option>
-                            <option value="arbitrage">Arbitrage</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Max Position Size (USDT)</label>
-                        <div class="input-group">
-                            <span class="input-group-text">$</span>
-                            <input type="number" class="form-control" name="max_position" 
-                                   placeholder="Enter maximum position size" required>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Risk Level</label>
-                        <select class="form-select" name="risk_level" required>
-                            <option value="low">Low</option>
-                            <option value="medium">Medium</option>
-                            <option value="high">High</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Select Stripe Events to Monitor</label>
-                        <select class="form-select" name="stripe_events" multiple required>
-                            <optgroup label="Payment Events">
-                                <option value="payment_intent.succeeded">Payment Successful</option>
-                                <option value="payment_intent.payment_failed">Payment Failed</option>
-                                <option value="payment_intent.canceled">Payment Canceled</option>
-                                <option value="payment_intent.processing">Payment Processing</option>
-                            </optgroup>
-                            <optgroup label="Subscription Events">
-                                <option value="customer.subscription.created">Subscription Created</option>
-                                <option value="customer.subscription.updated">Subscription Updated</option>
-                                <option value="customer.subscription.deleted">Subscription Canceled</option>
-                                <option value="customer.subscription.trial_will_end">Trial Ending Soon</option>
-                            </optgroup>
-                            <optgroup label="Invoice Events">
-                                <option value="invoice.paid">Invoice Paid</option>
-                                <option value="invoice.payment_failed">Invoice Payment Failed</option>
-                                <option value="invoice.upcoming">Invoice Upcoming</option>
-                                <option value="invoice.finalized">Invoice Finalized</option>
-                            </optgroup>
-                            <optgroup label="Dispute Events">
-                                <option value="charge.dispute.created">Dispute Created</option>
-                                <option value="charge.dispute.updated">Dispute Updated</option>
-                                <option value="charge.dispute.closed">Dispute Resolved</option>
-                                <option value="charge.dispute.funds_reinstated">Funds Reinstated</option>
-                            </optgroup>
-                            <optgroup label="Refund Events">
-                                <option value="charge.refund.updated">Refund Updated</option>
-                                <option value="charge.refunded">Charge Refunded</option>
-                                <option value="refund.created">Refund Created</option>
-                                <option value="refund.updated">Refund Status Updated</option>
-                            </optgroup>
-                        </select>
-                        <small class="form-text text-muted">Mantén presionado Ctrl (Cmd en Mac) para seleccionar múltiples eventos de Stripe a monitorear</small>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" onclick="createBot()">
-                    <i class="bi bi-robot"></i> Create Bot
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Sample data - replace with real data from backend
-    const portfolioData = {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
-        datasets: [{
-            label: 'Portfolio Value',
-            data: [1000, 1200, 1100, 1400, 1300, 1600, 1500],
-            borderColor: 'rgb(75, 192, 192)',
-            backgroundColor: 'rgba(75, 192, 192, 0.1)',
-            fill: true,
-            tension: 0.4
-        }]
-    };
-
-    // Initialize trading chart
-    const ctx = document.getElementById('tradingChart').getContext('2d');
+    // Configuración del gráfico de rendimiento
+    const ctx = document.getElementById('performanceChart').getContext('2d');
     new Chart(ctx, {
         type: 'line',
-        data: portfolioData,
+        data: {
+            labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+            datasets: [{
+                label: 'Ingresos ($)',
+                data: [12, 19, 3, 5, 2, 3],
+                borderColor: '#0d6efd',
+                backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                fill: true,
+                tension: 0.4
+            },
+            {
+                label: 'Usuarios Activos',
+                data: [45, 52, 68, 74, 85, 92],
+                borderColor: '#198754',
+                backgroundColor: 'rgba(25, 135, 84, 0.1)',
+                fill: true,
+                tension: 0.4
+            },
+            {
+                label: 'Trades Completados',
+                data: [150, 189, 220, 241, 258, 289],
+                borderColor: '#ffc107',
+                backgroundColor: 'rgba(255, 193, 7, 0.1)',
+                fill: true,
+                tension: 0.4
+            }]
+        },
         options: {
             responsive: true,
-            maintainAspectRatio: false,
-            aspectRatio: 2,
-            layout: {
-                padding: {
-                    top: 10,
-                    right: 20,
-                    bottom: 10,
-                    left: 10
-                }
+            interaction: {
+                intersect: false,
+                mode: 'index'
             },
             plugins: {
                 legend: {
-                    display: false
+                    position: 'top',
+                    labels: {
+                        usePointStyle: true,
+                        padding: 15
+                    }
                 },
                 tooltip: {
-                    mode: 'index',
-                    intersect: false,
-                    callbacks: {
-                        label: function(context) {
-                            return `$${context.parsed.y.toFixed(2)}`;
-                        }
-                    }
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    padding: 10
                 }
             },
             scales: {
                 y: {
-                    beginAtZero: false,
+                    beginAtZero: true,
                     grid: {
                         color: 'rgba(255, 255, 255, 0.1)'
-                    },
-                    ticks: {
-                        callback: function(value) {
-                            return `$${value}`;
-                        }
                     }
                 },
                 x: {
@@ -341,152 +244,36 @@ document.addEventListener('DOMContentLoaded', function() {
                         color: 'rgba(255, 255, 255, 0.1)'
                     }
                 }
-            },
-            interaction: {
-                intersect: false,
-                mode: 'index'
             }
         }
     });
 });
 
-function toggleBot(botId) {
-    fetch(`/api/bots/${botId}/toggle`, {
+function togglePlan(planId, status) {
+    fetch(`/admin/subscription/plans/${planId}/toggle`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Actualizar UI o recargar la página
-            window.location.reload();
-        } else {
-            alert('Error al cambiar el estado del bot');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Error al cambiar el estado del bot');
-    });
-}
-
-function createBot() {
-    const form = document.getElementById('newBotForm');
-    const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries());
-
-    fetch('/api/bots/create', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json'
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify({ active: status })
     })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            // Cerrar modal y recargar la página
-            const modal = bootstrap.Modal.getInstance(document.getElementById('newBotModal'));
-            modal.hide();
-            window.location.reload();
+            location.reload();
         } else {
-            alert(data.error || 'Error al crear el bot');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Error al crear el bot');
-    });
-}
-// Add editPlan function (this is a placeholder, needs actual implementation)
-function editPlan(planId) {
-    alert(`Editing plan with ID: ${planId}`); // Replace with actual modal logic
-}
-</script>
-<!-- Modal Editar Plan -->
-<div class="modal fade" id="editPlanModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Editar Plan de Suscripción</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <form id="editPlanForm">
-                    <input type="hidden" id="planId" name="plan_id">
-                    <div class="mb-3">
-                        <label class="form-label">Nombre del Plan</label>
-                        <input type="text" class="form-control" id="planName" name="name" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Señales Activas</label>
-                        <input type="number" class="form-control" id="activeSignals" name="active_signals" required min="1">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">APIs por Exchange</label>
-                        <input type="number" class="form-control" id="apisPerExchange" name="apis_per_exchange" required min="1">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Precio (USD)</label>
-                        <input type="number" class="form-control" id="planPrice" name="price" required step="0.01">
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" onclick="savePlan()">
-                    Guardar Cambios
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-function editPlan(planId) {
-    fetch(`/admin/subscription/plans/${planId}`)
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('planId').value = planId;
-            document.getElementById('planName').value = data.name;
-            document.getElementById('activeSignals').value = data.active_signals;
-            document.getElementById('apisPerExchange').value = data.apis_per_exchange;
-            document.getElementById('planPrice').value = data.price;
-            
-            const modal = new bootstrap.Modal(document.getElementById('editPlanModal'));
-            modal.show();
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error al cargar los datos del plan');
-        });
-}
-
-function savePlan() {
-    const form = document.getElementById('editPlanForm');
-    const formData = new FormData(form);
-    const planId = formData.get('plan_id');
-
-    fetch(`/admin/subscription/plans/${planId}/update`, {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            const modal = bootstrap.Modal.getInstance(document.getElementById('editPlanModal'));
-            modal.hide();
-            window.location.reload();
-        } else {
-            alert(data.error || 'Error al actualizar el plan');
+            alert('Error al actualizar el plan');
         }
     })
     .catch(error => {
         console.error('Error:', error);
         alert('Error al actualizar el plan');
     });
+}
+
+function exportData() {
+    // Implementar la exportación de datos
+    alert('Función de exportación en desarrollo');
 }
 </script>
 {% endblock %}

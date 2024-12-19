@@ -1,16 +1,15 @@
 import os
-import os
 from flask import Flask
 from flask import render_template
-from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_migrate import Migrate
-from sqlalchemy.orm import DeclarativeBase
+from .extensions import db
 
-class Base(DeclarativeBase):
-    pass
+from .routes.billing import billing_bp
+from .routes.subscription import subscription_bp
 
-db = SQLAlchemy(model_class=Base)
+all_blueprints = [billing_bp, subscription_bp]
+
 login_manager = LoginManager()
 
 @login_manager.user_loader
@@ -72,11 +71,14 @@ def create_app():
     from app.routes import all_blueprints
     from app.api.exchanges import exchanges_bp as api_exchanges_bp
     from app.routes.exchanges import exchanges_bp
-    
+    from app.routes.oanda import oanda_bp # Added import for oanda blueprint
+
     for blueprint in all_blueprints:
         app.register_blueprint(blueprint)
     app.register_blueprint(api_exchanges_bp)
     app.register_blueprint(exchanges_bp)
+    app.register_blueprint(oanda_bp, url_prefix='/api/oanda') # Added blueprint registration for oanda
+
     
     # Register index route
     @app.route('/')

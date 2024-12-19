@@ -35,8 +35,25 @@ def trading_terminal():
 @login_required
 def forex_terminal():
     """Forex trading terminal view"""
-    # Get user's forex exchanges
-    forex_exchanges = ForexExchange.query.filter_by(user_id=current_user.id).all()
+    # Get active forex exchanges
+    forex_exchanges = ForexExchange.query.filter_by(
+        user_id=current_user.id,
+        is_active=True
+    ).all()
+    
+    # Get all available forex instruments
+    forex_instruments = [
+        ('EUR_USD', 'EUR/USD'),
+        ('GBP_USD', 'GBP/USD'),
+        ('USD_JPY', 'USD/JPY'),
+        ('AUD_USD', 'AUD/USD'),
+        ('USD_CAD', 'USD/CAD'),
+        ('USD_CHF', 'USD/CHF'),
+        ('NZD_USD', 'NZD/USD'),
+        ('EUR_GBP', 'EUR/GBP'),
+        ('EUR_JPY', 'EUR/JPY'),
+        ('GBP_JPY', 'GBP/JPY')
+    ]
     
     # Get balances for forex exchanges
     balances = {}
@@ -49,7 +66,8 @@ def forex_terminal():
     
     return render_template('terminal/forex_terminal.html',
                          exchanges=forex_exchanges,
-                         balances=balances)
+                         balances=balances,
+                         forex_instruments=forex_instruments)
 
 @terminal_bp.route('/api/forex/balance')
 @login_required
@@ -85,6 +103,25 @@ def place_forex_order():
     data = request.get_json()
     if not data:
         return jsonify({'success': False, 'error': 'No se proporcionaron datos'})
+        
+    client = OandaClient.get_instance()
+    if not client:
+        return jsonify({'success': False, 'error': 'Cliente OANDA no inicializado'})
+        
+    try:
+        result = client.place_order(
+            symbol=data.get('symbol'),
+            side=data.get('side'),
+            units=int(data.get('units')),
+            price=None  # Market order
+        )
+        
+        if result:
+            return jsonify({'success': True, 'order': result})
+        return jsonify({'success': False, 'error': 'Error al colocar la orden'})
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
     
     client = OandaClient.get_instance()
     if not client:

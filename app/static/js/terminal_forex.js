@@ -44,13 +44,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Manejar envío del formulario
     tradeForm.addEventListener('submit', function(e) {
         e.preventDefault();
-        const formData = new FormData(this);
         const data = {
-            instrument: formData.get('instrument'),
-            units: parseInt(formData.get('units')),
-            side: formData.get('side'),
-            take_profit: formData.get('take_profit') || null,
-            stop_loss: formData.get('stop_loss') || null
+            symbol: document.getElementById('instrument').value,
+            units: parseInt(document.getElementById('units').value),
+            side: document.getElementById('side').value,
+            take_profit: document.getElementById('take_profit').value || null,
+            stop_loss: document.getElementById('stop_loss').value || null
         };
 
         fetch('/api/forex/order', {
