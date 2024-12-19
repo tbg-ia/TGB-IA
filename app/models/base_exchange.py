@@ -9,14 +9,21 @@ class BaseExchange(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
     exchange_type = db.Column(db.String(20), nullable=False)
+    market_type = db.Column(db.String(20), nullable=False)  # forex, crypto, futures, stocks
     api_key = db.Column(db.String(255))
     api_secret_hash = db.Column(db.String(255))
-    account_id = db.Column(db.String(100))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     is_active = db.Column(db.Boolean, default=True)
     trading_enabled = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     last_updated = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Campos comunes para todos los mercados
+    max_positions = db.Column(db.Integer, default=5)
+    max_leverage = db.Column(db.Integer, default=1)
+    trading_fee = db.Column(db.Float, default=0.1)
+    min_order_size = db.Column(db.Float)
+    max_order_size = db.Column(db.Float)
     
     __mapper_args__ = {
         'polymorphic_identity': 'base',
