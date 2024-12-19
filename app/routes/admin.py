@@ -367,31 +367,61 @@ def save_notification_settings():
 def manage_subscription_plans():
     """Ruta para gestionar planes de suscripción (solo administradores)"""
     try:
-        # Obtener estadísticas de suscripciones
-        stats = {
-            'total_subscribers': User.query.filter(User.subscription_type != 'basic').count(),
-            'monthly_revenue': db.session.query(
-                db.func.sum(Subscription.amount)
-            ).filter(Subscription.status == 'active').scalar() or 0,
-            'most_popular_plan': db.session.query(
-                User.subscription_type,
-                db.func.count(User.id).label('count')
-            ).group_by(User.subscription_type).order_by(db.text('count DESC')).first(),
-            'retention_rate': 95.5  # TODO: Implementar cálculo real
-        }
-        
-        # Obtener planes de la base de datos
+        # Obtener planes de la base de datos primero
         subscription_plans = SubscriptionPlan.query.all()
-        for plan in subscription_plans:
-            # Obtener el número de suscriptores para cada plan
-            plan.subscriber_count = User.query.filter_by(subscription_type=plan.name.lower()).count()
-        
-        return render_template('admin/subscription/plans.html', 
-                             subscription_plans=subscription_plans,
-                             stats=stats)
+        if not subscription_plans:
+            flash('No hay planes de suscripción configurados', 'warning')
+            subscription_plans = []
+
+        # Inicializar estadísticas con valores por defecto
+        stats = {
+            'total_subscribers': 0,
+            'monthly_revenue': 0,
+            'most_popular_plan': None,
+            'retention_rate': 95.5
+        }
+
+        try:
+            # Calcular estadísticas solo si hay planes
+            if subscription_plans:
+                stats['total_subscribers'] = User.query.filter(User.subscription_type != 'basic').count()
+                stats['monthly_revenue'] = db.session.query(
+                    db.func.coalesce(db.func.sum(Subscription.amount), 0)
+                ).filter(Subscription.status == 'active').scalar()
+
+                # Obtener plan más popular
+                most_popular = db.session.query(
+                    User.subscription_type,
+                    db.func.count(User.id).label('count')
+                ).group_by(User.subscription_type)\
+                 .filter(User.subscription_type != None)\
+                 .order_by(db.text('count DESC')).first()
+
+                if most_popular:
+                    stats['most_popular_plan'] = {
+                        'name': most_popular[0],
+                        'count': most_popular[1]
+                    }
+
+                # Calcular suscriptores por plan
+                for plan in subscription_plans:
+                    plan.subscriber_count = User.query.filter_by(
+                        subscription_type=plan.name.lower()
+                    ).count()
+
+        except Exception as stats_error:
+            logging.error(f"Error calculating subscription stats: {str(stats_error)}")
+            flash('Advertencia: Algunas estadísticas podrían no estar disponibles', 'warning')
+
+        return render_template(
+            'admin/subscription_plans.html',
+            subscription_plans=subscription_plans,
+            stats=stats
+        )
+
     except Exception as e:
         logging.error(f"Error loading subscription plans: {str(e)}")
-        flash('Error al cargar los planes de suscripción', 'error')
+        flash('Error al cargar los planes de suscripción. Por favor, contacte al administrador.', 'error')
         return redirect(url_for('admin.dashboard'))
 
 @admin_bp.route('/subscription/plans/<int:plan_id>')
