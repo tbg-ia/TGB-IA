@@ -19,10 +19,12 @@ class CryptoExchange(BaseExchange):
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.name = 'BINGX'
-        self.exchange_type = 'bingx'
-        self.quote_currency = 'USDT'
-        self.min_order_size = 10.0
-        self.max_order_size = 100000.0
-        self.max_leverage = 50
-        self.max_positions = 10
+        self.name = kwargs.get('name', 'BINGX')
+        self.exchange_type = kwargs.get('exchange_type', 'bingx')
+        self.quote_currency = kwargs.get('quote_currency', 'USDT')
+        self.min_order_size = kwargs.get('min_order_size', 10.0)
+        self.max_order_size = kwargs.get('max_order_size', 100000.0)
+        self.max_leverage = kwargs.get('max_leverage', 50)
+        self.max_positions = kwargs.get('max_positions', 10)
+        self.supports_spot = kwargs.get('supports_spot', True)
+        self.supports_futures = kwargs.get('supports_futures', True)

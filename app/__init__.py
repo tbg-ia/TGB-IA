@@ -7,8 +7,17 @@ from .extensions import db
 
 from app.billing import billing_bp
 from app.routes.subscription import subscription_bp
+from app.routes.auth import auth_bp
+from app.routes.user import user_bp
+from app.routes.admin import admin_bp
 
-all_blueprints = [billing_bp, subscription_bp]
+all_blueprints = [
+    billing_bp,
+    subscription_bp,
+    auth_bp,
+    user_bp,
+    admin_bp
+]
 
 login_manager = LoginManager()
 
@@ -71,13 +80,18 @@ def create_app():
     from app.routes import all_blueprints
     from app.api.exchanges import exchanges_bp as api_exchanges_bp
     from app.routes.exchanges import exchanges_bp
-    from app.routes.oanda import oanda_bp # Added import for oanda blueprint
+    from app.routes.oanda import oanda_bp
 
+    # Register core blueprints first
+    print("Registering blueprints...")
     for blueprint in all_blueprints:
+        print(f"Registering blueprint: {blueprint.name}")
         app.register_blueprint(blueprint)
+        
+    # Register API blueprints
     app.register_blueprint(api_exchanges_bp)
     app.register_blueprint(exchanges_bp)
-    app.register_blueprint(oanda_bp, url_prefix='/api/oanda') # Added blueprint registration for oanda
+    app.register_blueprint(oanda_bp, url_prefix='/api/oanda')
 
     
     # Register index route

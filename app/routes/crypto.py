@@ -18,8 +18,12 @@ crypto_bp = Blueprint('crypto', __name__)
 def terminal():
     from app.models.base_exchange import BaseExchange
     
-    # Obtener los exchanges configurados del usuario
-    user_exchanges = BaseExchange.query.filter_by(user_id=current_user.id, is_active=True).all()
+    # Obtener los exchanges activos del usuario (BingX y OANDA)
+    user_exchanges = BaseExchange.query.filter(
+        BaseExchange.user_id == current_user.id,
+        BaseExchange.is_active == True,
+        BaseExchange.exchange_type.in_(['bingx', 'oanda'])
+    ).all()
     
     # Obtener el balance de cada exchange
     exchange_balances = {}
@@ -29,15 +33,24 @@ def terminal():
                 from app.integrations.crypto.bingx_client import BingXClient
                 client = BingXClient.get_instance()
                 balance = client.get_account_balance()
-                exchange_balances[exchange.id] = float(balance.get('balance', 0))
+                exchange_balances[exchange.id] = {
+                    'balance': float(balance.get('balance', 0)),
+                    'currency': 'USDT'
+                }
             elif exchange.exchange_type == 'oanda':
                 from app.integrations.forex.oanda_client import OandaClient
                 client = OandaClient.get_instance()
                 account_info = client.get_account_info()
-                exchange_balances[exchange.id] = float(account_info.get('balance', 0))
+                exchange_balances[exchange.id] = {
+                    'balance': float(account_info.get('balance', 0)),
+                    'currency': 'USD'
+                }
         except Exception as e:
             current_app.logger.error(f"Error getting balance for exchange {exchange.id}: {str(e)}")
-            exchange_balances[exchange.id] = 0.0
+            exchange_balances[exchange.id] = {
+                'balance': 0.0,
+                'currency': 'USD' if exchange.exchange_type == 'oanda' else 'USDT'
+            }
     
     return render_template('public/terminal.html', 
                          exchanges=user_exchanges,
