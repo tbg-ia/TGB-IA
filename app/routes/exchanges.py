@@ -25,89 +25,38 @@ def list_exchanges():
 @exchanges_bp.route('/api/exchanges/add', methods=['POST'])
 @login_required
 def add_exchange():
-    """Add a new exchange connection."""
-    data = request.get_json()
-    logger.info(f"Received data for exchange addition: {data}")
-    
-    if not data:
-        logger.error("No data provided in request")
-        return jsonify({'success': False, 'error': 'No data provided'}), 400
-        
-    exchange_type = data.get('exchange_type')
-    api_key = data.get('api_key')
-    
-    logger.info(f"Processing exchange addition - Type: {exchange_type}")
-    
-    if not exchange_type or not api_key:
-        return jsonify({'success': False, 'error': 'Missing required fields'}), 400
-    
     try:
-        logger.info(f"Adding new exchange of type: {exchange_type}")
-        if exchange_type == 'oanda':
-            account_id = data.get('account_id')
-            api_key = data.get('api_key')
-            
-            if not account_id:
-                return jsonify({'success': False, 'error': 'OANDA Account ID is required'}), 400
-            if not api_key:
-                return jsonify({'success': False, 'error': 'OANDA API Key is required'}), 400
-            
-            # Create OANDA exchange
-            exchange = OandaExchange(
-                user_id=current_user.id,
-                api_key=api_key,
-                account_id=account_id,
-                name='OANDA',
-                exchange_type='oanda',
-                is_forex=True,
-                is_active=True,
-                trading_enabled=True
-            )
-            
-            # Initialize OANDA client to verify credentials
-            from app.integrations.forex.oanda_client import OandaClient
-            client = OandaClient.get_instance()
-            if not client.init_client(os.environ.get('OANDA_API_KEY'), os.environ.get('OANDA_ACCOUNT_ID')):
-                return jsonify({'success': False, 'error': 'Invalid OANDA credentials'}), 400
-            
-        elif exchange_type == 'binance':
-            api_secret = data.get('api_secret')
-            if not api_secret:
-                return jsonify({'success': False, 'error': 'API Secret is required'}), 400
-                
-            exchange = BinanceExchange(
-                user_id=current_user.id,
-                api_key=api_key,
-                name='Binance',
-                exchange_type='binance'
-            )
-            exchange.set_api_secret(api_secret)
-            
-        elif exchange_type == 'bingx':
-            api_secret = data.get('api_secret')
-            if not api_secret:
-                return jsonify({'success': False, 'error': 'API Secret is required'}), 400
-                
-            exchange = BingXExchange(
-                user_id=current_user.id,
-                api_key=api_key,
-                name='BingX',
-                exchange_type='bingx'
-            )
-            exchange.set_api_secret(api_secret)
-            
-        else:
-            return jsonify({'success': False, 'error': 'Invalid exchange type'}), 400
+        data = request.get_json()
         
-        logger.info("Adding exchange to database")
+        # Validar datos requeridos
+        if not all([data.get('exchange_type'), data.get('api_key'), data.get('api_secret')]):
+            return jsonify({'success': False, 'error': 'Faltan datos requeridos'})
+            
+        # Crear instancia de exchange según tipo
+        exchange = BaseExchange(
+            name=data['exchange_type'].upper(),
+            exchange_type=data['exchange_type'],
+            api_key=data['api_key'],
+            user_id=current_user.id
+        )
+        
+        # Encriptar y guardar API secret
+        success, error = exchange.set_api_secret(data['api_secret'])
+        if not success:
+            return jsonify({'success': False, 'error': error})
+            
+        # Guardar en base de datos
         db.session.add(exchange)
         db.session.commit()
-        logger.info("Exchange added successfully")
-        return jsonify({'success': True, 'message': 'Exchange added successfully'})
+        
+        return jsonify({
+            'success': True,
+            'message': 'Exchange agregado correctamente'
+        })
         
     except Exception as e:
         db.session.rollback()
-        return jsonify({'success': False, 'error': str(e)}), 500
+        return jsonify({'success': False, 'error': str(e)})
 
 @exchanges_bp.route('/exchanges/delete/<int:exchange_id>', methods=['POST'])
 @login_required
