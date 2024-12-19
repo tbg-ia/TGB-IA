@@ -8,7 +8,6 @@ class Exchange(BaseExchange):
     """Model for managing exchange connections and credentials"""
     is_forex = db.Column(db.Boolean, default=False)  
     is_testnet = db.Column(db.Boolean, default=False)  
-    trading_enabled = db.Column(db.Boolean, default=False)  
     max_positions = db.Column(db.Integer, default=5)  
     max_leverage = db.Column(db.Integer, default=20)  
     quote_currency = db.Column(db.String(10), default='USDT')  
