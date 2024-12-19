@@ -25,12 +25,7 @@ def terminal():
     exchange_balances = {}
     for exchange in user_exchanges:
         try:
-            if exchange.exchange_type == 'binance':
-                from app.integrations.crypto.binance_client import BinanceWrapper
-                client = BinanceWrapper.get_instance()
-                balance = client.get_client().get_asset_balance(asset='USDT')
-                exchange_balances[exchange.id] = float(balance['free'])
-            elif exchange.exchange_type == 'bingx':
+            if exchange.exchange_type == 'bingx':
                 from app.integrations.crypto.bingx_client import BingXClient
                 client = BingXClient.get_instance()
                 balance = client.get_account_balance()
@@ -157,16 +152,12 @@ def place_order():
     if not all([exchange_id, symbol, side, amount]):
         return jsonify({'success': False, 'error': 'Faltan parámetros requeridos'}), 400
         
-    exchange = Exchange.query.get(exchange_id)
+    exchange = BaseExchange.query.get(exchange_id)
     if not exchange or exchange.user_id != current_user.id:
         return jsonify({'success': False, 'error': 'Exchange no encontrado'}), 404
         
     try:
-        if exchange.exchange_type == 'binance':
-            from app.integrations.crypto.binance_client import BinanceWrapper
-            client = BinanceWrapper.get_instance()
-            order = client.place_order(symbol=symbol, side=side, quantity=amount)
-        elif exchange.exchange_type == 'bingx':
+        if exchange.exchange_type == 'bingx':
             from app.integrations.crypto.bingx_client import BingXClient
             client = BingXClient.get_instance()
             order = client.place_order(symbol=symbol, side=side, quantity=amount, price=price, order_type=order_type)
@@ -192,20 +183,14 @@ def get_orderbook():
     if not exchange_id or not symbol:
         return jsonify({'success': False, 'error': 'Faltan parámetros requeridos'}), 400
         
-    exchange = Exchange.query.get(exchange_id)
+    exchange = BaseExchange.query.get(exchange_id)
     if not exchange or exchange.user_id != current_user.id:
         return jsonify({'success': False, 'error': 'Exchange no encontrado'}), 404
         
     try:
         orderbook = {'asks': [], 'bids': []}
         
-        if exchange.exchange_type == 'binance':
-            from app.integrations.crypto.binance_client import BinanceWrapper
-            client = BinanceWrapper.get_instance()
-            depth = client.get_client().get_order_book(symbol=symbol)
-            orderbook['asks'] = depth['asks'][:10]
-            orderbook['bids'] = depth['bids'][:10]
-        elif exchange.exchange_type == 'bingx':
+        if exchange.exchange_type == 'bingx':
             from app.integrations.crypto.bingx_client import BingXClient
             client = BingXClient.get_instance()
             depth = client.get_orderbook(symbol)
@@ -234,18 +219,14 @@ def get_open_orders():
     if not exchange_id:
         return jsonify({'success': False, 'error': 'Falta ID del exchange'}), 400
         
-    exchange = Exchange.query.get(exchange_id)
+    exchange = BaseExchange.query.get(exchange_id)
     if not exchange or exchange.user_id != current_user.id:
         return jsonify({'success': False, 'error': 'Exchange no encontrado'}), 404
         
     try:
         orders = []
         
-        if exchange.exchange_type == 'binance':
-            from app.integrations.crypto.binance_client import BinanceWrapper
-            client = BinanceWrapper.get_instance()
-            orders = client.get_client().get_open_orders()
-        elif exchange.exchange_type == 'bingx':
+        if exchange.exchange_type == 'bingx':
             from app.integrations.crypto.bingx_client import BingXClient
             client = BingXClient.get_instance()
             orders = client.get_open_orders()
