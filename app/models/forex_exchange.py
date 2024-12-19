@@ -1,4 +1,3 @@
-
 from app import db
 from .base_exchange import BaseExchange
 
@@ -6,12 +5,14 @@ class ForexExchange(BaseExchange):
     """Modelo para exchanges de Forex"""
     __tablename__ = 'forex_exchanges'
     
-    id = db.Column(db.Integer, db.ForeignKey('exchanges.id', ondelete='CASCADE'), primary_key=True)
+    id = db.Column(db.Integer, db.ForeignKey('base_exchanges.id'), primary_key=True)
+    account_id = db.Column(db.String(100), nullable=False)  # Específico para OANDA
+    base_currency = db.Column(db.String(3), default='USD')
     margin_rate = db.Column(db.Float, default=0.02)  # 2% margen por defecto
     max_leverage = db.Column(db.Integer, default=50)
     position_size_decimals = db.Column(db.Integer, default=2)
-    min_trade_size = db.Column(db.Float, default=1000.0)  
-    max_trade_size = db.Column(db.Float, default=100000.0)
+    min_trade_size = db.Column(db.Float, default=1000.0)  # Tamaño mínimo en unidades base
+    max_trade_size = db.Column(db.Float, default=100000.0)  # Tamaño máximo en unidades base
     
     __mapper_args__ = {
         'polymorphic_identity': 'forex'

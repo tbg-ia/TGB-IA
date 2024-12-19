@@ -1,4 +1,3 @@
-
 from app import db
 from .base_exchange import BaseExchange
 
@@ -6,7 +5,7 @@ class CryptoExchange(BaseExchange):
     """Modelo base para exchanges de criptomonedas"""
     __tablename__ = 'crypto_exchanges'
     
-    id = db.Column(db.Integer, db.ForeignKey('exchanges.id'), primary_key=True)
+    id = db.Column(db.Integer, db.ForeignKey('base_exchanges.id'), primary_key=True)
     max_positions = db.Column(db.Integer, default=5)
     max_leverage = db.Column(db.Integer, default=20)
     quote_currency = db.Column(db.String(10), default='USDT')
