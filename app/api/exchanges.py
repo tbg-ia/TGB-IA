@@ -112,7 +112,7 @@ def update_exchange():
         if not exchange_id:
             return jsonify({'success': False, 'error': 'Exchange ID is required'}), 400
             
-        exchange = Exchange.query.filter_by(id=exchange_id, user_id=current_user.id).first()
+        exchange = BaseExchange.query.filter_by(id=exchange_id, user_id=current_user.id).first()
         if not exchange:
             return jsonify({'success': False, 'error': 'Exchange not found'}), 404
         
