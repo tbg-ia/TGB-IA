@@ -1,0 +1,28 @@
+Sí, es posible estructurar tu arquitectura de forma que, cuando se reciba una alerta desde TradingView hacia un endpoint en tu VPS, esta información pueda validarse y ejecutarse usando la base de datos de tu proyecto. La idea general sería:
+
+Base de datos centralizada:
+Tu plataforma tendría una base de datos (por ejemplo, MySQL, PostgreSQL o incluso una base de datos NoSQL) alojada en un servidor o en el mismo VPS donde se gestionan las órdenes.
+
+Información de usuarios y permisos:
+En esta base de datos se almacena la información de los usuarios, incluyendo:
+
+ID del usuario
+Claves de autorización o tokens de acceso
+Configuración de estrategias o permisos de ejecución de órdenes
+Flujo de la alerta:
+
+TradingView → Webhook: TradingView enviará una alerta (en formato JSON) al endpoint (URL) que hayas configurado en tu VPS.
+Endpoint en el VPS: Este endpoint recibe la alerta y, dentro de tu código, extrae la información relevante (por ejemplo, el ID del usuario o el token que asocie la alerta al usuario en tu plataforma).
+Validación en la base de datos: Con el ID o token recibido, tu aplicación consulta la base de datos para verificar:
+Si el usuario existe.
+Si el usuario está autorizado a ejecutar esa orden.
+Si tiene suficiente saldo, permisos, o cualquier otra lógica de negocio que definas.
+Ejecución de la orden:
+Si la validación es exitosa, entonces la aplicación (en el mismo VPS) procede a ejecutar la orden en el exchange correspondiente usando las credenciales y la lógica establecida.
+
+Ventajas de esta configuración:
+
+Baja latencia: Mantener el webhook y la lógica de ejecución en el mismo VPS que tiene acceso a la base de datos reduce el tiempo de respuesta.
+Menos complejidad inicial: Todo el flujo (recepción, validación, ejecución) está centralizado.
+Seguridad: Puedes implementar tokens y verificaciones para asegurarte de que las alertas realmente vienen de TradingView y corresponden a un usuario autorizado.
+En resumen, sí, puedes diseñar el sistema para que TradingView envíe las alertas directamente a tu VPS, y allí, con acceso a la base de datos, validar el usuario y autorizar la ejecución de las órdenes de manera inmediata. Esto facilita la verificación y el cumplimiento de las condiciones antes de colocar las operaciones.
