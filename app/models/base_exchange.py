@@ -6,6 +6,7 @@ class BaseExchange(db.Model):
     __tablename__ = 'exchanges'
     
     id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.String(50))  # Discriminator column for SQLAlchemy inheritance
     name = db.Column(db.String(50), nullable=False)
     exchange_type = db.Column(db.String(20), nullable=False)
     api_key = db.Column(db.String(255))
@@ -15,6 +16,11 @@ class BaseExchange(db.Model):
     trading_enabled = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     last_updated = db.Column(db.DateTime, default=datetime.utcnow)
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'base',
+        'polymorphic_on': type
+    }
 
     def set_api_secret(self, secret):
         from werkzeug.security import generate_password_hash

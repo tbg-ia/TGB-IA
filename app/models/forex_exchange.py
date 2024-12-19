@@ -5,7 +5,11 @@ class ForexExchange(BaseExchange):
     """Modelo para exchanges de Forex"""
     __tablename__ = 'forex_exchanges'
     
-    id = db.Column(db.Integer, db.ForeignKey('base_exchanges.id'), primary_key=True)
+    id = db.Column(db.Integer, db.ForeignKey('exchanges.id'), primary_key=True)
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'forex'
+    }
     account_id = db.Column(db.String(100), nullable=False)  # Específico para OANDA
     base_currency = db.Column(db.String(3), default='USD')
     margin_rate = db.Column(db.Float, default=0.02)  # 2% margen por defecto

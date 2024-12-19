@@ -16,11 +16,9 @@
                 <form id="tradeForm">
                     <div class="mb-3">
                         <select class="form-select" id="instrument" required>
-                            <option value="EUR_USD">EUR/USD</option>
-                            <option value="GBP_USD">GBP/USD</option>
-                            <option value="USD_JPY">USD/JPY</option>
-                            <option value="AUD_USD">AUD/USD</option>
-                            <option value="USD_CAD">USD/CAD</option>
+                            {% for code, name in forex_instruments %}
+                            <option value="{{ code }}">{{ name }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                     <div class="mb-3">
