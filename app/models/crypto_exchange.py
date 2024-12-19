@@ -1,4 +1,3 @@
-
 from app import db
 from .base_exchange import BaseExchange
 

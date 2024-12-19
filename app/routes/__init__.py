@@ -10,7 +10,7 @@ from .admin import admin_bp
 from .user import user_bp
 from .crypto import crypto_bp
 from app.billing import billing_bp
-from .subscription import subscription_bp
+# from .subscription import subscription_bp
 from .terminal import terminal_bp
 
 # List of all blueprints to be registered
@@ -20,6 +20,6 @@ all_blueprints = [
     user_bp,
     crypto_bp,
     billing_bp,
-    subscription_bp,
+    # subscription_bp,
     terminal_bp
 ]

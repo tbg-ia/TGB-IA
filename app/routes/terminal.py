@@ -35,25 +35,8 @@ def trading_terminal():
 @login_required
 def forex_terminal():
     """Forex trading terminal view"""
-    # Get active forex exchanges
-    forex_exchanges = ForexExchange.query.filter_by(
-        user_id=current_user.id,
-        is_active=True
-    ).all()
-    
-    # Get all available forex instruments
-    forex_instruments = [
-        ('EUR_USD', 'EUR/USD'),
-        ('GBP_USD', 'GBP/USD'),
-        ('USD_JPY', 'USD/JPY'),
-        ('AUD_USD', 'AUD/USD'),
-        ('USD_CAD', 'USD/CAD'),
-        ('USD_CHF', 'USD/CHF'),
-        ('NZD_USD', 'NZD/USD'),
-        ('EUR_GBP', 'EUR/GBP'),
-        ('EUR_JPY', 'EUR/JPY'),
-        ('GBP_JPY', 'GBP/JPY')
-    ]
+    # Get user's forex exchanges
+    forex_exchanges = ForexExchange.query.filter_by(user_id=current_user.id).all()
     
     # Get balances for forex exchanges
     balances = {}
@@ -66,8 +49,7 @@ def forex_terminal():
     
     return render_template('terminal/forex_terminal.html',
                          exchanges=forex_exchanges,
-                         balances=balances,
-                         forex_instruments=forex_instruments)
+                         balances=balances)
 
 @terminal_bp.route('/api/forex/balance')
 @login_required

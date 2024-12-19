@@ -1,7 +1,7 @@
 import os
 from flask import Blueprint, render_template, request, jsonify, current_app, redirect, url_for
 from flask_login import login_required, current_user
-from app.models.exchange import Exchange
+from app.models.base_exchange import BaseExchange
 from app.models.trading_bot import TradingBot
 from app.models.trade import Trade
 from app.models.user import User
@@ -16,10 +16,10 @@ crypto_bp = Blueprint('crypto', __name__)
 @crypto_bp.route('/terminal')
 @login_required
 def terminal():
-    from app.models.exchange import Exchange
+    from app.models.base_exchange import BaseExchange
     
     # Obtener los exchanges configurados del usuario
-    user_exchanges = Exchange.query.filter_by(user_id=current_user.id, is_active=True).all()
+    user_exchanges = BaseExchange.query.filter_by(user_id=current_user.id, is_active=True).all()
     
     # Obtener el balance de cada exchange
     exchange_balances = {}
