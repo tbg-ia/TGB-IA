@@ -43,17 +43,3 @@ class BaseExchange(db.Model):
     def validate_credentials(self):
         """Método para validar credenciales con el exchange"""
         return True, None
-@classmethod
-def get_by_market_type(cls, market_type):
-    """Get exchanges filtered by market type"""
-    return cls.query.filter_by(market_type=market_type).all()
-
-@classmethod 
-def get_active(cls):
-    """Get all active exchanges"""
-    return cls.query.filter_by(is_active=True).all()
-
-@classmethod
-def get_by_type(cls, exchange_type):
-    """Get exchanges filtered by exchange type"""
-    return cls.query.filter_by(exchange_type=exchange_type).all()
