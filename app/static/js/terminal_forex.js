@@ -1,26 +1,19 @@
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Inicializar TradingView
-    let widget = new TradingView.widget({
+    // Initialize TradingView widget
+    new TradingView.widget({
         "width": "100%",
-        "height": 500,
+        "height": 400,
         "symbol": "FX:EURUSD",
         "interval": "15",
         "timezone": "Etc/UTC",
         "theme": "dark",
         "style": "1",
-        "locale": "es",
+        "locale": "en",
         "toolbar_bg": "#f1f3f6",
         "enable_publishing": false,
-        "withdateranges": true,
         "hide_side_toolbar": false,
         "allow_symbol_change": true,
-        "details": true,
-        "studies": [
-            "RSI@tv-basicstudies",
-            "MASimple@tv-basicstudies",
-            "MACD@tv-basicstudies"
-        ],
         "container_id": "tradingview_chart"
     });
 
@@ -32,21 +25,20 @@ document.addEventListener('DOMContentLoaded', function() {
         widget.chart().setSymbol(`FX:${pair}`);
     });
 
+    // Handle form submission
     tradeForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         
-        const webhookUrl = document.getElementById('webhook_url').value;
         const data = {
             symbol: document.getElementById('instrument').value,
-            units: parseInt(document.getElementById('units').value),
             side: document.getElementById('side').value,
+            units: parseInt(document.getElementById('units').value),
             take_profit: document.getElementById('take_profit').value || null,
             stop_loss: document.getElementById('stop_loss').value || null
         };
 
         try {
-            // Send to webhook
-            const webhookResponse = await fetch(webhookUrl, {
+            const response = await fetch('/api/forex/order', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -54,36 +46,38 @@ document.addEventListener('DOMContentLoaded', function() {
                 body: JSON.stringify(data)
             });
 
-            if (webhookResponse.ok) {
-                alert('Order sent to webhook successfully');
+            const result = await response.json();
+            
+            if (result.success) {
+                alert('Order placed successfully');
                 updateTrades();
             } else {
-                alert('Error sending order to webhook');
+                alert(`Error: ${result.error}`);
             }
         } catch (error) {
             console.error('Error:', error);
-            alert('Error executing order');
+            alert('Error placing order');
         }
     });
 
+    // Update active trades list
     function updateTrades() {
-        fetch('/api/forex/trades')
+        fetch('/api/forex/positions')
             .then(response => response.json())
             .then(data => {
                 const tbody = document.getElementById('tradesList');
                 tbody.innerHTML = '';
-                data.trades?.forEach(trade => {
+                
+                data.positions?.forEach(trade => {
                     tbody.innerHTML += `
                         <tr>
                             <td>${trade.instrument}</td>
                             <td>${trade.side}</td>
                             <td>${trade.units}</td>
-                            <td>${trade.price}</td>
-                            <td>${trade.pnl || 'Calculating...'}</td>
+                            <td>${trade.openPrice}</td>
+                            <td>${trade.currentPnl || 'Calculating...'}</td>
                             <td>
-                                ${trade.status === 'OPEN' ? 
-                                    `<button class="btn btn-danger btn-sm" onclick="closeTrade(${trade.id})">Close</button>` :
-                                    'Closed'}
+                                <button class="btn btn-danger btn-sm" onclick="closeTrade('${trade.id}')">Close</button>
                             </td>
                         </tr>
                     `;
@@ -92,30 +86,32 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(console.error);
     }
 
-    setInterval(updateTrades, 5000);
+    // Initialize trades list
     updateTrades();
+    // Update every 5 seconds
+    setInterval(updateTrades, 5000);
 });
 
-function closeTrade(tradeId) {
-    if (!confirm('¿Estás seguro de que deseas cerrar esta operación?')) return;
+async function closeTrade(tradeId) {
+    if (!confirm('Are you sure you want to close this trade?')) return;
     
-    fetch(`/api/forex/trades/${tradeId}/close`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
+    try {
+        const response = await fetch(`/api/forex/position/${tradeId}/close`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        const result = await response.json();
+        if (result.success) {
             alert('Trade closed successfully');
             updateTrades();
         } else {
-            alert(`Error: ${data.error}`);
+            alert(`Error: ${result.error}`);
         }
-    })
-    .catch(error => {
+    } catch (error) {
         console.error('Error:', error);
         alert('Error closing trade');
-    });
+    }
 }

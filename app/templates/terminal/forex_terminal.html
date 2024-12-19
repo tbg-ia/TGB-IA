@@ -35,15 +35,11 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Take Profit</label>
-                        <input type="number" class="form-control" id="take_profit" step="0.00001" min="0">
+                        <input type="number" class="form-control" id="take_profit" step="0.00001" min="0" placeholder="Leave empty for no take profit">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Stop Loss</label>
-                        <input type="number" class="form-control" id="stop_loss" step="0.00001" min="0">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Webhook URL</label>
-                        <input type="text" class="form-control" id="webhook_url" value="https://176.9.64.242:443/webhook">
+                        <input type="number" class="form-control" id="stop_loss" step="0.00001" min="0" placeholder="Leave empty for no stop loss">
                     </div>
                     <button type="submit" class="btn btn-primary w-100">Place Trade</button>
                 </form>
