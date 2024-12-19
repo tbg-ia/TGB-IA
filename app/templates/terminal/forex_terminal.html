@@ -7,7 +7,20 @@
         <div class="col-md-9">
             <div class="card mb-3">
                 <div class="card-body p-0">
-                    <div id="tradingview_chart" style="height: 600px;"></div>
+                    <!-- TradingView Chart Container -->
+                    <div id="tradingview_chart"></div>
+                </div>
+            </div>
+            
+            <!-- Balance Info -->
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <h5>Account Balance</h5>
+                            <h3 id="accountBalance">Loading...</h3>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -15,37 +28,42 @@
         <div class="col-md-3">
             <div class="card mb-3">
                 <div class="card-body">
-                    <form id="tradeForm">
+                    <form id="tradeForm" onsubmit="return false;">
                         <div class="mb-3">
-                            <input type="text" class="form-control bg-dark text-light" id="symbol" value="EUR/USD" readonly>
+                            <label class="form-label">Symbol</label>
+                            <select class="form-select bg-dark text-light" id="symbol">
+                                <option value="EUR_USD">EUR/USD</option>
+                                <option value="GBP_USD">GBP/USD</option>
+                                <option value="USD_JPY">USD/JPY</option>
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Side</label>
                             <select class="form-select bg-dark text-light" id="side">
-                                <option value="Buy">Buy</option>
-                                <option value="Sell">Sell</option>
+                                <option value="BUY">Buy</option>
+                                <option value="SELL">Sell</option>
                             </select>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Units</label>
-                            <input type="number" class="form-control bg-dark text-light" id="units" value="100">
+                            <input type="number" class="form-control bg-dark text-light" id="units" value="1000" min="1000" step="1000">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Take Profit</label>
-                            <input type="number" class="form-control bg-dark text-light" id="takeProfit" step="0.00001" placeholder="Leave empty for no take profit">
+                            <label class="form-label">Take Profit (pips)</label>
+                            <input type="number" class="form-control bg-dark text-light" id="takeProfit" step="1" placeholder="Optional">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Stop Loss</label>
-                            <input type="number" class="form-control bg-dark text-light" id="stopLoss" step="0.00001" placeholder="Leave empty for no stop loss">
+                            <label class="form-label">Stop Loss (pips)</label>
+                            <input type="number" class="form-control bg-dark text-light" id="stopLoss" step="1" placeholder="Optional">
                         </div>
-                        <button type="submit" class="btn btn-primary w-100">Place Trade</button>
+                        <button type="button" onclick="placeTrade()" class="btn btn-primary w-100">Place Trade</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row">
+    <div class="row mt-3">
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
@@ -58,6 +76,8 @@
                                     <th>Side</th>
                                     <th>Units</th>
                                     <th>Open Price</th>
+                                    <th>Take Profit</th>
+                                    <th>Stop Loss</th>
                                     <th>Current P/L</th>
                                     <th>Actions</th>
                                 </tr>
@@ -76,4 +96,21 @@
 {% block extra_js %}
 <script src="https://s3.tradingview.com/tv.js"></script>
 <script src="{{ url_for('static', filename='js/terminal_forex.js') }}"></script>
+<style>
+#tradingview_chart {
+    height: 600px;
+    background: #1e222d;
+}
+.dark-theme {
+    background: #131722;
+    color: #d1d4dc;
+}
+.card {
+    background: #1e222d;
+    border: 1px solid #2a2e39;
+}
+.table-dark {
+    background: #1e222d;
+}
+</style>
 {% endblock %}
