@@ -365,6 +365,7 @@ def save_notification_settings():
 @login_required
 @admin_required
 def manage_subscription_plans():
+    """Ruta para gestionar planes de suscripción (solo administradores)"""
     try:
         # Obtener estadísticas de suscripciones
         stats = {
@@ -375,7 +376,7 @@ def manage_subscription_plans():
             'most_popular_plan': db.session.query(
                 User.subscription_type,
                 db.func.count(User.id).label('count')
-            ).group_by(User.subscription_type).order_by(db.text('count DESC')).first()[0],
+            ).group_by(User.subscription_type).order_by(db.text('count DESC')).first(),
             'retention_rate': 95.5  # TODO: Implementar cálculo real
         }
         
@@ -385,7 +386,7 @@ def manage_subscription_plans():
             # Obtener el número de suscriptores para cada plan
             plan.subscriber_count = User.query.filter_by(subscription_type=plan.name.lower()).count()
         
-        return render_template('admin/subscription_plans.html', 
+        return render_template('admin/subscription/plans.html', 
                              subscription_plans=subscription_plans,
                              stats=stats)
     except Exception as e:

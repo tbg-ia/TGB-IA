@@ -39,6 +39,7 @@ def init_stripe():
 @subscription_bp.route('/planes')
 @login_required
 def planes():
+    """Ruta para mostrar los planes de suscripción a usuarios regulares"""
     try:
         subscription_plans = SubscriptionPlan.query.filter_by(is_active=True).all()
         current_subscription = Subscription.query.filter_by(
