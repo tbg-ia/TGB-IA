@@ -6,40 +6,42 @@
     <div class="col-md-8">
         <div class="card mb-4">
             <div class="card-body p-0">
-                <div id="tradingview_chart" style="height: 400px;"></div>
+                <div id="tradingview_chart" style="height: 500px;"></div>
             </div>
         </div>
     </div>
     
     <div class="col-md-4">
         <div class="card mb-4">
-            <div class="card-body">
+            <div class="card-body dark-theme">
                 <form id="tradeForm">
                     <div class="mb-3">
-                        <select class="form-select" id="instrument" required>
+                        <select class="form-select bg-dark text-light" id="instrument" required>
                             <option value="EUR_USD">EUR/USD</option>
                             <option value="GBP_USD">GBP/USD</option>
                             <option value="USD_JPY">USD/JPY</option>
+                            <option value="USD_CAD">USD/CAD</option>
+                            <option value="AUD_USD">AUD/USD</option>
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Side</label>
-                        <select class="form-select" id="side" required>
+                        <label class="form-label text-light">Side</label>
+                        <select class="form-select bg-dark text-light" id="side" required>
                             <option value="BUY">Buy</option>
                             <option value="SELL">Sell</option>
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Units</label>
-                        <input type="number" class="form-control" id="units" required min="1">
+                        <label class="form-label text-light">Units</label>
+                        <input type="number" class="form-control bg-dark text-light" id="units" required min="1">
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Take Profit</label>
-                        <input type="number" class="form-control" id="take_profit" step="0.00001" min="0" placeholder="Leave empty for no take profit">
+                        <label class="form-label text-light">Take Profit</label>
+                        <input type="number" class="form-control bg-dark text-light" id="take_profit" step="0.00001" min="0" placeholder="Leave empty for no take profit">
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Stop Loss</label>
-                        <input type="number" class="form-control" id="stop_loss" step="0.00001" min="0" placeholder="Leave empty for no stop loss">
+                        <label class="form-label text-light">Stop Loss</label>
+                        <input type="number" class="form-control bg-dark text-light" id="stop_loss" step="0.00001" min="0" placeholder="Leave empty for no stop loss">
                     </div>
                     <button type="submit" class="btn btn-primary w-100">Place Trade</button>
                 </form>
@@ -48,11 +50,11 @@
     </div>
 </div>
 
-<div class="card">
+<div class="card bg-dark">
     <div class="card-body">
-        <h5 class="card-title">Active Trades</h5>
+        <h5 class="card-title text-light">Active Trades</h5>
         <div class="table-responsive">
-            <table class="table">
+            <table class="table table-dark">
                 <thead>
                     <tr>
                         <th>Instrument</th>
@@ -69,6 +71,20 @@
         </div>
     </div>
 </div>
+
+<style>
+.dark-theme {
+    background-color: #1e222d;
+    color: #fff;
+}
+.form-control::placeholder {
+    color: #6c757d;
+}
+.table-dark {
+    color: #fff;
+    background-color: #1e222d;
+}
+</style>
 {% endblock %}
 
 {% block extra_js %}
