@@ -85,6 +85,25 @@ def place_forex_order():
     data = request.get_json()
     if not data:
         return jsonify({'success': False, 'error': 'No se proporcionaron datos'})
+        
+    client = OandaClient.get_instance()
+    if not client:
+        return jsonify({'success': False, 'error': 'Cliente OANDA no inicializado'})
+        
+    try:
+        result = client.place_order(
+            symbol=data.get('symbol'),
+            side=data.get('side'),
+            units=int(data.get('units')),
+            price=None  # Market order
+        )
+        
+        if result:
+            return jsonify({'success': True, 'order': result})
+        return jsonify({'success': False, 'error': 'Error al colocar la orden'})
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
     
     client = OandaClient.get_instance()
     if not client:
