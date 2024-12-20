@@ -36,6 +36,14 @@ def trading_terminal():
 def forex_terminal():
     """Forex trading terminal view"""
     return render_template('public/forex_terminal.html')
+
+@terminal_bp.route('/terminal/crypto')
+@login_required
+def crypto_terminal():
+    """Crypto trading terminal view"""
+    return render_template('public/crypto_terminal.html')
+    """Forex trading terminal view"""
+    return render_template('public/forex_terminal.html')
     
     balances = {}
     for exchange in forex_exchanges:
