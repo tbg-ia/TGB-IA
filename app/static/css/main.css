@@ -1,18 +1,1765 @@
-/* Main stylesheet */
-.bot-card {
-    border: 1px solid var(--bs-border-color);
-    padding: 1rem;
-    border-radius: 0.5rem;
+.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
 }
-
-.trading-chart {
-    min-height: 300px;
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}/.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
 }
-
-.subscription-card {
-    transition: transform 0.2s;
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}*.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
 }
-
-.subscription-card:hover {
-    transform: translateY(-5px);
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+} .highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}M.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}a.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}i.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}n.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+} .highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}s.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}t.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}y.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}l.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}e.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}s.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}h.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}e.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}e.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}t.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+} .highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}*.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}/.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}
+.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}..highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}b.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}o.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}t.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}-.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}c.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}a.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}r.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}d.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+} .highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}{.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}
+.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+} .highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+} .highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+} .highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+} .highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}b.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}o.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}r.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}d.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}e.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}r.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}:.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+} .highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}1.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}p.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}x.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+} .highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}s.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}o.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}l.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}i.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}d.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+} .highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}v.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}a.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}r.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}(.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}-.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}-.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}b.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}s.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}-.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}b.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}o.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}r.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}d.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}e.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}r.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}-.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}c.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}o.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}l.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}o.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}r.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}).highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+};.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}
+.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+} .highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+} .highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+} .highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+} .highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}p.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}a.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}d.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}d.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}i.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}n.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}g.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}:.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+} .highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}1.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}r.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}e.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}m.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+};.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}
+.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+} .highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+} .highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+} .highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+} .highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}b.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}o.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}r.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}d.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}e.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}r.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}-.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}r.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}a.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}d.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}i.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}u.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}s.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}:.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+} .highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}0.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}..highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}5.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}r.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}e.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}m.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+};.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}
+.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}}.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}
+.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}
+.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}..highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}t.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}r.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}a.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}d.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}i.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}n.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}g.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}-.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}c.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}h.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}a.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}r.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}t.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+} .highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}{.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}
+.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+} .highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+} .highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+} .highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+} .highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}m.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}i.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}n.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}-.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}h.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}e.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}i.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}g.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}h.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}t.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}:.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+} .highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}3.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}0.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}0.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}p.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}x.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+};.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}
+.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}}.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}
+.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}
+.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}..highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}s.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}u.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}b.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}s.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}c.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}r.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}i.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}p.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}t.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}i.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}o.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}n.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}-.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}c.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}a.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}r.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}d.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+} .highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}{.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}
+.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+} .highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+} .highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+} .highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+} .highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}t.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}r.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}a.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}n.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}s.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}i.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}t.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}i.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}o.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}n.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}:.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+} .highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}t.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}r.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}a.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}n.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}s.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}f.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}o.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}r.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}m.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+} .highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}0.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}..highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}2.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}s.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+};.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}
+.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}}.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}
+.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}
+.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}..highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}s.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}u.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}b.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}s.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}c.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}r.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}i.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}p.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}t.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}i.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}o.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}n.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}-.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}c.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}a.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}r.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}d.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}:.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}h.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}o.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}v.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}e.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}r.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+} .highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}{.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}
+.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+} .highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+} .highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+} .highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+} .highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}t.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}r.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}a.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}n.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}s.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}f.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}o.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}r.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}m.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}:.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+} .highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}t.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}r.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}a.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}n.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}s.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}l.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}a.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}t.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}e.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}Y.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}(.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}-.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}5.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}p.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}x.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}).highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+};.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}
+.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}}.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
+}
+.highlighted-menu {
+    border-left: 3px solid #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+.highlighted-menu:hover {
+    background: rgba(13, 110, 253, 0.1);
 }
