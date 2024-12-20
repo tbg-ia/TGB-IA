@@ -37,6 +37,12 @@ def forex_terminal():
     """Forex trading terminal view"""
     return render_template('public/forex_terminal.html')
 
+@terminal_bp.route('/terminal/forex/bot')
+@login_required
+def forex_bot():
+    """Forex bot configuration view"""
+    return render_template('public/forex_bot.html')
+
 @terminal_bp.route('/terminal/crypto')
 @login_required
 def crypto_terminal():
