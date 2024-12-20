@@ -35,6 +35,18 @@ def trading_terminal():
 @login_required
 def forex_terminal():
     """Forex trading terminal view"""
+    forex_exchanges = ForexExchange.query.filter_by(
+        user_id=current_user.id,
+        is_active=True
+    ).all()
+    
+    balances = {}
+    for exchange in forex_exchanges:
+        client = OandaClient.get_instance()
+        if client:
+            account_info = client.get_account_info()
+            if account_info:
+                balances[exchange.id] = account_info.get('balance', 0.0)
     # Get user's forex exchanges
     forex_exchanges = ForexExchange.query.filter_by(user_id=current_user.id).all()
     
