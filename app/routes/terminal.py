@@ -41,7 +41,9 @@ def forex_terminal():
 @login_required
 def forex_bot():
     """Forex bot configuration view"""
-    return render_template('terminal/forex_bot.html')
+    # Get or create bot config for current user
+    bot = TradingBot.query.filter_by(user_id=current_user.id).first() or TradingBot()
+    return render_template('terminal/forex_bot.html', bot=bot)
 
 @terminal_bp.route('/terminal/forex/bot/save', methods=['POST'])
 @login_required
