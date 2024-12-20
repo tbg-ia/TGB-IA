@@ -35,10 +35,7 @@ def trading_terminal():
 @login_required
 def forex_terminal():
     """Forex trading terminal view"""
-    forex_exchanges = ForexExchange.query.filter_by(
-        user_id=current_user.id,
-        is_active=True
-    ).all()
+    return render_template('public/forex_terminal.html')
     
     balances = {}
     for exchange in forex_exchanges:

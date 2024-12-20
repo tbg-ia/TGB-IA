@@ -15,3 +15,11 @@ def upgrade():
 
 def downgrade():
     op.drop_column('exchanges', 'type')
+from alembic import op
+import sqlalchemy as sa
+
+def upgrade():
+    op.add_column('exchanges', sa.Column('type', sa.String(50)))
+    
+def downgrade():
+    op.drop_column('exchanges', 'type')
