@@ -10,6 +10,8 @@ from app.models.user import User
 from app.models.subscription import Subscription
 from app.models.payment import Payment
 from app.models.base_exchange import BaseExchange
+from app.models.exchange_credential import ExchangeCredential
+from app.models.exchange_settings import ExchangeSettings
 from app.models.crypto_exchange import CryptoExchange
 from app.models.forex_exchange import ForexExchange
 from app.models.exchanges.binance_exchange import BinanceExchange
@@ -28,6 +30,8 @@ __all__ = [
     'Subscription',
     'Payment',
     'BaseExchange',
+    'ExchangeCredential',
+    'ExchangeSettings',
     'CryptoExchange',
     'ForexExchange',
     'BinanceExchange',

@@ -1,0 +1,93 @@
+ProgrammingError
+sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedColumn) column exchanges.type does not exist
+LINE 1: SELECT exchanges.id AS exchanges_id, exchanges.type AS excha...
+                                             ^
+
+[SQL: SELECT exchanges.id AS exchanges_id, exchanges.type AS exchanges_type, exchanges.name AS exchanges_name, exchanges.exchange_type AS exchanges_exchange_type, exchanges.api_key AS exchanges_api_key, exchanges.api_secret_hash AS exchanges_api_secret_hash, exchanges.user_id AS exchanges_user_id, exchanges.is_active AS exchanges_is_active, exchanges.trading_enabled AS exchanges_trading_enabled, exchanges.max_positions AS exchanges_max_positions, exchanges.max_leverage AS exchanges_max_leverage, exchanges.quote_currency AS exchanges_quote_currency, exchanges.min_order_size AS exchanges_min_order_size, exchanges.max_order_size AS exchanges_max_order_size, exchanges.created_at AS exchanges_created_at, exchanges.last_updated AS exchanges_last_updated, exchanges.last_error AS exchanges_last_error 
+FROM exchanges 
+WHERE exchanges.user_id = %(user_id_1)s AND exchanges.is_active = true AND exchanges.type = %(type_1)s 
+ LIMIT %(param_1)s]
+[parameters: {'user_id_1': 2, 'type_1': 'crypto', 'param_1': 1}]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+
+Traceback (most recent call last)
+File "/home/runner/TGB-IA/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+self.dialect.do_execute(
+^
+File "/home/runner/TGB-IA/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 941, in do_execute
+cursor.execute(statement, parameters)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The above exception was the direct cause of the following exception:
+File "/home/runner/TGB-IA/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 1536, in __call__
+return self.wsgi_app(environ, start_response)
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/TGB-IA/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 1514, in wsgi_app
+response = self.handle_exception(e)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/TGB-IA/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 1511, in wsgi_app
+response = self.full_dispatch_request()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/TGB-IA/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 919, in full_dispatch_request
+rv = self.handle_user_exception(e)
+     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/TGB-IA/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 917, in full_dispatch_request
+rv = self.dispatch_request()
+     ^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/TGB-IA/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 902, in dispatch_request
+return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/TGB-IA/.pythonlibs/lib/python3.11/site-packages/flask_login/utils.py", line 290, in decorated_view
+return current_app.ensure_sync(func)(*args, **kwargs)
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/TGB-IA/app/routes/crypto.py", line 73, in signalbot
+).first()
+  ^^^^^^^
+File "/home/runner/TGB-IA/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/orm/query.py", line 2728, in first
+return self.limit(1)._iter().first()  # type: ignore
+       ^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/TGB-IA/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/orm/query.py", line 2827, in _iter
+result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                              
+File "/home/runner/TGB-IA/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2362, in execute
+return self._execute_internal(
+       
+File "/home/runner/TGB-IA/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2247, in _execute_internal
+result: Result[Any] = compile_state_cls.orm_execute_statement(
+                      
+File "/home/runner/TGB-IA/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/orm/context.py", line 305, in orm_execute_statement
+result = conn.execute(
+         
+File "/home/runner/TGB-IA/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1418, in execute
+return meth(
+       
+File "/home/runner/TGB-IA/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/sql/elements.py", line 515, in _execute_on_connection
+return connection._execute_clauseelement(
+       
+File "/home/runner/TGB-IA/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1640, in _execute_clauseelement
+ret = self._execute_context(
+      
+File "/home/runner/TGB-IA/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+return self._exec_single_context(
+       
+File "/home/runner/TGB-IA/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+self._handle_dbapi_exception(
+^
+File "/home/runner/TGB-IA/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2355, in _handle_dbapi_exception
+raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/TGB-IA/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+self.dialect.do_execute(
+^
+File "/home/runner/TGB-IA/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 941, in do_execute
+cursor.execute(statement, parameters)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedColumn) column exchanges.type does not exist
+LINE 1: SELECT exchanges.id AS exchanges_id, exchanges.type AS excha...
+^
+
+[SQL: SELECT exchanges.id AS exchanges_id, exchanges.type AS exchanges_type, exchanges.name AS exchanges_name, exchanges.exchange_type AS exchanges_exchange_type, exchanges.api_key AS exchanges_api_key, exchanges.api_secret_hash AS exchanges_api_secret_hash, exchanges.user_id AS exchanges_user_id, exchanges.is_active AS exchanges_is_active, exchanges.trading_enabled AS exchanges_trading_enabled, exchanges.max_positions AS exchanges_max_positions, exchanges.max_leverage AS exchanges_max_leverage, exchanges.quote_currency AS exchanges_quote_currency, exchanges.min_order_size AS exchanges_min_order_size, exchanges.max_order_size AS exchanges_max_order_size, exchanges.created_at AS exchanges_created_at, exchanges.last_updated AS exchanges_last_updated, exchanges.last_error AS exchanges_last_error
+FROM exchanges
+WHERE exchanges.user_id = %(user_id_1)s AND exchanges.is_active = true AND exchanges.type = %(type_1)s
+LIMIT %(param_1)s]
+[parameters: {'user_id_1': 2, 'type_1': 'crypto', 'param_1': 1}]
+(Background on this error at: https://sqlalche.me/e/20/f405)

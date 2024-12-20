@@ -1,0 +1,110 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4">Configuración del Bot de Forex</h2>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Configuración General</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('terminal.save_forex_bot_config') }}">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Nombre del Bot</label>
+                                <input type="text" class="form-control" name="name" value="{{ bot.name }}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Par de Divisas</label>
+                                <select class="form-select" name="trading_pair" required>
+                                    <option value="EUR_USD">EUR/USD</option>
+                                    <option value="GBP_USD">GBP/USD</option>
+                                    <option value="USD_JPY">USD/JPY</option>
+                                    <option value="USD_CHF">USD/CHF</option>
+                                    <option value="AUD_USD">AUD/USD</option>
+                                    <option value="USD_CAD">USD/CAD</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Estrategia</label>
+                                <select class="form-select" name="strategy" required>
+                                    <option value="trend_following">Trend Following</option>
+                                    <option value="mean_reversion">Mean Reversion</option>
+                                    <option value="breakout">Breakout</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Intervalo</label>
+                                <select class="form-select" name="interval">
+                                    <option value="M5">5 minutos</option>
+                                    <option value="M15">15 minutos</option>
+                                    <option value="M30">30 minutos</option>
+                                    <option value="H1">1 hora</option>
+                                    <option value="H4">4 horas</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Stop Loss (pips)</label>
+                                <input type="number" class="form-control" name="stop_loss" value="{{ bot.stop_loss }}" step="1">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Take Profit (pips)</label>
+                                <input type="number" class="form-control" name="take_profit" value="{{ bot.take_profit }}" step="1">
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Tamaño Posición (unidades)</label>
+                                <input type="number" class="form-control" name="position_size" value="{{ bot.position_size }}" min="1000" step="1000">
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check form-switch mt-4">
+                                    <input class="form-check-input" type="checkbox" name="active" {% if bot.active %}checked{% endif %}>
+                                    <label class="form-check-label">Activar Bot</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Guardar Configuración</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Estadísticas</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Operaciones Totales</label>
+                        <h4>{{ bot.total_trades or 0 }}</h4>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Operaciones Exitosas</label>
+                        <h4>{{ bot.successful_trades or 0 }}</h4>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Rentabilidad</label>
+                        <h4 class="{% if bot.current_profit >= 0 %}text-success{% else %}text-danger{% endif %}">
+                            {{ "%.2f"|format(bot.current_profit|default(0)) }}%
+                        </h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
