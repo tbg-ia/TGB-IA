@@ -43,13 +43,25 @@ def forex_terminal():
 @login_required
 def forex_bot():
     """Forex bot configuration view"""
+    # Get active forex exchange
+    exchange = ForexExchange.query.filter_by(
+        user_id=current_user.id,
+        is_active=True
+    ).first()
+    
     # Get or create bot config for current user
     bot = TradingBot.query.filter_by(user_id=current_user.id).first()
-    if not bot:
-        bot = TradingBot(user_id=current_user.id)
+    if not bot and exchange:
+        bot = TradingBot(
+            user_id=current_user.id,
+            exchange_id=exchange.id,
+            name="Forex Bot",
+            strategy="trend_following"
+        )
         db.session.add(bot)
         db.session.commit()
-    return render_template('terminal/signal_bot.html', bot=bot)
+    
+    return render_template('terminal/signal_bot.html', bot=bot or TradingBot())
 
 @terminal_bp.route('/terminal/forex/bot/save', methods=['POST'])
 @login_required
