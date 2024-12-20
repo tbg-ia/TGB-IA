@@ -356,23 +356,15 @@
 
 <script>
     document.getElementById('exchangeSelect').addEventListener('change', function() {
-        const oandaFields = document.getElementById('oandaFields');
-        const otherExchangeFields = document.getElementById('otherExchangeFields');
         const credentialsSection = document.getElementById('credentialsSection');
         const exchangeSettings = document.getElementById('exchangeSettings');
         const accountIdField = document.getElementById('accountIdField');
 
         if (this.value === 'oanda') {
-            oandaFields.style.display = 'block';
-            otherExchangeFields.style.display = 'none';
             accountIdField.style.display = 'block';
         } else if (this.value) {
-            oandaFields.style.display = 'none';
-            otherExchangeFields.style.display = 'block';
             accountIdField.style.display = 'none';
         } else {
-            oandaFields.style.display = 'none';
-            otherExchangeFields.style.display = 'none';
             accountIdField.style.display = 'none';
         }
         credentialsSection.style.display = this.value ? 'block' : 'none';
