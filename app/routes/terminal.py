@@ -41,7 +41,13 @@ def forex_terminal():
 @login_required
 def forex_bot():
     """Forex bot configuration view"""
-    return render_template('public/forex_bot.html')
+    return render_template('terminal/forex_bot.html')
+
+@terminal_bp.route('/terminal/forex/bot/save', methods=['POST'])
+@login_required
+def save_forex_bot_config():
+    """Save forex bot configuration"""
+    return jsonify({'success': True})
 
 @terminal_bp.route('/terminal/crypto')
 @login_required
