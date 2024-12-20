@@ -63,19 +63,21 @@ def exchanges():
     exchanges = []  # TODO: Obtener exchanges de la base de datos
     return render_template('public/exchanges.html', exchanges=exchanges)
 
-@crypto_bp.route('/signalbot', methods=['GET', 'POST'])
+@crypto_bp.route('/signal-bot', methods=['GET', 'POST'])
 @login_required
 def signalbot():
-    # Get user's active exchange
-    exchange = BaseExchange.query.filter_by(user_id=current_user.id, is_active=True).first()
+    exchange = BaseExchange.query.filter_by(
+        user_id=current_user.id, 
+        is_active=True,
+        type='crypto'
+    ).first()
     
-    # Get or create bot
     bot = TradingBot.query.filter_by(user_id=current_user.id).first()
     if not bot and exchange:
         bot = TradingBot(
             user_id=current_user.id,
             exchange_id=exchange.id,
-            name="Default Bot",
+            name="Signal Bot",
             strategy="trend_following"
         )
         db.session.add(bot)
