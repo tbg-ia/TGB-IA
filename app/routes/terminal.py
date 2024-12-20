@@ -2,7 +2,9 @@ from flask import Blueprint, render_template, jsonify, request
 from flask_login import login_required, current_user
 from app.models.base_exchange import BaseExchange
 from app.models.forex_exchange import ForexExchange
+from app.models.trading_bot import TradingBot
 from app.integrations.forex.oanda_client import OandaClient
+from app import db
 import logging
 
 logger = logging.getLogger(__name__)
@@ -37,13 +39,17 @@ def forex_terminal():
     """Forex trading terminal view"""
     return render_template('public/forex_terminal.html')
 
-@terminal_bp.route('/terminal/forex/bot')
+@terminal_bp.route('/terminal/bot')
 @login_required
 def forex_bot():
     """Forex bot configuration view"""
     # Get or create bot config for current user
-    bot = TradingBot.query.filter_by(user_id=current_user.id).first() or TradingBot()
-    return render_template('terminal/forex_bot.html', bot=bot)
+    bot = TradingBot.query.filter_by(user_id=current_user.id).first()
+    if not bot:
+        bot = TradingBot(user_id=current_user.id)
+        db.session.add(bot)
+        db.session.commit()
+    return render_template('terminal/signal_bot.html', bot=bot)
 
 @terminal_bp.route('/terminal/forex/bot/save', methods=['POST'])
 @login_required
