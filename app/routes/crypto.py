@@ -63,13 +63,28 @@ def exchanges():
     exchanges = []  # TODO: Obtener exchanges de la base de datos
     return render_template('public/exchanges.html', exchanges=exchanges)
 
-@crypto_bp.route('/signalbot')
+@crypto_bp.route('/signalbot', methods=['GET', 'POST'])
 @login_required
 def signalbot():
-    # Aquí podríamos obtener la configuración actual del bot para el usuario
-    bot = {}  # TODO: Obtener configuración del bot de la base de datos
-    stats = {}  # TODO: Obtener estadísticas del bot
-    return render_template('public/signalbot.html', bot=bot, stats=stats)
+    bot = TradingBot.query.filter_by(user_id=current_user.id).first()
+    if not bot:
+        bot = TradingBot(user_id=current_user.id)
+        db.session.add(bot)
+        db.session.commit()
+    
+    exchange = BaseExchange.query.filter_by(user_id=current_user.id, is_active=True).first()
+    account_balance = 0
+    
+    if exchange:
+        try:
+            if exchange.exchange_type == 'bingx':
+                client = BingXClient.get_instance()
+                balance = client.get_account_balance()
+                account_balance = float(balance.get('balance', 0))
+        except Exception as e:
+            current_app.logger.error(f"Error getting balance: {str(e)}")
+    
+    return render_template('public/signal_bot.html', bot=bot, account_balance=account_balance)
 
 @crypto_bp.route('/subscription/plans')
 def plans():
@@ -273,6 +288,29 @@ def save_config():
     value = request.form.get('value')
     category = request.form.get('category')
     description = request.form.get('description')
+    
+@crypto_bp.route('/signalbot/save', methods=['POST'])
+@login_required
+def save_bot_config():
+    bot = TradingBot.query.filter_by(user_id=current_user.id).first()
+    if not bot:
+        bot = TradingBot(user_id=current_user.id)
+        db.session.add(bot)
+    
+    bot.name = request.form.get('name')
+    bot.strategy = request.form.get('strategy')
+    bot.trading_pair = request.form.get('trading_pair')
+    bot.interval = request.form.get('interval')
+    bot.max_position = float(request.form.get('max_position', 0))
+    bot.leverage = int(request.form.get('leverage', 1))
+    bot.margin_type = request.form.get('margin_type')
+    bot.stop_loss = float(request.form.get('stop_loss', 0))
+    bot.take_profit = float(request.form.get('take_profit', 0))
+    bot.active = 'active' in request.form
+    
+    db.session.commit()
+    flash('Configuración del bot guardada correctamente', 'success')
+    return redirect(url_for('crypto.signalbot'))
     
     config = SystemConfig.set_value(
         key=key,
