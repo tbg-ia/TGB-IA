@@ -40,13 +40,18 @@
                             </ul>
                         </li>
                         {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('user.dashboard') }}">Dashboard</a>
-                        </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link" href="{{ url_for('terminal.forex_terminal') }}">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                                 <i class="bi bi-currency-exchange me-1"></i>Forex
                             </a>
+                            <ul class="dropdown-menu dropdown-menu-dark">
+                                <li><a class="dropdown-item" href="{{ url_for('terminal.forex_terminal') }}">
+                                    <i class="bi bi-graph-up me-2"></i>Terminal
+                                </a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('terminal.forex_bot') }}">
+                                    <i class="bi bi-robot me-2"></i>Bot
+                                </a></li>
+                            </ul>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('terminal.crypto_terminal') }}">
