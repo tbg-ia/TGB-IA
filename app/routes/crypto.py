@@ -66,11 +66,31 @@ def exchanges():
 @crypto_bp.route('/signalbot', methods=['GET', 'POST'])
 @login_required
 def signalbot():
+    # Get user's active exchange
+    exchange = BaseExchange.query.filter_by(user_id=current_user.id, is_active=True).first()
+    
+    # Get or create bot
     bot = TradingBot.query.filter_by(user_id=current_user.id).first()
-    if not bot:
-        bot = TradingBot(user_id=current_user.id)
+    if not bot and exchange:
+        bot = TradingBot(
+            user_id=current_user.id,
+            exchange_id=exchange.id,
+            name="Default Bot",
+            strategy="trend_following"
+        )
         db.session.add(bot)
         db.session.commit()
+    
+    # Get account balance
+    account_balance = 0
+    if exchange:
+        try:
+            if exchange.exchange_type == 'bingx':
+                client = BingXClient.get_instance()
+                balance = client.get_account_balance()
+                account_balance = float(balance.get('balance', 0))
+        except Exception as e:
+            current_app.logger.error(f"Error getting balance: {str(e)}")
     
     exchange = BaseExchange.query.filter_by(user_id=current_user.id, is_active=True).first()
     account_balance = 0
